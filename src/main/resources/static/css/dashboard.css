@@ -1,0 +1,102 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  color: #0f172a;
+  background: radial-gradient(1200px 600px at 10% 10%, #e0f2fe 0%, transparent 60%),
+              radial-gradient(900px 500px at 90% 30%, #dcfce7 0%, transparent 55%),
+              #f8fafc;
+}
+
+.shell { min-height: 100%; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo { width: 38px; height: 38px; object-fit: contain; }
+.brand-name { font-weight: 800; letter-spacing: 0.2px; }
+.brand-sub { font-size: 12px; color: #475569; margin-top: 2px; }
+
+.content { padding: 20px; max-width: 980px; margin: 0 auto; }
+
+.card {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.08);
+}
+
+.h1 { margin: 0 0 6px; font-size: 22px; }
+.muted { margin: 0 0 14px; color: #475569; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.tile {
+  display: block;
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255,255,255,0.7);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.tile:hover {
+  transform: translateY(-1px);
+  border-color: rgba(2, 132, 199, 0.35);
+  background: rgba(255,255,255,0.9);
+}
+.tile-title { font-weight: 800; margin-bottom: 3px; }
+.tile-sub { color: #475569; font-size: 13px; }
+
+.btn {
+  appearance: none;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: white;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.55);
+}
+.btn:hover { border-color: rgba(2, 132, 199, 0.35); }
+
+.alert {
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255,255,255,0.75);
+}
+.alert-success {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(236, 253, 245, 0.85);
+}
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+}
+

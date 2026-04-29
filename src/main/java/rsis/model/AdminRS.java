@@ -1,4 +1,4 @@
 package rsis.model;
 
-public class AdminRS {
+public class AdminRS extends User {
 }

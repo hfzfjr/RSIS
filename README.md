@@ -116,3 +116,22 @@ src/
         │   └── AppointmentServiceTest.java   → Unit test service appointment
         └── RsisApplicationTests.java         → Test utama aplikasi Spring Boot
 ```
+
+## Cara Set Database (Persist antar restart)
+
+Project ini membaca konfigurasi DB dari environment variable: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
+
+Agar tidak “hilang” setelah kamu close IDE/terminal, buat file `.env` di root project (selevel `pom.xml`):
+
+1. Copy `.env.example` menjadi `.env`
+2. Isi nilainya sesuai database kamu
+
+Contoh format:
+
+```properties
+DB_URL=jdbc:postgresql://<host>:5432/<database>?sslmode=require
+DB_USERNAME=<your_db_user>
+DB_PASSWORD=<your_db_password>
+```
+
+Setelah itu jalankan ulang `mvn spring-boot:run` / Run dari IDE, dan konfigurasi akan kebaca otomatis.

@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.codeium/
+.junie/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local database
+data/
+*.db
+*.mv.db
+*.trace.db
+
+# Documentation
+README.md
+*.md
+
+# Environment files
+.env
+.env.example
+.env.local
+.env.*.local
+
+# Node modules (if any)
+node_modules/
+
+# Test files
+src/test/
+
+# Fly.io config (not needed in build)
+fly.toml

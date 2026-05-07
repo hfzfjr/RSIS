@@ -13,6 +13,6 @@ public interface AppUserRepository extends JpaRepository<User, String> {
 
     boolean existsByEmailIgnoreCase(String email);
 
-    @Query(value = "select id_user from users where id_user like 'u-%' order by cast(substring(id_user, 3) as int) desc limit 1", nativeQuery = true)
+    @Query(value = "SELECT id_user FROM users WHERE id_user LIKE 'u-%' ORDER BY CAST(SUBSTRING(id_user FROM 3) AS INTEGER) DESC LIMIT 1", nativeQuery = true)
     Optional<String> findLatestUserId();
 }

@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!-- Navbar Fragment untuk Admin -->
+    <header th:fragment="navbar" class="header">
+      <div class="container header-container">
+        <div class="logo">
+          <a href="/admin/dashboard">
+            <img src="/images/logo-rsis.png" alt="RSIS" height="32" />
+          </a>
+        </div>
+        <nav class="nav">
+          <a href="/admin/dashboard" class="nav-link">Dashboard</a>
+          <a href="/admin/kelola-dokter" class="nav-link">Kelola Dokter</a>
+          <a href="/admin/kelola-poli" class="nav-link">Kelola Poli</a>
+          <a href="/admin/kelola-jadwal" class="nav-link">Kelola Jadwal</a>
+          <a href="/admin/laporan-bulanan" class="nav-link">Laporan</a>
+        </nav>
+        <div class="header-actions">
+          <span
+            class="user-name"
+            th:text="${#authentication.principal.username}"
+            >Admin</span
+          >
+          <a href="/logout" class="btn btn-outline btn-small">Keluar</a>
+        </div>
+      </div>
+    </header>
+  </body>
 </html>

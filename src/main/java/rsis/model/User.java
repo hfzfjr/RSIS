@@ -2,14 +2,12 @@ package rsis.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 
 import java.time.Instant;
 
-@Entity
-@Table(name = "users")
-public class User {
+@MappedSuperclass
+public abstract class User {
     @Id
     @Column(name = "id_user", nullable = false, length = 32)
     private String idUser;

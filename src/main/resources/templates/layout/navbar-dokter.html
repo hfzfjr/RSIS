@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!-- Navbar Fragment untuk Dokter -->
+    <header th:fragment="navbar" class="header">
+      <div class="container header-container">
+        <div class="logo">
+          <a href="/dokter/dashboard">
+            <img src="/images/logo-rsis.png" alt="RSIS" height="32" />
+          </a>
+        </div>
+        <nav class="nav">
+          <a href="/dokter/dashboard" class="nav-link">Dashboard</a>
+          <a href="/dokter/jadwal" class="nav-link">Kelola Jadwal</a>
+          <a href="/dokter/daftar-pasien" class="nav-link">Daftar Pasien</a>
+          <a href="/dokter/appointment" class="nav-link">Appointment</a>
+        </nav>
+        <div class="header-actions">
+          <span
+            class="user-name"
+            th:text="${#authentication.principal.username}"
+            >Dokter</span
+          >
+          <a href="/logout" class="btn btn-outline btn-small">Keluar</a>
+        </div>
+      </div>
+    </header>
+  </body>
 </html>

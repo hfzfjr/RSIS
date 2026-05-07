@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsis.service.AuthService;
 
 @Controller
@@ -30,14 +32,14 @@ public class AuthController {
 
     @GetMapping("/")
     public String root() {
-        return "redirect:/login";
+        return "landing";
     }
 
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error,
-                            @RequestParam(value = "logout", required = false) String logout,
-                            @RequestParam(value = "registered", required = false) String registered,
-                            Model model) {
+            @RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "registered", required = false) String registered,
+            Model model) {
         model.addAttribute("hasError", error != null);
         model.addAttribute("hasLogout", logout != null);
         model.addAttribute("hasRegistered", registered != null);
@@ -52,41 +54,56 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerSubmit(@ModelAttribute("form") RegisterForm form,
-                                 BindingResult binding,
-                                 Model model,
-                                 HttpServletRequest request) {
-        // Bean Validation on @ModelAttribute record isn't automatically triggered everywhere;
+            BindingResult binding,
+            Model model,
+            HttpServletRequest request) {
+        // Bean Validation on @ModelAttribute record isn't automatically triggered
+        // everywhere;
         // keep a tiny guard for required fields to avoid bad inserts.
-        if (isBlank(form.nama()) || isBlank(form.email()) || isBlank(form.password())) {
-            model.addAttribute("errorMessage", "Nama, email, dan password wajib diisi");
+        if (isBlank(form.namaLengkap()) || isBlank(form.email()) || isBlank(form.password())) {
+            model.addAttribute("errorMessage", "Nama lengkap, email, dan password wajib diisi");
             return "auth/register";
         }
+
+        // Validate password confirmation
+        if (!form.password().equals(form.confirmPassword())) {
+            model.addAttribute("errorMessage", "Password dan konfirmasi password tidak cocok");
+            return "auth/register";
+        }
+
+        // Validate password length
+        if (form.password().length() < 8) {
+            model.addAttribute("errorMessage", "Password minimal 8 karakter");
+            return "auth/register";
+        }
+
         try {
-            authService.registerPasien(form.nama(), form.email(), form.password());
+            authService.registerPasien(form.namaLengkap(), form.email(), form.password());
             Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(form.email(), form.password())
-            );
+                    new UsernamePasswordAuthenticationToken(form.email(), form.password()));
             SecurityContextHolder.getContext().setAuthentication(auth);
             HttpSession session = request.getSession(true);
             session.setAttribute(
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext()
-            );
+                    SecurityContextHolder.getContext());
             session.setAttribute("FLASH_SUCCESS", "Registrasi berhasil. Selamat datang!");
             return "redirect:/pasien/dashboard";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "auth/register";
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "Terjadi kesalahan sistem: " + ex.getMessage());
+            return "auth/register";
         }
     }
 
     public record RegisterForm(
-            @NotBlank(message = "Nama wajib diisi") String nama,
+            @NotBlank(message = "Nama lengkap wajib diisi") String namaLengkap,
             @NotBlank(message = "Email wajib diisi") @Email(message = "Email tidak valid") String email,
-            @NotBlank(message = "Password wajib diisi") String password
-    ) {
+            @NotBlank(message = "Password wajib diisi") String password,
+            @NotBlank(message = "Konfirmasi password wajib diisi") String confirmPassword) {
         public RegisterForm() {
-            this("", "", "");
+            this("", "", "", "");
         }
     }
 

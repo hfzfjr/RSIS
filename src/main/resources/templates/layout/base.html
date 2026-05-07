@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!doctype html>
+<html
+  lang="id"
+  xmlns:th="http://www.thymeleaf.org"
+  th:fragment="layout (title, navbar, content)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:replace="${title}">RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+    <th:block th:replace="${head} ?: ~{}"></th:block>
+  </head>
+  <body>
+    <!-- Navbar - Dipilih berdasarkan role -->
+    <nav th:if="${navbar} != null" th:replace="${navbar}"></nav>
 
-</body>
+    <!-- Main Content -->
+    <main th:replace="${content}"></main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <th:block th:replace="${scripts} ?: ~{}"></th:block>
+  </body>
 </html>

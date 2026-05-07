@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSIS - Rumah Sakit Intelligent System</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="icon" type="image/x-icon" href="/images/logo-rsis.png" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container header-container">
+        <div class="logo">
+          <span class="logo-icon">
+            <img src="/images/logo-tulisan-rsis.png" alt="logo-rsis" />
+          </span>
+        </div>
+        <nav class="nav">
+          <a href="#" class="nav-link">Beranda</a>
+          <a href="#layanan" class="nav-link">Spesialisasi</a>
+          <a href="#fasilitas" class="nav-link">Fasilitas</a>
+          <a href="#about" class="nav-link">About</a>
+        </nav>
+        <div class="header-actions">
+          <a href="/login" class="btn btn-outline btn-small">Masuk</a>
+          <a href="/register" class="btn btn-primary btn-small">Daftar</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <div class="badge">
+            <span class="badge-icon">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+            </span>
+            <span>Layanan Kesehatan Terpercaya</span>
+          </div>
+          <h1 class="hero-title">Jadwalkan Dokter Kapan Saja, Di Mana Saja</h1>
+          <p class="hero-description">
+            Temukan dokter terbaik, pilih jadwal yang sesuai, dan booking
+            appointment dalam hitungan menit tanpa antre panjang.
+          </p>
+          <div class="hero-buttons">
+            <a href="/login" class="btn btn-primary btn-large"
+              >Cari Lokasi Terdekat</a
+            >
+            <a href="#fasilitas" class="btn btn-outline btn-large"
+              >Lihat Fasilitas</a
+            >
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number">500+</span>
+              <span class="stat-label">Dokter</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">20+</span>
+              <span class="stat-label">Spesialisasi</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">50k+</span>
+              <span class="stat-label">Pasien</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img
+            src="/images/LandingPage/hospital-building.png"
+            alt="RSIS Hospital Building"
+          />
+          <div class="floating-card">
+            <div class="floating-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div class="floating-content">
+              <span class="floating-label">Open Every Day</span>
+              <span class="floating-value">24 Hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layanan Spesialis Section -->
+    <section id="layanan" class="services-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">
+            Layanan <span style="color: var(--primary)">Spesialis</span>
+          </h2>
+          <p class="section-subtitle">
+            Kami menyediakan tenaga medis profesional dengan kualifikasi
+            internasional untuk berbagai bidang spesialisasi.
+          </p>
+          <a href="/login" class="link-arrow">Lihat Semua Spesialis</a>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon green">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="service-title">Penyakit Dalam</h3>
+            <p class="service-desc">
+              Menangani penyakit organ dalam seperti diabetes, infeksi, dan
+              gangguan pencernaan.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon teal">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            </div>
+            <h3 class="service-title">Kesehatan Anak</h3>
+            <p class="service-desc">
+              Merawat kesehatan fisik dan mental bayi hingga remaja.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon green">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="service-title">Jantung dan Pembuluh Darah</h3>
+            <p class="service-desc">
+              Menangani penyakit jantung dan hipertensi.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon teal">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <h3 class="service-title">Saraf</h3>
+            <p class="service-desc">
+              Menangani gangguan otak, saraf tulang belakang, dan saraf tepi.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fasilitas Rumah Sakit Section -->
+    <section id="fasilitas" class="facilities-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Fasilitas Rumah Sakit</h2>
+          <p class="section-subtitle">
+            Fasilitas rumah sakit yang mendukung pemeriksaan mendalam untuk
+            hasil yang lebih maksimal.
+          </p>
+        </div>
+        <div class="facilities-grid">
+          <div class="facility-card">
+            <div class="facility-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <h3 class="facility-title">Pelayanan<br />Medis Utama</h3>
+            <p class="facility-desc">
+              UGD/IGD, Kamar Rawat Inap, Kamar Operasi, Kamar Bersalin, Rawat
+              Jalan.
+            </p>
+          </div>
+          <div class="facility-card">
+            <div class="facility-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <h3 class="facility-title">Pelayanan<br />Khusus</h3>
+            <p class="facility-desc">
+              ICU/ICCU/NICU, PICU/NICU, Hemodialisa, Ruang Isolasi.
+            </p>
+          </div>
+          <div class="facility-card">
+            <div class="facility-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h3 class="facility-title">Penunjang<br />Medis</h3>
+            <p class="facility-desc">
+              Radiologi, Laboratorium, Farmasi/ Apotek, Rehabilitasi Medik.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Branches Section -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <div class="section-header" style="text-align: left">
+          <h2 class="section-title" style="text-align: left">About</h2>
+          <p class="section-subtitle" style="text-align: left; margin: 0">
+            Dapatkan penanganan langsung dari rumah sakit terdekat
+          </p>
+        </div>
+        <div class="branches-grid">
+          <div class="branch-card">
+            <img
+              src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&q=80"
+              alt="Mayapada Hospital Bandung"
+              class="branch-image"
+            />
+            <div class="branch-info">
+              <span class="branch-location">BANDUNG</span>
+              <h3 class="branch-name">Mayapada Hospital Bandung</h3>
+              <p class="branch-address">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="vertical-align: middle; margin-right: 4px"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                  ></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                MediCare Pusat, Bandung
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary btn-small"
+                style="width: 100%; margin-top: 4px"
+                >Lihat Jadwal</a
+              >
+            </div>
+          </div>
+          <div class="branch-card">
+            <img
+              src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400&q=80"
+              alt="Mayapada Hospital Kuningan"
+              class="branch-image"
+            />
+            <div class="branch-info">
+              <span class="branch-location">KUNINGAN</span>
+              <h3 class="branch-name">Mayapada Hospital Kuningan</h3>
+              <p class="branch-address">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="vertical-align: middle; margin-right: 4px"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                  ></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                MediCare Pusat, Kuningan
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary btn-small"
+                style="width: 100%; margin-top: 4px"
+                >Lihat Jadwal</a
+              >
+            </div>
+          </div>
+          <div class="branch-card">
+            <img
+              src="https://images.unsplash.com/photo-1626315869436-d6781ba69d6e?w=400&q=80"
+              alt="Mayapada Hospital Tangerang"
+              class="branch-image"
+            />
+            <div class="branch-info">
+              <span class="branch-location">TANGERANG</span>
+              <h3 class="branch-name">Mayapada Hospital Tangerang</h3>
+              <p class="branch-address">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="vertical-align: middle; margin-right: 4px"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                  ></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                MediCare Pusat, Tangerang
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary btn-small"
+                style="width: 100%; margin-top: 4px"
+                >Lihat Jadwal</a
+              >
+            </div>
+          </div>
+          <div class="branch-card">
+            <img
+              src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=400&q=80"
+              alt="Mayapada Hospital Jakarta Selatan"
+              class="branch-image"
+            />
+            <div class="branch-info">
+              <span class="branch-location">JAKARTA SELATAN</span>
+              <h3 class="branch-name">Mayapada Hospital Jakarta Selatan</h3>
+              <p class="branch-address">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="vertical-align: middle; margin-right: 4px"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                  ></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                MediCare Pusat, Jakarta Selatan
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary btn-small"
+                style="width: 100%; margin-top: 4px"
+                >Lihat Jadwal</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="testimonial-section">
+      <div class="container testimonial-container">
+        <div class="testimonial-quote">
+          <div class="quote-mark">"</div>
+          <h2 class="quote-text">Kesehatan Bukan Pilihan, Tapi Prioritas.</h2>
+          <p class="quote-desc">
+            Kami mendengar ribuan cerita sukses dari mereka yang telah
+            mempercayakan kesehatannya pada kami.
+          </p>
+        </div>
+        <div class="testimonial-right">
+          <div class="testimonial-card-small">
+            <p class="testimonial-text-small">
+              "Pelayanan di MediCare sangat cepat. Saya bisa booking dokter
+              spesialis jantung hanya dalam hitungan menit tanpa antre panjang."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar"></div>
+              <div class="author-info">
+                <span class="author-name">Rian Kurniawan</span>
+                <span class="author-role">Pasien Kardiologi</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-content">
+            <p class="testimonial-text">
+              "Dokter-dokternya sangat edukatif. Platform ini benar-benar
+              membantu saya mengelola jadwal check-up rutin keluarga dengan
+              mudah."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar author-avatar-green"></div>
+              <div class="author-info">
+                <span class="author-name">Siska Amelia</span>
+                <span class="author-role">Ibu Rumah Tangga</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

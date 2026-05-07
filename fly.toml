@@ -6,6 +6,7 @@ primary_region = 'sin'
 
 [env]
   SERVER_PORT = '8080'
+  SERVER_ADDRESS = '0.0.0.0'
   SPRING_PROFILES_ACTIVE = 'prod'
 
 [http_service]

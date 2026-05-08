@@ -27,9 +27,9 @@ public class PasienController {
         return "pasien/cari-dokter";
     }
 
-    @GetMapping("/jadwal-dokter")
-    public String jadwalDokter() {
-        return "pasien/jadwal-dokter";
+    @GetMapping("/jadwal-riwayat")
+    public String jadwalRiwayat() {
+        return "pasien/jadwal-riwayat";
     }
 
     @GetMapping("/booking")
@@ -37,8 +37,23 @@ public class PasienController {
         return "pasien/booking";
     }
 
-    @GetMapping("/riwayat-appointment")
-    public String riwayatAppointment() {
-        return "pasien/riwayat-appointment";
+    @GetMapping("/profil-informasi")
+    public String profilInformasi() {
+        return "pasien/profil-informasi";
+    }
+
+    @GetMapping("/profil-medis")
+    public String profilMedis() {
+        return "pasien/profil-medis";
+    }
+
+    @GetMapping("/profil-notifikasi")
+    public String profilNotifikasi() {
+        return "pasien/profil-notifikasi";
+    }
+
+    @GetMapping("/profil-keamanan")
+    public String profilKeamanan() {
+        return "pasien/profil-keamanan";
     }
 }

@@ -1,0 +1,385 @@
+/* Cari Dokter Page Styles - RSIS */
+/* Menggunakan variabel warna dari style.css */
+
+/* ===== MAIN CONTAINER ===== */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1A1A2E);
+  margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary, #6B7280);
+  margin: 0;
+}
+
+/* ===== SEARCH SECTION ===== */
+.search-section {
+  margin-bottom: 32px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted, #9CA3AF);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--color-surface, #ffffff);
+  color: var(--color-text-primary, #1A1A2E);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--color-brand-dark, #006C5A);
+  box-shadow: 0 0 0 3px var(--color-brand-light, #E8F5F1);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-muted, #9CA3AF);
+}
+
+.search-btn {
+  padding: 12px 24px;
+  font-weight: 600;
+}
+
+/* ===== CATEGORY FILTERS ===== */
+.category-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.category-pill {
+  padding: 8px 16px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6B7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-pill:hover {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+.category-pill.active {
+  background: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand-dark, #006C5A);
+  color: white;
+}
+
+/* ===== ADDITIONAL FILTERS ===== */
+.additional-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6B7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+.filter-dropdowns {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-select {
+  padding: 8px 16px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary, #6B7280);
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-select:focus {
+  border-color: var(--color-brand-dark, #006C5A);
+}
+
+/* ===== DOCTORS GRID ===== */
+.doctors-section {
+  margin-bottom: 32px;
+}
+
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ===== DOCTOR CARD ===== */
+.doctor-card {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.doctor-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doctor-image-wrapper {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.doctor-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+  background: var(--color-brand-dark, #006C5A);
+  color: white;
+}
+
+.status-badge.busy {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.doctor-content {
+  padding: 16px;
+}
+
+.doctor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.doctor-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1A1A2E);
+  margin: 0;
+}
+
+.doctor-specialty {
+  font-size: 12px;
+  color: var(--color-text-muted, #9CA3AF);
+  margin: 4px 0 0 0;
+}
+
+.doctor-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #F59E0B;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.doctor-meta {
+  margin-bottom: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6B7280);
+  margin-bottom: 4px;
+}
+
+.meta-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--color-brand-dark, #006C5A);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #005a4a;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text-secondary, #6B7280);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+}
+
+.btn-outline:hover {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #E5E7EB);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6B7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+.pagination-btn.active {
+  background: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand-dark, #006C5A);
+  color: white;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+  color: var(--color-text-muted, #9CA3AF);
+  padding: 0 4px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .doctors-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .search-bar {
+    flex-direction: column;
+  }
+  
+  .additional-filters {
+    flex-wrap: wrap;
+  }
+  
+  .filter-dropdowns {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .doctors-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .category-filters {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 8px;
+  }
+}

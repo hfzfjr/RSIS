@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import rsis.service.CustomUserDetailsService;
+import rsis.service.UserService;
 
 @Configuration
 @EnableMethodSecurity
@@ -40,7 +40,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
+    DaoAuthenticationProvider authenticationProvider(UserService userDetailsService,
             PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);

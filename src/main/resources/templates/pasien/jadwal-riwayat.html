@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jadwal & Riwayat - RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/jadwal-riwayat.css" />
+  </head>
+  <body>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
+
+    <main class="main-container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="/pasien/dashboard">Portal Pasien</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Riwayat Janji Temu</span>
+      </nav>
+
+      <!-- Header Section -->
+      <section class="page-header">
+        <div class="header-content">
+          <div>
+            <h1 class="page-title">Riwayat Janji Temu</h1>
+            <p class="page-subtitle">
+              Lihat dan kelola semua riwayat konsultasi medis Anda.
+            </p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-outline">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export Riwayat
+            </button>
+            <button class="btn btn-primary">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Janji Temu Baru
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filters Section -->
+      <section class="filters-section">
+        <div class="filters-row">
+          <div class="search-wrapper">
+            <svg
+              class="search-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Cari nama dokter atau spesialisasi..."
+            />
+          </div>
+          <button class="btn btn-date-filter">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Semua Tanggal
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="status-legend">
+            <span class="legend-item">
+              <span class="legend-dot completed"></span>
+              Completed
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot rescheduled"></span>
+              Rescheduled
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot cancelled"></span>
+              Cancelled
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Table Section -->
+      <section class="table-section">
+        <div class="table-container">
+          <table class="appointment-table">
+            <thead>
+              <tr>
+                <th class="col-doctor">DOCTOR</th>
+                <th class="col-date">DATE & TIME</th>
+                <th class="col-type">CONSULTATION TYPE</th>
+                <th class="col-status">STATUS</th>
+                <th class="col-action">ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 -->
+              <tr>
+                <td class="col-doctor">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar">
+                      <img
+                        src="/images/doctor-avatar-1.jpg"
+                        alt="Dr. Adrian Pratama"
+                      />
+                    </div>
+                    <div class="doctor-details">
+                      <span class="doctor-name">Dr. Adrian Pratama</span>
+                      <span class="doctor-specialty">Cardiologist</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-date">
+                  <div class="date-time">
+                    <span class="date">12 Okt 2023</span>
+                    <span class="time">09:30 AM</span>
+                  </div>
+                </td>
+                <td class="col-type">Pemeriksaan Rutin</td>
+                <td class="col-status">
+                  <span class="status-badge status-completed">
+                    <span class="status-dot"></span>
+                    Completed
+                  </span>
+                </td>
+                <td class="col-action">
+                  <div class="action-buttons">
+                    <button class="btn-text">Details</button>
+                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
+                      >Book Again</a
+                    >
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 2 -->
+              <tr>
+                <td class="col-doctor">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar">
+                      <img
+                        src="/images/doctor-avatar-1.jpg"
+                        alt="Dr. Adrian Pratama"
+                      />
+                    </div>
+                    <div class="doctor-details">
+                      <span class="doctor-name">Dr. Adrian Pratama</span>
+                      <span class="doctor-specialty">Cardiologist</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-date">
+                  <div class="date-time">
+                    <span class="date">12 Nov 2023</span>
+                    <span class="time">09:30 AM</span>
+                  </div>
+                </td>
+                <td class="col-type">Pemeriksaan Rutin</td>
+                <td class="col-status">
+                  <span class="status-badge status-ongoing">
+                    <span class="status-dot"></span>
+                    On-Going
+                  </span>
+                </td>
+                <td class="col-action">
+                  <div class="action-buttons">
+                    <button class="btn-text">Details</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 3 -->
+              <tr>
+                <td class="col-doctor">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar">
+                      <img
+                        src="/images/doctor-avatar-2.jpg"
+                        alt="Dr. Sarah Wijaya"
+                      />
+                    </div>
+                    <div class="doctor-details">
+                      <span class="doctor-name">Dr. Sarah Wijaya</span>
+                      <span class="doctor-specialty">Pediatrician</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-date">
+                  <div class="date-time">
+                    <span class="date">05 Okt 2023</span>
+                    <span class="time">02:00 PM</span>
+                  </div>
+                </td>
+                <td class="col-type">Konsultasi Anak</td>
+                <td class="col-status">
+                  <span class="status-badge status-rescheduled">
+                    <span class="status-dot"></span>
+                    Rescheduled
+                  </span>
+                </td>
+                <td class="col-action">
+                  <div class="action-buttons">
+                    <button class="btn-text">Details</button>
+                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
+                      >Book Again</a
+                    >
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 4 -->
+              <tr>
+                <td class="col-doctor">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar">
+                      <img
+                        src="/images/doctor-avatar-3.jpg"
+                        alt="Dr. Budi Santoso"
+                      />
+                    </div>
+                    <div class="doctor-details">
+                      <span class="doctor-name">Dr. Budi Santoso</span>
+                      <span class="doctor-specialty">Neurologist</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-date">
+                  <div class="date-time">
+                    <span class="date">28 Sep 2023</span>
+                    <span class="time">11:00 AM</span>
+                  </div>
+                </td>
+                <td class="col-type">Follow-up Terapi</td>
+                <td class="col-status">
+                  <span class="status-badge status-cancelled">Cancelled</span>
+                </td>
+                <td class="col-action">
+                  <div class="action-buttons">
+                    <button class="btn-text">Details</button>
+                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
+                      >Book Again</a
+                    >
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 5 -->
+              <tr>
+                <td class="col-doctor">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar">
+                      <img
+                        src="/images/doctor-avatar-4.jpg"
+                        alt="Dr. Linda Hartini"
+                      />
+                    </div>
+                    <div class="doctor-details">
+                      <span class="doctor-name">Dr. Linda Hartini</span>
+                      <span class="doctor-specialty">Dermatologist</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-date">
+                  <div class="date-time">
+                    <span class="date">15 Sep 2023</span>
+                    <span class="time">03:45 PM</span>
+                  </div>
+                </td>
+                <td class="col-type">Skin Screening</td>
+                <td class="col-status">
+                  <span class="status-badge status-completed">
+                    <span class="status-dot"></span>
+                    Completed
+                  </span>
+                </td>
+                <td class="col-action">
+                  <div class="action-buttons">
+                    <button class="btn-text">Details</button>
+                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
+                      >Book Again</a
+                    >
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer -->
+        <div class="table-footer">
+          <span class="showing-text"
+            >Menampilkan 4 dari 28 riwayat janji temu</span
+          >
+          <div class="pagination">
+            <button class="pagination-btn" disabled>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info Cards Section -->
+      <section class="info-cards">
+        <div class="info-card help-card">
+          <div class="help-content">
+            <h3 class="help-title">Butuh Bantuan dengan Jadwal Anda?</h3>
+            <p class="help-desc">
+              Tim admin kami siap membantu Anda menjadwalkan ulang atau mengatur
+              kunjungan medis berikutnya.
+            </p>
+            <button class="btn btn-light">Hubungi CS Kami</button>
+          </div>
+        </div>
+        <div class="info-card security-card">
+          <div class="security-header">
+            <div class="security-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 class="security-title">Data Aman</h4>
+              <p class="security-subtitle">Enkripsi End-to-End</p>
+            </div>
+          </div>
+          <p class="security-desc">
+            Semua riwayat medis dan janji temu Anda dilindungi oleh protokol
+            keamanan standar medis internasional.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

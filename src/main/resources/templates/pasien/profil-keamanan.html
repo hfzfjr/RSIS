@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Keamanan- RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/profil.css" />
+  </head>
+  <body>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
+
+    <main class="main-container">
+      <div class="profile-layout">
+        <!-- Left Sidebar Fragment -->
+        <div
+          th:replace="~{fragments/sidebar-profil :: sidebar-profil (activeMenu='informasi')}"
+        ></div>
+
+        <!-- Main Content -->
+        <section class="profile-content"></section>
+      </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

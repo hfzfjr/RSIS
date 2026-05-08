@@ -5,65 +5,609 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Pasien - RSIS</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/dashboard-pasien.css" />
   </head>
   <body>
-    <main class="shell">
-      <header class="topbar">
-        <div class="brand">
-          <img class="brand-logo" src="/images/logo-rsis.png" alt="RSIS" />
-          <div>
-            <div class="brand-name">RSIS</div>
-            <div class="brand-sub">Dashboard Pasien</div>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
+
+    <main class="main-container">
+      <!-- Welcome Section -->
+      <section class="welcome-section">
+        <div class="welcome-content">
+          <div class="welcome-text">
+            <h1 class="welcome-title">
+              Selamat Datang,
+              <span
+                class="welcome-name"
+                th:text="${nama != null ? nama : 'Budi Santoso'}"
+                >Budi Santoso</span
+              >
+            </h1>
+            <p class="welcome-subtitle">
+              Nomor Rekam Medis:
+              <strong
+                class="nrm"
+                th:text="${nomorRekamMedis != null ? nomorRekamMedis : 'RM-123456'}"
+                >RM-123456</strong
+              >
+            </p>
           </div>
+          <div class="welcome-decoration"></div>
         </div>
 
-        <form method="post" action="/logout">
-          <input
-            type="hidden"
-            th:name="${_csrf.parameterName}"
-            th:value="${_csrf.token}"
-          />
-          <button class="btn btn-ghost" type="submit">Logout</button>
-        </form>
-      </header>
-
-      <section class="content">
-        <div
-          class="alert alert-success"
-          th:if="${successMessage}"
-          th:text="${successMessage}"
-        >
-          Login berhasil
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <svg
+              class="search-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Cari dokter, spesialisasi, atau poli..."
+            />
+          </div>
+          <button class="btn btn-primary search-btn">Cari Sekarang</button>
         </div>
 
-        <div class="card">
-          <h1 class="h1">Selamat datang</h1>
-          <p class="muted" th:if="${email}">
-            Kamu login sebagai
-            <strong th:text="${email}">email@contoh.com</strong>.
-          </p>
+        <!-- Quick Categories -->
+        <div class="quick-categories">
+          <a href="/pasien/cari-dokter?spesialisasi=umum" class="category-pill"
+            >Umum</a
+          >
+          <a
+            href="/pasien/cari-dokter?spesialisasi=jantung"
+            class="category-pill"
+            >Jantung</a
+          >
+          <a href="/pasien/cari-dokter?spesialisasi=anak" class="category-pill"
+            >Anak</a
+          >
+          <a href="/pasien/cari-dokter?spesialisasi=kulit" class="category-pill"
+            >Kulit</a
+          >
+          <a href="/pasien/cari-dokter?spesialisasi=gigi" class="category-pill"
+            >Gigi</a
+          >
+        </div>
+      </section>
 
-          <div class="grid">
-            <a class="tile" href="/pasien/cari-dokter">
-              <div class="tile-title">Cari Dokter</div>
-              <div class="tile-sub">Lihat daftar dokter & spesialisasi</div>
-            </a>
-            <a class="tile" href="/pasien/jadwal-dokter">
-              <div class="tile-title">Jadwal Dokter</div>
-              <div class="tile-sub">Cek jadwal praktik dokter</div>
-            </a>
-            <a class="tile" href="/pasien/booking">
-              <div class="tile-title">Booking</div>
-              <div class="tile-sub">Buat janji temu (appointment)</div>
-            </a>
-            <a class="tile" href="/pasien/riwayat-appointment">
-              <div class="tile-title">Riwayat</div>
-              <div class="tile-sub">Lihat riwayat appointment kamu</div>
-            </a>
+      <!-- Stats Cards -->
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Appointment</span>
+              <span
+                class="stat-value"
+                th:text="${totalAppointment != null ? totalAppointment : '3'}"
+                >3</span
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-green">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Dokter</span>
+              <span
+                class="stat-value"
+                th:text="${totalDokter != null ? totalDokter : '2'}"
+                >2</span
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Notifikasi Baru</span>
+              <span
+                class="stat-value"
+                th:text="${totalNotifikasi != null ? totalNotifikasi : '0'}"
+                >0</span
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-purple">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Tersedia Hari Ini</span>
+              <span
+                class="stat-value"
+                th:text="${dokterTersedia != null ? dokterTersedia : '12'}"
+                >12</span
+              >
+              <span class="stat-suffix">Dokter</span>
+            </div>
           </div>
         </div>
       </section>
+
+      <!-- Available Doctors Section -->
+      <section class="doctors-section">
+        <div class="section-header">
+          <div>
+            <span class="section-label">TEMUKAN DOKTER</span>
+            <h2 class="section-title">Dokter Tersedia Hari Ini</h2>
+          </div>
+          <a href="/pasien/cari-dokter" class="section-link">
+            Selengkapnya
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </div>
+
+        <div class="doctors-grid">
+          <!-- Doctor Card 1 -->
+          <div class="doctor-card">
+            <div class="doctor-image-wrapper">
+              <img
+                src="/images/doctor-1.jpg"
+                alt="Dr. Ismail"
+                class="doctor-image"
+              />
+              <span class="doctor-badge">TERSEDIA</span>
+            </div>
+            <div class="doctor-content">
+              <div class="doctor-header">
+                <div>
+                  <h3 class="doctor-name">Dr. Issaq Ismail</h3>
+                  <p class="doctor-specialty">Spesialis Kardiologi</p>
+                </div>
+                <div class="doctor-rating">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    ></polygon>
+                  </svg>
+                  <span>4.9</span>
+                </div>
+              </div>
+              <div class="doctor-schedule">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Chatting 8.11-4 (Jumat listing)</span>
+              </div>
+              <div class="doctor-tags">
+                <span class="tag">Rabu</span>
+                <span class="tag">Jum</span>
+                <span class="tag">Sab</span>
+                <span class="tag tag-more">+4</span>
+              </div>
+              <a href="/pasien/booking" class="btn btn-primary btn-full">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                  ></path>
+                </svg>
+                Buat Janji Temu
+              </a>
+            </div>
+          </div>
+
+          <!-- Doctor Card 2 -->
+          <div class="doctor-card">
+            <div class="doctor-image-wrapper">
+              <img
+                src="/images/doctor-2.jpg"
+                alt="Dr. Abdurasiyd"
+                class="doctor-image"
+              />
+              <span class="doctor-badge">TERSEDIA</span>
+            </div>
+            <div class="doctor-content">
+              <div class="doctor-header">
+                <div>
+                  <h3 class="doctor-name">Dr. Abdurasiyd Rafiq</h3>
+                  <p class="doctor-specialty">Spesialis Kardiologi</p>
+                </div>
+                <div class="doctor-rating">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    ></polygon>
+                  </svg>
+                  <span>4.9</span>
+                </div>
+              </div>
+              <div class="doctor-schedule">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Chatting 8.11-4 (Jumat listing)</span>
+              </div>
+              <div class="doctor-tags">
+                <span class="tag">Rabu</span>
+                <span class="tag">Jum</span>
+                <span class="tag">Sab</span>
+                <span class="tag tag-more">+4</span>
+              </div>
+              <a href="/pasien/booking" class="btn btn-primary btn-full">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                  ></path>
+                </svg>
+                Buat Janji Temu
+              </a>
+            </div>
+          </div>
+
+          <!-- Doctor Card 3 -->
+          <div class="doctor-card">
+            <div class="doctor-image-wrapper">
+              <img
+                src="/images/doctor-3.jpg"
+                alt="Dr. Fajar"
+                class="doctor-image"
+              />
+              <span class="doctor-badge">TERSEDIA</span>
+            </div>
+            <div class="doctor-content">
+              <div class="doctor-header">
+                <div>
+                  <h3 class="doctor-name">Dr. Fajar Hafiz</h3>
+                  <p class="doctor-specialty">Spesialis Kardiologi</p>
+                </div>
+                <div class="doctor-rating">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    ></polygon>
+                  </svg>
+                  <span>4.9</span>
+                </div>
+              </div>
+              <div class="doctor-schedule">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Chatting 8.11-4 (Jumat listing)</span>
+              </div>
+              <div class="doctor-tags">
+                <span class="tag">Rabu</span>
+                <span class="tag">Jum</span>
+                <span class="tag">Sab</span>
+                <span class="tag tag-more">+4</span>
+              </div>
+              <a href="/pasien/booking" class="btn btn-primary btn-full">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                  ></path>
+                </svg>
+                Buat Janji Temu
+              </a>
+            </div>
+          </div>
+
+          <!-- Doctor Card 4 -->
+          <div class="doctor-card">
+            <div class="doctor-image-wrapper">
+              <img
+                src="/images/doctor-4.jpg"
+                alt="Dr. Jordan"
+                class="doctor-image"
+              />
+              <span class="doctor-badge">TERSEDIA</span>
+            </div>
+            <div class="doctor-content">
+              <div class="doctor-header">
+                <div>
+                  <h3 class="doctor-name">Dr. Jordan Muhammad</h3>
+                  <p class="doctor-specialty">Spesialis Kardiologi</p>
+                </div>
+                <div class="doctor-rating">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    ></polygon>
+                  </svg>
+                  <span>4.9</span>
+                </div>
+              </div>
+              <div class="doctor-schedule">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Chatting 8.11-4 (Jumat listing)</span>
+              </div>
+              <div class="doctor-tags">
+                <span class="tag">Rabu</span>
+                <span class="tag">Jum</span>
+                <span class="tag">Sab</span>
+                <span class="tag tag-more">+4</span>
+              </div>
+              <a href="/pasien/booking" class="btn btn-primary btn-full">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                  ></path>
+                </svg>
+                Buat Janji Temu
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Appointments Section -->
+      <section class="appointments-section">
+        <div class="section-header">
+          <div>
+            <span class="section-label">APPOINTMENT MENDATANG</span>
+            <h2 class="section-title">Jadwal Konsultasi Anda</h2>
+          </div>
+          <a href="/pasien/riwayat-appointment" class="section-link">
+            Lihat Semua
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </div>
+
+        <div class="appointments-list">
+          <!-- Appointment 1 -->
+          <div class="appointment-card">
+            <div class="appointment-avatar">
+              <img src="/images/doctor-female.jpg" alt="Dr. Sarah" />
+            </div>
+            <div class="appointment-info">
+              <div class="appointment-header">
+                <h3 class="appointment-doctor">dr. Sarah Wijaya, Sp.A</h3>
+                <span class="appointment-status status-confirmed"
+                  >Dikonfirmasi</span
+                >
+              </div>
+              <p class="appointment-meta">Spesialis Anak • RSIS Jakarta</p>
+              <div class="appointment-date">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>14 Okt 2025 • 10:30</span>
+              </div>
+            </div>
+            <div class="appointment-actions">
+              <button class="btn btn-outline btn-sm">Reschedule</button>
+              <button class="btn btn-danger btn-sm">Batalkan</button>
+            </div>
+          </div>
+
+          <!-- Appointment 2 -->
+          <div class="appointment-card">
+            <div class="appointment-avatar appointment-avatar-placeholder">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="appointment-info">
+              <div class="appointment-header">
+                <h3 class="appointment-doctor">dr. Ahmad Subiarjo, Sp.JP</h3>
+                <span class="appointment-status status-pending"
+                  >Menunggu Konfirmasi</span
+                >
+              </div>
+              <p class="appointment-meta">Spesialis Jantung • RSIS Malang</p>
+              <div class="appointment-date">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>18 Okt 2025 • 09:00</span>
+              </div>
+            </div>
+            <div class="appointment-actions">
+              <button class="btn btn-outline btn-sm">Detail</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Emergency Section -->
+      <section class="emergency-section">
+        <div class="emergency-card">
+          <div class="emergency-content">
+            <h2 class="emergency-title">Butuh Konsultasi Mendesak?</h2>
+            <p class="emergency-text">
+              Kami memiliki tim dokter jaga yang siap membantu Anda kapan saja.
+              Temukan dokter yang sedang aktif sekarang.
+            </p>
+            <a href="/pasien/cari-dokter?status=online" class="btn btn-white"
+              >Cari Dokter Sekarang</a
+            >
+          </div>
+          <div class="emergency-decoration"></div>
+        </div>
+      </section>
     </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
   </body>
 </html>

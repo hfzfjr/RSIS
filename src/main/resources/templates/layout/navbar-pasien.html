@@ -1,29 +1,66 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+  </head>
   <body>
     <!-- Navbar Fragment untuk Pasien -->
-    <header th:fragment="navbar" class="header">
-      <div class="container header-container">
-        <div class="logo">
-          <a href="/pasien/dashboard">
-            <img src="/images/logo-rsis.png" alt="RSIS" height="32" />
+    <nav th:fragment="navbar" class="navbar-pasien">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <img src="/images/logo-rsis.png" alt="RSIS" class="nav-logo" />
+          <span class="nav-brand-text">RSIS</span>
+        </div>
+        <div class="nav-menu">
+          <a
+            href="/pasien/dashboard"
+            class="nav-link active"
+            th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'"
+            >Dashboard</a
+          >
+          <a
+            href="/pasien/cari-dokter"
+            class="nav-link"
+            th:class="${activeMenu == 'cari-dokter'} ? 'nav-link active' : 'nav-link'"
+            >Cari Dokter</a
+          >
+          <a
+            href="/pasien/jadwal-riwayat"
+            class="nav-link"
+            th:class="${activeMenu == 'jadwal'} ? 'nav-link active' : 'nav-link'"
+            >Jadwal & Riwayat</a
+          >
+        </div>
+        <div class="nav-actions">
+          <button class="nav-btn nav-btn-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <a href="/pasien/profil-informasi" class="nav-profile-link">
+            <div class="nav-profile">
+              <img
+                src="/images/avatar-default.png"
+                alt="Profile"
+                class="nav-avatar"
+              />
+              <span
+                class="nav-username"
+                th:text="${nama != null ? nama : 'Pasien'}"
+                >Budi Santoso</span
+              >
+            </div>
           </a>
         </div>
-        <nav class="nav">
-          <a href="/pasien/dashboard" class="nav-link">Dashboard</a>
-          <a href="/pasien/cari-dokter" class="nav-link">Cari Dokter</a>
-          <a href="/pasien/jadwal-dokter" class="nav-link">Jadwal</a>
-          <a href="/pasien/riwayat-appointment" class="nav-link">Riwayat</a>
-        </nav>
-        <div class="header-actions">
-          <span
-            class="user-name"
-            th:text="${#authentication.principal.username}"
-            >Pasien</span
-          >
-          <a href="/logout" class="btn btn-outline btn-small">Keluar</a>
-        </div>
       </div>
-    </header>
+    </nav>
   </body>
 </html>

@@ -1,0 +1,151 @@
+/* Navbar Pasien - RSIS */
+/* Menggunakan variabel warna dari style.css */
+
+.navbar-pasien {
+  background: var(--color-surface, #ffffff);
+  border-bottom: 1px solid var(--border-subtle, #E5E7EB);
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+/* Brand */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo {
+  height: 32px;
+  width: auto;
+}
+
+.nav-brand-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-brand-dark, #006C5A);
+}
+
+/* Menu */
+.nav-menu {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6B7280);
+  text-decoration: none;
+  padding: 8px 0;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-brand-dark, #006C5A);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-brand-dark, #006C5A);
+  border-radius: 2px;
+}
+
+/* Actions */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary, #6B7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: var(--color-surface-gray, #F3F4F6);
+  color: var(--color-text-primary, #1A1A2E);
+}
+
+.nav-btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Profile */
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px 4px 4px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.nav-profile:hover {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+.nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-subtle, #E5E7EB);
+}
+
+.nav-username {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #1A1A2E);
+}
+
+/* Profile Link */
+.nav-profile-link {
+  text-decoration: none;
+  display: block;
+}
+
+.nav-profile-link:hover .nav-profile {
+  background: var(--color-surface-gray, #F3F4F6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+  
+  .nav-username {
+    display: none;
+  }
+}

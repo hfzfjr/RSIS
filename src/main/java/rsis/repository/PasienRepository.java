@@ -9,10 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface PasienRepository extends JpaRepository<Pasien, String> {
-    Optional<Pasien> findByEmailIgnoreCase(String email);
-
-    boolean existsByEmailIgnoreCase(String email);
-
-    @Query(value = "SELECT id_user FROM pasien WHERE id_user LIKE 'u-%' ORDER BY CAST(SUBSTRING(id_user FROM 3) AS INTEGER) DESC LIMIT 1", nativeQuery = true)
-    Optional<String> findLatestUserId();
+    @Query(value = "SELECT id_pasien FROM pasien WHERE id_pasien LIKE 'psn-%' ORDER BY CAST(SUBSTRING(id_pasien FROM 5) AS INTEGER) DESC LIMIT 1", nativeQuery = true)
+    Optional<String> findLatestPasienId();
 }

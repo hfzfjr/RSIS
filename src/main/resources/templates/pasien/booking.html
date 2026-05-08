@@ -1,10 +1,316 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Janji Temu - RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/booking.css" />
+  </head>
+  <body>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
 
-</body>
+    <main class="main-container">
+      <div class="booking-layout">
+        <!-- Left Sidebar - Doctor Info -->
+        <aside class="doctor-sidebar">
+          <div class="doctor-profile-card">
+            <div class="doctor-image-wrapper">
+              <img
+                src="/images/doctor-large.jpg"
+                alt="Dr. Adrian Pratama"
+                class="doctor-image"
+              />
+            </div>
+            <div class="doctor-info">
+              <h1 class="doctor-name">dr. Adrian Pratama, Sp.JP</h1>
+              <p class="doctor-specialty">Spesialis Jantung & Pembuluh Darah</p>
+              <div class="doctor-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Pengalaman</span>
+                  <span class="meta-value">12 Tahun</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Rating</span>
+                  <span class="meta-value">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="#F59E0B"
+                      stroke="#F59E0B"
+                      stroke-width="2"
+                    >
+                      <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                      ></polygon>
+                    </svg>
+                    4.9 (2k+)
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="doctor-about">
+              <h3 class="about-title">Tentang Dokter</h3>
+              <p class="about-text">
+                dr. Adrian adalah ahli kardiologi terkemuka dengan fokus pada
+                intervensi kardiovaskular. Beliau memiliki pengalaman luas dalam
+                menangani kasus penyakit jantung koroner dan manajemen
+                hipertensi kronis.
+              </p>
+              <div class="specialty-tags">
+                <span class="tag">Gagal Jantung</span>
+                <span class="tag">Aritmia</span>
+                <span class="tag">Intervensi Jantung</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verified Service Card -->
+          <div class="verified-card">
+            <div class="verified-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 12 15 16 10"></polyline>
+              </svg>
+            </div>
+            <div class="verified-content">
+              <h4 class="verified-title">Layanan Terverifikasi</h4>
+              <p class="verified-text">
+                Setiap janji temu di RSIS dijamin dengan standar pelayanan medis
+                internasional (JCI).
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right Content - Booking Form -->
+        <section class="booking-content">
+          <!-- Date Selection -->
+          <div class="booking-card">
+            <h2 class="card-title">Pilih Tanggal Kunjungan</h2>
+            <div class="date-carousel">
+              <button class="date-item active">
+                <span class="date-month">Okt</span>
+                <span class="date-day">14</span>
+                <span class="date-weekday">Senin</span>
+              </button>
+              <button class="date-item">
+                <span class="date-month">Okt</span>
+                <span class="date-day">15</span>
+                <span class="date-weekday">Selasa</span>
+              </button>
+              <button class="date-item">
+                <span class="date-month">Okt</span>
+                <span class="date-day">16</span>
+                <span class="date-weekday">Rabu</span>
+              </button>
+              <button class="date-item">
+                <span class="date-month">Okt</span>
+                <span class="date-day">17</span>
+                <span class="date-weekday">Kamis</span>
+              </button>
+              <button class="date-item disabled">
+                <span class="date-month">Okt</span>
+                <span class="date-day">18</span>
+                <span class="date-weekday">Penuh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Time Slots -->
+          <div class="booking-card">
+            <!-- Pagi Session -->
+            <div class="session-section">
+              <div class="session-header">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <span>SESI PAGI</span>
+              </div>
+              <div class="time-slots">
+                <button class="time-slot">08:00</button>
+                <button class="time-slot active">09:00</button>
+                <button class="time-slot">10:00</button>
+                <button class="time-slot disabled">11:00</button>
+              </div>
+            </div>
+
+            <!-- Sore Session -->
+            <div class="session-section">
+              <div class="session-header">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M17 18a5 5 0 0 0-10 0"></path>
+                  <line x1="12" y1="9" x2="12" y2="2"></line>
+                  <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line>
+                  <line x1="1" y1="18" x2="3" y2="18"></line>
+                  <line x1="21" y1="18" x2="23" y2="18"></line>
+                  <line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line>
+                  <line x1="23" y1="22" x2="1" y2="22"></line>
+                  <polyline points="16 5 12 9 8 5"></polyline>
+                </svg>
+                <span>SESI SORE</span>
+              </div>
+              <div class="time-slots">
+                <button class="time-slot">13:00</button>
+                <button class="time-slot">14:00</button>
+                <button class="time-slot">15:00</button>
+                <button class="time-slot">16:00</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consultation Type & Pricing -->
+          <div class="booking-row">
+            <!-- Consultation Type -->
+            <div class="booking-card consultation-card">
+              <h3 class="card-subtitle">Tipe Konsultasi</h3>
+              <label class="consultation-option active">
+                <div class="option-content">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                    ></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                  <span>Tatap Muka (In-Clinic)</span>
+                </div>
+                <div class="radio-check">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
+                  </svg>
+                </div>
+              </label>
+              <label class="consultation-option">
+                <div class="option-content">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect
+                      x="2"
+                      y="3"
+                      width="20"
+                      height="14"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                  <span>Telekonsultasi</span>
+                </div>
+                <div class="radio-check">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                  </svg>
+                </div>
+              </label>
+            </div>
+
+            <!-- Pricing -->
+            <div class="booking-card pricing-card">
+              <h3 class="card-subtitle">Rincian Biaya</h3>
+              <div class="pricing-item">
+                <span>Biaya Konsultasi</span>
+                <span>Rp 450.000</span>
+              </div>
+              <div class="pricing-item">
+                <span>Biaya Layanan</span>
+                <span>Rp 25.000</span>
+              </div>
+              <div class="pricing-total">
+                <span>Total</span>
+                <span>Rp 475.000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms & Confirm -->
+          <div class="booking-footer">
+            <div class="terms-section">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <p class="terms-text">
+                Dengan mengklik konfirmasi, Anda menyetujui syarat dan ketentuan
+                pembatalan RSIS. Peringatan akan dikirim 24 jam sebelum jadwal.
+              </p>
+            </div>
+            <button class="btn btn-confirm">Konfirmasi Jadwal</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
 </html>

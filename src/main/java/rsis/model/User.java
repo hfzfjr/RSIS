@@ -1,34 +1,15 @@
 package rsis.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
-import java.time.Instant;
+import rsis.model.interfaces.INotifiable;
 
 @MappedSuperclass
-public abstract class User {
-    @Id
+public abstract class User implements INotifiable {
+    // Only id_user is common (as FK in subclass tables, PK in users table)
     @Column(name = "id_user", nullable = false, length = 32)
     private String idUser;
-
-    @Column(name = "nama", nullable = false)
-    private String nama;
-
-    @Column(name = "email", nullable = false)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Column(name = "nomor_hp")
-    private String nomorHp;
-
-    @Column(name = "role", nullable = false)
-    private String role;
-
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
 
     public String getIdUser() {
         return idUser;
@@ -38,51 +19,31 @@ public abstract class User {
         this.idUser = idUser;
     }
 
-    public String getNama() {
-        return nama;
+    @Override
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Default implementation - to be overridden if needed
     }
 
-    public void setNama(String nama) {
-        this.nama = nama;
+    // Abstract methods - implemented by subclasses that have these fields
+    public abstract String getEmail();
+
+    public abstract String getNama();
+
+    public abstract String getPassword();
+
+    public abstract String getNomorHp();
+
+    public abstract String getRole();
+
+    public void login() {
+        // Placeholder - auth handled by Spring Security
     }
 
-    public String getEmail() {
-        return email;
+    public void logout() {
+        // Placeholder - auth handled by Spring Security
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNomorHp() {
-        return nomorHp;
-    }
-
-    public void setNomorHp(String nomorHp) {
-        this.nomorHp = nomorHp;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    public String getId() {
+        return this.idUser;
     }
 }

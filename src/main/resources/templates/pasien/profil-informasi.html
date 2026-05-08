@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Informasi - RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/profil.css" />
+  </head>
+  <body>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
+
+    <main class="main-container">
+      <div class="profile-layout">
+        <!-- Left Sidebar Fragment -->
+        <div
+          th:replace="~{fragments/sidebar-profil :: sidebar-profil (activeMenu='informasi')}"
+        ></div>
+
+        <!-- Main Content -->
+        <section class="profile-content">
+          <!-- Profile Header -->
+          <div class="profile-header-card">
+            <div class="profile-header">
+              <div class="profile-avatar-section">
+                <div class="profile-avatar">
+                  <img src="/images/avatar-pasien.jpg" alt="Budi Santoso" />
+                  <span class="verified-badge">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                      stroke="white"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="profile-info">
+                  <h1 class="profile-name">
+                    Budi Santoso
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="#006C5A"
+                      stroke="#006C5A"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                      ></path>
+                      <polyline points="9 12 12 15 16 10"></polyline>
+                    </svg>
+                  </h1>
+                  <p class="profile-email">budisantoso@email.com</p>
+                  <div class="profile-meta">
+                    <span class="meta-id">ID: RS-2022-8812</span>
+                    <span class="separator">|</span>
+                    <span class="meta-status">
+                      <span class="status-label">Status:</span>
+                      <span class="status-value verified">Terverifikasi</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-card">
+                  <span class="stat-label">Kunjungan</span>
+                  <span class="stat-value">12</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Resep</span>
+                  <span class="stat-value">05</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal Info Form -->
+          <div class="profile-form-card">
+            <div class="form-header">
+              <div>
+                <h2 class="form-title">Informasi Pribadi</h2>
+                <p class="form-subtitle">
+                  Kelola detail dasar akun Anda di sini.
+                </p>
+              </div>
+              <button class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+
+            <form class="profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="namaLengkap">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    id="namaLengkap"
+                    class="form-input"
+                    value="Budi Santoso"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="nomorTelepon">Nomor Telepon</label>
+                  <input
+                    type="text"
+                    id="nomorTelepon"
+                    class="form-input"
+                    value="+62 812 3456 7890"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="tanggalLahir">Tanggal Lahir</label>
+                  <input
+                    type="text"
+                    id="tanggalLahir"
+                    class="form-input"
+                    value="05/12/1985"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="jenisKelamin">Jenis Kelamin</label>
+                  <select id="jenisKelamin" class="form-select">
+                    <option value="laki-laki" selected>Laki-laki</option>
+                    <option value="perempuan">Perempuan</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="alamat">Alamat Lengkap</label>
+                <textarea id="alamat" class="form-textarea" rows="3">
+Jl. Kebayoran Baru No. 45, Jakarta Selatan, DKI Jakarta</textarea
+                >
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

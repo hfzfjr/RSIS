@@ -13,22 +13,22 @@ src/
 │   │   │   │   ├── INotifiable.java         → Interface kontrak penerimaan notifikasi
 │   │   │   │   └── ISchedulable.java        → Interface kontrak pengelolaan jadwal
 │   │   │   │
-│   │   │   ├── User.java                    → Abstract class base semua pengguna (@MappedSuperclass)
+│   │   │   ├── User.java                    → Entity base semua pengguna (JOINED inheritance, implements INotifiable)
 │   │   │   ├── Pasien.java                  → Entity pasien, extends User
-│   │   │   ├── Dokter.java                  → Entity dokter, extends User, implements ISchedulable
-│   │   │   ├── AdminRS.java                 → Entity admin, extends User
+│   │   │   ├── Dokter.java                  → Entity dokter (table dokter, extends User, implements ISchedulable, has id_dokter)
+│   │   │   ├── AdminRS.java                 → Entity admin (table admin_rs, extends User, has id_admin)
 │   │   │   ├── Poli.java                    → Entity poli/unit layanan rumah sakit
 │   │   │   ├── Spesialisasi.java            → Entity spesialisasi dokter
 │   │   │   ├── JadwalPraktik.java           → Entity jadwal praktik dokter
 │   │   │   ├── Appointment.java             → Entity booking appointment pasien dengan dokter
 │   │   │   ├── Notifikasi.java              → Entity notifikasi status appointment
-│   │   │   ├── DashboardStatistik.java      → Class (bukan entity) untuk kalkulasi statistik admin
 │   │   │   └── LaporanBulanan.java          → Class untuk generate & export laporan PDF/CSV
 │   │   │
 │   │   ├── repository/
-│   │   │   ├── PasienRepository.java        → Akses tabel pasien di Supabase
-│   │   │   ├── DokterRepository.java        → Akses tabel dokter di Supabase
-│   │   │   ├── AdminRSRepository.java       → Akses tabel admin_rs di Supabase
+│   │   │   ├── UserRepository.java            → Akses tabel users untuk autentikasi (findByEmail)
+│   │   │   ├── PasienRepository.java        → Akses tabel pasien (JOINED inheritance)
+│   │   │   ├── DokterRepository.java        → Akses tabel dokter (JOINED inheritance)
+│   │   │   ├── AdminRSRepository.java       → Akses tabel admin_rs (JOINED inheritance)
 │   │   │   ├── PoliRepository.java          → Akses tabel poli di Supabase
 │   │   │   ├── SpesialisasiRepository.java  → Akses tabel spesialisasi di Supabase
 │   │   │   ├── JadwalPraktikRepository.java → Akses tabel jadwal_praktik di Supabase
@@ -37,6 +37,7 @@ src/
 │   │   │
 │   │   ├── service/
 │   │   │   ├── AuthService.java             → Logika login, register, logout
+│   │   │   ├── UserService.java             → Load user dari database untuk Spring Security
 │   │   │   ├── PasienService.java           → Logika bisnis fitur pasien
 │   │   │   ├── DokterService.java           → Logika bisnis fitur dokter
 │   │   │   ├── AdminRSService.java          → Logika bisnis fitur admin
@@ -116,22 +117,3 @@ src/
         │   └── AppointmentServiceTest.java   → Unit test service appointment
         └── RsisApplicationTests.java         → Test utama aplikasi Spring Boot
 ```
-
-## Cara Set Database (Persist antar restart)
-
-Project ini membaca konfigurasi DB dari environment variable: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
-
-Agar tidak “hilang” setelah kamu close IDE/terminal, buat file `.env` di root project (selevel `pom.xml`):
-
-1. Copy `.env.example` menjadi `.env`
-2. Isi nilainya sesuai database kamu
-
-Contoh format:
-
-```properties
-DB_URL=jdbc:postgresql://<host>:5432/<database>?sslmode=require
-DB_USERNAME=<your_db_user>
-DB_PASSWORD=<your_db_password>
-```
-
-Setelah itu jalankan ulang `mvn spring-boot:run` / Run dari IDE, dan konfigurasi akan kebaca otomatis.

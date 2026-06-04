@@ -58,15 +58,21 @@
   color: var(--color-brand-dark, #006C5A);
 }
 
-.nav-link.active::after {
+.nav-link::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
+  width: 0;
   height: 2px;
   background: var(--color-brand-dark, #006C5A);
   border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
 }
 
 /* Actions */

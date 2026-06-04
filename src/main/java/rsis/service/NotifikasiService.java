@@ -1,4 +1,61 @@
 package rsis.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import rsis.model.AppUser;
+import rsis.model.Notifikasi;
+import rsis.repository.AppUserRepository;
+import rsis.repository.NotifikasiRepository;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+
+@Service
 public class NotifikasiService {
+
+    @Autowired
+    private NotifikasiRepository notifikasiRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Transactional
+    public Notifikasi kirimNotifikasi(String penerimaId, String pesan, String tipe) {
+        Optional<AppUser> penerimaOpt = appUserRepository.findById(penerimaId);
+        if (penerimaOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        Notifikasi notifikasi = new Notifikasi();
+        notifikasi.setIdNotifikasi(generateNotifikasiId());
+        notifikasi.setPenerima(penerimaOpt.get());
+        notifikasi.setPesan(pesan);
+        notifikasi.setTipe(tipe);
+        notifikasi.setTanggalKirim(Instant.now());
+        notifikasi.setStatus("BELUM_DIBACA");
+        return notifikasiRepository.save(notifikasi);
+    }
+
+    public List<Notifikasi> getNotifikasiByPenerimaId(String penerimaId) {
+        return notifikasiRepository.findByPenerima_IdUser(penerimaId);
+    }
+
+    @Transactional
+    public void tandaiDibaca(String notifikasiId) {
+        notifikasiRepository.findById(notifikasiId).ifPresent(notif -> {
+            notif.markAsRead();
+            notifikasiRepository.save(notif);
+        });
+    }
+
+    @Transactional
+    public void deleteNotifikasi(String notifikasiId) {
+        notifikasiRepository.deleteById(notifikasiId);
+    }
+
+    private String generateNotifikasiId() {
+        return "ntf-" + System.currentTimeMillis();
+    }
 }

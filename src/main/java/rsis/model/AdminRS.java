@@ -22,6 +22,9 @@ public class AdminRS extends User {
     @Column(name = "jabatan")
     private String jabatan;
 
+    @Column(name = "nomor_hp")
+    private String nomorHp;
+
     // Transient fields - only exist in users table, not in admin_rs table
     @Transient
     private String nama;
@@ -29,8 +32,6 @@ public class AdminRS extends User {
     private String email;
     @Transient
     private String password;
-    @Transient
-    private String nomorHp;
     @Transient
     private String role;
 

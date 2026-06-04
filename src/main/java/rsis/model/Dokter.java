@@ -31,6 +31,9 @@ public class Dokter extends User implements ISchedulable {
     @JoinColumn(name = "id_poli")
     private Poli poli;
 
+    @Column(name = "nomor_hp")
+    private String nomorHp;
+
     // Transient fields - only exist in users table, not in dokter table
     @Transient
     private String nama;
@@ -38,8 +41,6 @@ public class Dokter extends User implements ISchedulable {
     private String email;
     @Transient
     private String password;
-    @Transient
-    private String nomorHp;
     @Transient
     private String role;
 

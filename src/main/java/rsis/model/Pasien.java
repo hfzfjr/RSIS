@@ -27,6 +27,9 @@ public class Pasien extends User {
     @Column(name = "alamat")
     private String alamat;
 
+    @Column(name = "nomor_hp")
+    private String nomorHp;
+
     // Transient fields - only exist in users table, not in pasien table
     @Transient
     private String nama;
@@ -34,8 +37,6 @@ public class Pasien extends User {
     private String email;
     @Transient
     private String password;
-    @Transient
-    private String nomorHp;
     @Transient
     private String role;
 

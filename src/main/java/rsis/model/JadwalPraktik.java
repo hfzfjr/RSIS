@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -24,11 +25,17 @@ public class JadwalPraktik {
     @Column(name = "hari", nullable = false)
     private String hari;
 
+    @Column(name = "tanggal")
+    private LocalDate tanggal;
+
     @Column(name = "jam_mulai", nullable = false)
     private LocalTime jamMulai;
 
     @Column(name = "jam_selesai", nullable = false)
     private LocalTime jamSelesai;
+
+    @Column(name = "status_ketersediaan")
+    private String statusKetersediaan;
 
     @Column(name = "kuota", nullable = false)
     private int kuota;
@@ -36,18 +43,11 @@ public class JadwalPraktik {
     @Column(name = "sisa_kuota", nullable = false)
     private int sisaKuota;
 
-    @Column(name = "status_ketersediaan")
-    private String statusKetersediaan;
-
     public JadwalPraktik() {
     }
 
     public Dokter getDokter() {
         return this.dokter;
-    }
-
-    public LocalTime getTanggal() {
-        return this.jamMulai;
     }
 
     public void updateStatus(String status) {
@@ -90,6 +90,14 @@ public class JadwalPraktik {
 
     public void setHari(String hari) {
         this.hari = hari;
+    }
+
+    public LocalDate getTanggal() {
+        return tanggal;
+    }
+
+    public void setTanggal(LocalDate tanggal) {
+        this.tanggal = tanggal;
     }
 
     public LocalTime getJamMulai() {

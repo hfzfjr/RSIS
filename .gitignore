@@ -34,3 +34,6 @@ build/
 
 ### Local env (do not commit secrets) ###
 .env
+
+### Database schema and data
+Daftar_Tabel_dan_Data_Database_RSIS.sql

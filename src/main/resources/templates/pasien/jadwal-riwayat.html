@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jadwal & Riwayat - RSIS</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/navbar-pasien.css" />
-    <link rel="stylesheet" href="/css/footer.css" />
-    <link rel="stylesheet" href="/css/jadwal-riwayat.css" />
+    <link rel="stylesheet" href="/css/layout/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/layout/footer.css" />
+    <link rel="stylesheet" href="/css/pasien/jadwal-riwayat.css" />
   </head>
   <body>
     <!-- Navbar Fragment -->
@@ -131,7 +131,29 @@
 
       <!-- Table Section -->
       <section class="table-section">
-        <div class="table-container">
+        <div
+          th:if="${success}"
+          class="alert alert-success"
+          th:text="${success}"
+        ></div>
+        <div
+          th:if="${error}"
+          class="alert alert-danger"
+          th:text="${error}"
+        ></div>
+
+        <div
+          th:if="${appointments == null or appointments.empty}"
+          class="alert alert-info"
+        >
+          Belum ada appointment.
+          <a href="/appointment/booking">Booking appointment sekarang</a>
+        </div>
+
+        <div
+          th:if="${appointments != null and !appointments.empty}"
+          class="table-container"
+        >
           <table class="appointment-table">
             <thead>
               <tr>
@@ -143,185 +165,70 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Row 1 -->
-              <tr>
+              <tr th:each="appointment : ${appointments}">
                 <td class="col-doctor">
                   <div class="doctor-info">
                     <div class="doctor-avatar">
-                      <img
-                        src="/images/doctor-avatar-1.jpg"
-                        alt="Dr. Adrian Pratama"
-                      />
+                      <img src="/images/doctor-avatar-1.jpg" alt="Doctor" />
                     </div>
                     <div class="doctor-details">
-                      <span class="doctor-name">Dr. Adrian Pratama</span>
-                      <span class="doctor-specialty">Cardiologist</span>
+                      <span
+                        class="doctor-name"
+                        th:text="${appointment.jadwal.dokter != null ? appointment.jadwal.dokter.nama : 'N/A'}"
+                      ></span>
+                      <span
+                        class="doctor-specialty"
+                        th:text="${appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? appointment.jadwal.dokter.spesialisasi.namaSpesialisasi : 'N/A'}"
+                      ></span>
                     </div>
                   </div>
                 </td>
                 <td class="col-date">
                   <div class="date-time">
-                    <span class="date">12 Okt 2023</span>
-                    <span class="time">09:30 AM</span>
+                    <span
+                      class="date"
+                      th:text="${appointment.tanggalBooking}"
+                    ></span>
+                    <span
+                      class="time"
+                      th:text="${appointment.jadwal != null ? appointment.jadwal.jamMulai : 'N/A'}"
+                    ></span>
                   </div>
                 </td>
-                <td class="col-type">Pemeriksaan Rutin</td>
+                <td class="col-type">Konsultasi</td>
                 <td class="col-status">
-                  <span class="status-badge status-completed">
+                  <span
+                    class="status-badge"
+                    th:class="'status-badge status-' + (${appointment.status} == 'DIKONFIRMASI' ? 'completed' : ${appointment.status} == 'MENUNGGU' ? 'ongoing' : ${appointment.status} == 'DIBATALKAN' ? 'cancelled' : 'rescheduled')"
+                  >
                     <span class="status-dot"></span>
-                    Completed
+                    <span th:text="${appointment.status}"></span>
                   </span>
                 </td>
                 <td class="col-action">
                   <div class="action-buttons">
-                    <button class="btn-text">Details</button>
-                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
-                      >Book Again</a
+                    <a
+                      th:href="@{/appointment/detail/{id}(id=${appointment.idAppointment})}"
+                      class="btn-text"
+                      >Details</a
                     >
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 2 -->
-              <tr>
-                <td class="col-doctor">
-                  <div class="doctor-info">
-                    <div class="doctor-avatar">
-                      <img
-                        src="/images/doctor-avatar-1.jpg"
-                        alt="Dr. Adrian Pratama"
-                      />
-                    </div>
-                    <div class="doctor-details">
-                      <span class="doctor-name">Dr. Adrian Pratama</span>
-                      <span class="doctor-specialty">Cardiologist</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="col-date">
-                  <div class="date-time">
-                    <span class="date">12 Nov 2023</span>
-                    <span class="time">09:30 AM</span>
-                  </div>
-                </td>
-                <td class="col-type">Pemeriksaan Rutin</td>
-                <td class="col-status">
-                  <span class="status-badge status-ongoing">
-                    <span class="status-dot"></span>
-                    On-Going
-                  </span>
-                </td>
-                <td class="col-action">
-                  <div class="action-buttons">
-                    <button class="btn-text">Details</button>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 3 -->
-              <tr>
-                <td class="col-doctor">
-                  <div class="doctor-info">
-                    <div class="doctor-avatar">
-                      <img
-                        src="/images/doctor-avatar-2.jpg"
-                        alt="Dr. Sarah Wijaya"
-                      />
-                    </div>
-                    <div class="doctor-details">
-                      <span class="doctor-name">Dr. Sarah Wijaya</span>
-                      <span class="doctor-specialty">Pediatrician</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="col-date">
-                  <div class="date-time">
-                    <span class="date">05 Okt 2023</span>
-                    <span class="time">02:00 PM</span>
-                  </div>
-                </td>
-                <td class="col-type">Konsultasi Anak</td>
-                <td class="col-status">
-                  <span class="status-badge status-rescheduled">
-                    <span class="status-dot"></span>
-                    Rescheduled
-                  </span>
-                </td>
-                <td class="col-action">
-                  <div class="action-buttons">
-                    <button class="btn-text">Details</button>
-                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
-                      >Book Again</a
+                    <form
+                      th:if="${appointment.status == 'MENUNGGU'}"
+                      th:action="@{/appointment/cancel/{id}(id=${appointment.idAppointment})}"
+                      method="post"
+                      style="display: inline"
                     >
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 4 -->
-              <tr>
-                <td class="col-doctor">
-                  <div class="doctor-info">
-                    <div class="doctor-avatar">
-                      <img
-                        src="/images/doctor-avatar-3.jpg"
-                        alt="Dr. Budi Santoso"
-                      />
-                    </div>
-                    <div class="doctor-details">
-                      <span class="doctor-name">Dr. Budi Santoso</span>
-                      <span class="doctor-specialty">Neurologist</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="col-date">
-                  <div class="date-time">
-                    <span class="date">28 Sep 2023</span>
-                    <span class="time">11:00 AM</span>
-                  </div>
-                </td>
-                <td class="col-type">Follow-up Terapi</td>
-                <td class="col-status">
-                  <span class="status-badge status-cancelled">Cancelled</span>
-                </td>
-                <td class="col-action">
-                  <div class="action-buttons">
-                    <button class="btn-text">Details</button>
-                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
-                      >Book Again</a
-                    >
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 5 -->
-              <tr>
-                <td class="col-doctor">
-                  <div class="doctor-info">
-                    <div class="doctor-avatar">
-                      <img
-                        src="/images/doctor-avatar-4.jpg"
-                        alt="Dr. Linda Hartini"
-                      />
-                    </div>
-                    <div class="doctor-details">
-                      <span class="doctor-name">Dr. Linda Hartini</span>
-                      <span class="doctor-specialty">Dermatologist</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="col-date">
-                  <div class="date-time">
-                    <span class="date">15 Sep 2023</span>
-                    <span class="time">03:45 PM</span>
-                  </div>
-                </td>
-                <td class="col-type">Skin Screening</td>
-                <td class="col-status">
-                  <span class="status-badge status-completed">
-                    <span class="status-dot"></span>
-                    Completed
-                  </span>
-                </td>
-                <td class="col-action">
-                  <div class="action-buttons">
-                    <button class="btn-text">Details</button>
-                    <a href="/pasien/booking" class="btn btn-sm btn-primary"
+                      <button
+                        type="submit"
+                        class="btn btn-sm btn-danger"
+                        onclick="return confirm('Batalkan appointment ini?');"
+                      >
+                        Cancel
+                      </button>
+                    </form>
+                    <a
+                      href="/appointment/booking"
+                      class="btn btn-sm btn-primary"
                       >Book Again</a
                     >
                   </div>

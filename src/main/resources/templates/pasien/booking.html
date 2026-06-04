@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking Janji Temu - RSIS</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/navbar-pasien.css" />
-    <link rel="stylesheet" href="/css/footer.css" />
-    <link rel="stylesheet" href="/css/booking.css" />
+    <link rel="stylesheet" href="/css/layout/navbar-pasien.css" />
+    <link rel="stylesheet" href="/css/layout/footer.css" />
+    <link rel="stylesheet" href="/css/pasien/booking.css" />
   </head>
   <body>
     <!-- Navbar Fragment -->
@@ -286,25 +286,77 @@
 
           <!-- Terms & Confirm -->
           <div class="booking-footer">
-            <div class="terms-section">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              <p class="terms-text">
-                Dengan mengklik konfirmasi, Anda menyetujui syarat dan ketentuan
-                pembatalan RSIS. Peringatan akan dikirim 24 jam sebelum jadwal.
-              </p>
-            </div>
-            <button class="btn btn-confirm">Konfirmasi Jadwal</button>
+            <div
+              th:if="${error}"
+              class="alert alert-danger"
+              th:text="${error}"
+            ></div>
+            <form
+              th:action="@{/appointment/booking}"
+              th:object="${bookingRequest}"
+              method="post"
+            >
+              <div class="mb-3">
+                <label for="jadwalId" class="form-label">Pilih Jadwal</label>
+                <select
+                  class="form-select"
+                  id="jadwalId"
+                  th:field="*{jadwalId}"
+                  required
+                >
+                  <option value="">-- Pilih Jadwal --</option>
+                  <!-- Will be populated dynamically -->
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="tanggalBooking" class="form-label"
+                  >Tanggal Booking</label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="tanggalBooking"
+                  th:field="*{tanggalBooking}"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="catatan" class="form-label"
+                  >Catatan (Opsional)</label
+                >
+                <textarea
+                  class="form-control"
+                  id="catatan"
+                  th:field="*{catatan}"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="terms-section">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <p class="terms-text">
+                  Dengan mengklik konfirmasi, Anda menyetujui syarat dan
+                  ketentuan pembatalan RSIS. Peringatan akan dikirim 24 jam
+                  sebelum jadwal.
+                </p>
+              </div>
+              <button type="submit" class="btn btn-confirm">
+                Konfirmasi Jadwal
+              </button>
+            </form>
           </div>
         </section>
       </div>

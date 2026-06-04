@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Jadwal - RSIS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">RSIS</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/jadwal/list">Daftar Jadwal</a>
+                <a class="nav-link" href="/jadwal/available">Jadwal Tersedia</a>
+                <a class="nav-link active" href="/jadwal/create">Tambah Jadwal</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Tambah Jadwal Praktik</h3>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        
+                        <form th:action="@{/jadwal/create}" th:object="${jadwal}" method="post">
+                            <div class="mb-3">
+                                <label for="dokterId" class="form-label">Dokter</label>
+                                <select class="form-select" id="dokterId" th:field="*{dokterId}" required>
+                                    <option value="">-- Pilih Dokter --</option>
+                                    <!-- Will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="hari" class="form-label">Hari</label>
+                                <select class="form-select" id="hari" th:field="*{hari}" required>
+                                    <option value="">-- Pilih Hari --</option>
+                                    <option value="SENIN">Senin</option>
+                                    <option value="SELASA">Selasa</option>
+                                    <option value="RABU">Rabu</option>
+                                    <option value="KAMIS">Kamis</option>
+                                    <option value="JUMAT">Jumat</option>
+                                    <option value="SABTU">Sabtu</option>
+                                    <option value="MINGGU">Minggu</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="jamMulai" class="form-label">Jam Mulai</label>
+                                <input type="time" class="form-control" id="jamMulai" th:field="*{jamMulai}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="jamSelesai" class="form-label">Jam Selesai</label>
+                                <input type="time" class="form-control" id="jamSelesai" th:field="*{jamSelesai}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="kuota" class="form-label">Kuota</label>
+                                <input type="number" class="form-control" id="kuota" th:field="*{kuota}" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <a href="/jadwal/list" class="btn btn-secondary">Kembali</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

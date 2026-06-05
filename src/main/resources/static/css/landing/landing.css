@@ -27,18 +27,18 @@
 }
 
 .btn-primary {
-    background-color: var(--color-brand-dark);
+    background-color: var(--color-brand);
     color: var(--color-surface);
 }
 
 .btn-primary:hover {
-    background-color: var(--color-brand-dark);
+    background-color: var(--color-brand);
 }
 
 .btn-outline {
     background-color: transparent;
-    color: var(--color-brand-dark);
-    border: 1.5px solid var(--color-brand-dark);
+    color: var(--color-brand);
+    border: 1.5px solid var(--color-brand);
 }
 
 .btn-outline:hover {
@@ -88,7 +88,7 @@
 }
 
 .logo-icon {
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .logo-icon img {
@@ -112,11 +112,11 @@
 }
 
 .nav-link:hover {
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .nav-link.active {
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .nav-link::after {
@@ -126,7 +126,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--color-brand-dark);
+    background-color: var(--color-brand);
     transition: width 0.3s ease;
 }
 
@@ -186,7 +186,7 @@
     align-items: center;
     gap: 8px;
     background-color: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
     padding: 7px 16px;
     border-radius: 50px;
     font-size: 13px;
@@ -197,7 +197,7 @@
 .badge-icon {
     width: 20px;
     height: 20px;
-    background-color: var(--color-brand-dark);
+    background-color: var(--color-brand);
     color: var(--color-surface);
     border-radius: 50%;
     display: flex;
@@ -241,7 +241,7 @@
 .stat-number {
     font-size: 28px;
     font-weight: 700;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .stat-label {
@@ -283,7 +283,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
     flex-shrink: 0;
 }
 
@@ -336,7 +336,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
@@ -378,7 +378,7 @@
 
 .service-icon.green {
     background-color: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .service-icon.teal {
@@ -422,7 +422,7 @@
 
 .facility-card:hover {
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    border-bottom-color: var(--color-brand-dark);
+    border-bottom-color: var(--color-brand);
 }
 
 .facility-icon {
@@ -434,7 +434,7 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 20px;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
 }
 
 .facility-title {
@@ -495,7 +495,7 @@
 .branch-location {
     font-size: 11px;
     font-weight: 700;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
     text-transform: uppercase;
     letter-spacing: 0.8px;
     margin-bottom: 6px;
@@ -538,7 +538,7 @@
 
 .quote-mark {
     font-size: 100px;
-    color: var(--color-brand-dark);
+    color: var(--color-brand);
     line-height: 0.8;
     margin-bottom: 16px;
     font-family: Georgia, serif;
@@ -583,7 +583,7 @@
 }
 
 .testimonial-content {
-    background-color: var(--color-brand-dark);
+    background-color: var(--color-brand);
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(13,123,93,0.25);
@@ -620,7 +620,7 @@
 }
 
 .author-avatar-green {
-    background: linear-gradient(135deg, var(--color-brand-dark) 0%, var(--color-teal) 100%);
+    background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-teal) 100%);
 }
 
 .author-info {

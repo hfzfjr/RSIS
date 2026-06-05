@@ -34,7 +34,7 @@
 .nav-brand-text {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 /* Menu */
@@ -55,7 +55,7 @@
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .nav-link::after {
@@ -65,7 +65,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   border-radius: 2px;
   transition: width 0.3s ease;
 }

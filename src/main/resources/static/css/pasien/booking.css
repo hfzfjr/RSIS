@@ -51,7 +51,7 @@
 .doctor-name {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
   margin: 0 0 4px 0;
 }
 
@@ -135,7 +135,7 @@
 .verified-icon {
   width: 40px;
   height: 40px;
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -215,12 +215,12 @@
 }
 
 .date-item:hover:not(.disabled) {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
 }
 
 .date-item.active {
-  background: var(--color-brand-dark, #006C5A);
-  border-color: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -269,7 +269,7 @@
 }
 
 .session-header svg {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .time-slots {
@@ -291,12 +291,12 @@
 }
 
 .time-slot:hover:not(.disabled) {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
 }
 
 .time-slot.active {
-  background: var(--color-brand-dark, #006C5A);
-  border-color: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -337,11 +337,11 @@
 }
 
 .consultation-option:hover {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
 }
 
 .consultation-option.active {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   background: var(--color-brand-light, #E8F5F1);
 }
 
@@ -359,11 +359,11 @@
 }
 
 .consultation-option.active .option-content svg {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .radio-check {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 /* Pricing Card */
@@ -395,7 +395,7 @@
   border-top: 2px solid rgba(0, 108, 90, 0.2);
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 /* Booking Footer */
@@ -449,7 +449,7 @@
 }
 
 .btn-confirm {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   color: white;
   padding: 14px 32px;
   white-space: nowrap;

@@ -63,7 +63,7 @@
 }
 
 .search-input:focus {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   box-shadow: 0 0 0 3px var(--color-brand-light, #E8F5F1);
 }
 
@@ -101,8 +101,8 @@
 }
 
 .category-pill.active {
-  background: var(--color-brand-dark, #006C5A);
-  border-color: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -149,7 +149,7 @@
 }
 
 .filter-select:focus {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
 }
 
 /* ===== DOCTORS GRID ===== */
@@ -201,7 +201,7 @@
 }
 
 .status-badge.available {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -279,7 +279,7 @@
 }
 
 .btn-primary {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -331,8 +331,8 @@
 }
 
 .pagination-btn.active {
-  background: var(--color-brand-dark, #006C5A);
-  border-color: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   color: white;
 }
 

@@ -35,7 +35,7 @@
 }
 
 .welcome-name {
-  color: var(--color-brand-dark);
+  color: var(--color-brand);
 }
 
 .welcome-subtitle {
@@ -93,7 +93,7 @@
 }
 
 .search-input:focus {
-  border-color: var(--color-brand-dark);
+  border-color: var(--color-brand);
   box-shadow: 0 0 0 3px var(--color-brand-light);
 }
 
@@ -128,8 +128,8 @@
 }
 
 .category-pill:hover {
-  background: var(--color-brand-dark);
-  border-color: var(--color-brand-dark);
+  background: var(--color-brand);
+  border-color: var(--color-brand);
   color: white;
 }
 
@@ -175,7 +175,7 @@
 
 .stat-icon-green {
   background: var(--color-brand-light);
-  color: var(--color-brand-dark);
+  color: var(--color-brand);
 }
 
 .stat-icon-orange {
@@ -226,7 +226,7 @@
 .section-label {
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-brand-dark);
+  color: var(--color-brand);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -244,7 +244,7 @@
   gap: 4px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-brand-dark);
+  color: var(--color-brand);
   text-decoration: none;
   transition: gap 0.2s;
 }
@@ -285,6 +285,17 @@
   position: relative;
   height: 160px;
   overflow: hidden;
+  background: var(--color-surface-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doctor-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
 }
 
 .doctor-image {
@@ -298,7 +309,7 @@
   top: 12px;
   left: 12px;
   padding: 4px 8px;
-  background: var(--color-brand-dark);
+  background: var(--color-brand);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -376,7 +387,7 @@
 }
 
 .tag-more {
-  background: var(--color-brand-dark);
+  background: var(--color-brand);
   color: white;
 }
 
@@ -464,6 +475,11 @@
   color: #D97706;
 }
 
+.status-canceled {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
 .appointment-meta {
   font-size: 13px;
   color: var(--color-text-muted);
@@ -488,6 +504,24 @@
   gap: 8px;
 }
 
+.no-appointments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--color-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+.no-appointments p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0 0 16px 0;
+}
+
 /* ===== EMERGENCY SECTION ===== */
 .emergency-section {
   margin-bottom: 32px;
@@ -498,7 +532,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 40px;
-  background: var(--color-brand-dark);
+  background: var(--color-brand);
   border-radius: var(--radius-card);
   position: relative;
   overflow: hidden;
@@ -550,7 +584,7 @@
 }
 
 .btn-primary {
-  background: var(--color-brand-dark);
+  background: var(--color-brand);
   color: white;
 }
 
@@ -579,7 +613,7 @@
 
 .btn-white {
   background: white;
-  color: var(--color-brand-dark);
+  color: var(--color-brand);
   font-weight: 600;
 }
 
@@ -601,7 +635,7 @@
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .doctors-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -611,21 +645,21 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .doctors-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .emergency-card {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .appointment-card {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .appointment-actions {
     width: 100%;
     justify-content: flex-end;

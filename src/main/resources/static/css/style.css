@@ -6,7 +6,8 @@
 
 :root {
     /* === BRAND COLORS (RSIS Green) === */
-    --color-brand-dark: #006C5A;
+    --color-brand: #016d55;
+    --color-brand-dark: #014d3d;
     --color-brand-light: #E8F5F1;
     --color-teal: #14A085;
     --color-teal-light: #CCFBF1;
@@ -25,10 +26,12 @@
     --color-text-slate: #475569;
 
     /* === SURFACE/BACKGROUND COLORS === */
+    --color-white: #FFFFFF;
     --color-surface: #FFFFFF;
     --color-surface-gray: #F3F4F6;
     --color-surface-gray-light: #F0F0F0;
     --color-surface-cream: #E8F5F1;
+    --color-field-bg: #f2f3fd;
 
     /* === STATUS COLORS === */
     --color-danger: #DC2626;

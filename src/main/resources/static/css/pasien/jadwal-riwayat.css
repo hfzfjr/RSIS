@@ -25,7 +25,7 @@
 }
 
 .breadcrumb a:hover {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .breadcrumb-separator {
@@ -33,7 +33,7 @@
 }
 
 .breadcrumb-current {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
   font-weight: 500;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .btn-primary {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -121,7 +121,7 @@
 }
 
 .btn-text {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
   font-size: 14px;
   font-weight: 500;
   padding: 0;
@@ -184,7 +184,7 @@
 }
 
 .search-input:focus {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   box-shadow: 0 0 0 3px var(--color-brand-light, #E8F5F1);
 }
 
@@ -215,7 +215,7 @@
 }
 
 .legend-dot.completed {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
 }
 
 .legend-dot.rescheduled {
@@ -372,11 +372,11 @@
 
 .status-completed {
   background: #E8F5F1;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .status-completed .status-dot {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
 }
 
 .status-ongoing {
@@ -452,8 +452,8 @@
 }
 
 .pagination-btn.active {
-  background: var(--color-brand-dark, #006C5A);
-  border-color: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -475,7 +475,7 @@
 }
 
 .help-card {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   color: white;
 }
 
@@ -513,7 +513,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .security-title {

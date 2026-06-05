@@ -6,7 +6,6 @@
     <title>Dashboard Pasien - RSIS</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/layout/navbar-pasien.css" />
-    <link rel="stylesheet" href="/css/layout/footer.css" />
     <link rel="stylesheet" href="/css/pasien/dashboard-pasien.css" />
   </head>
   <body>
@@ -209,274 +208,47 @@
         </div>
 
         <div class="doctors-grid">
-          <!-- Doctor Card 1 -->
-          <div class="doctor-card">
+          <!-- Dynamic Doctor Cards from Database -->
+          <div th:each="dokter : ${dokters}" class="doctor-card">
             <div class="doctor-image-wrapper">
-              <img
-                src="/images/doctor-1.jpg"
-                alt="Dr. Ismail"
-                class="doctor-image"
-              />
+              <div class="doctor-avatar-placeholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
               <span class="doctor-badge">TERSEDIA</span>
             </div>
             <div class="doctor-content">
               <div class="doctor-header">
                 <div>
-                  <h3 class="doctor-name">Dr. Issaq Ismail</h3>
-                  <p class="doctor-specialty">Spesialis Kardiologi</p>
+                  <h3 class="doctor-name" th:text="${dokter.nama}">Dr. Nama Dokter</h3>
+                  <p class="doctor-specialty" th:text="${dokter.spesialisasi != null ? dokter.spesialisasi.nama : 'Spesialis'}">Spesialis</p>
                 </div>
                 <div class="doctor-rating">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    ></polygon>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                   </svg>
                   <span>4.9</span>
                 </div>
               </div>
               <div class="doctor-schedule">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span>Chatting 8.11-4 (Jumat listing)</span>
+                <span>Tersedia Hari Ini</span>
               </div>
               <div class="doctor-tags">
+                <span class="tag">Senin</span>
                 <span class="tag">Rabu</span>
-                <span class="tag">Jum</span>
-                <span class="tag">Sab</span>
-                <span class="tag tag-more">+4</span>
+                <span class="tag">Jumat</span>
               </div>
-              <a href="/pasien/booking" class="btn btn-primary btn-full">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
-                  ></path>
+              <a th:href="@{/pasien/jadwal-dokter/{dokterId}(dokterId=${dokter.idDokter})}" class="btn btn-primary btn-full">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"></path>
                 </svg>
-                Buat Janji Temu
-              </a>
-            </div>
-          </div>
-
-          <!-- Doctor Card 2 -->
-          <div class="doctor-card">
-            <div class="doctor-image-wrapper">
-              <img
-                src="/images/doctor-2.jpg"
-                alt="Dr. Abdurasiyd"
-                class="doctor-image"
-              />
-              <span class="doctor-badge">TERSEDIA</span>
-            </div>
-            <div class="doctor-content">
-              <div class="doctor-header">
-                <div>
-                  <h3 class="doctor-name">Dr. Abdurasiyd Rafiq</h3>
-                  <p class="doctor-specialty">Spesialis Kardiologi</p>
-                </div>
-                <div class="doctor-rating">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    ></polygon>
-                  </svg>
-                  <span>4.9</span>
-                </div>
-              </div>
-              <div class="doctor-schedule">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>Chatting 8.11-4 (Jumat listing)</span>
-              </div>
-              <div class="doctor-tags">
-                <span class="tag">Rabu</span>
-                <span class="tag">Jum</span>
-                <span class="tag">Sab</span>
-                <span class="tag tag-more">+4</span>
-              </div>
-              <a href="/pasien/booking" class="btn btn-primary btn-full">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
-                  ></path>
-                </svg>
-                Buat Janji Temu
-              </a>
-            </div>
-          </div>
-
-          <!-- Doctor Card 3 -->
-          <div class="doctor-card">
-            <div class="doctor-image-wrapper">
-              <img
-                src="/images/doctor-3.jpg"
-                alt="Dr. Fajar"
-                class="doctor-image"
-              />
-              <span class="doctor-badge">TERSEDIA</span>
-            </div>
-            <div class="doctor-content">
-              <div class="doctor-header">
-                <div>
-                  <h3 class="doctor-name">Dr. Fajar Hafiz</h3>
-                  <p class="doctor-specialty">Spesialis Kardiologi</p>
-                </div>
-                <div class="doctor-rating">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    ></polygon>
-                  </svg>
-                  <span>4.9</span>
-                </div>
-              </div>
-              <div class="doctor-schedule">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>Chatting 8.11-4 (Jumat listing)</span>
-              </div>
-              <div class="doctor-tags">
-                <span class="tag">Rabu</span>
-                <span class="tag">Jum</span>
-                <span class="tag">Sab</span>
-                <span class="tag tag-more">+4</span>
-              </div>
-              <a href="/pasien/booking" class="btn btn-primary btn-full">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
-                  ></path>
-                </svg>
-                Buat Janji Temu
-              </a>
-            </div>
-          </div>
-
-          <!-- Doctor Card 4 -->
-          <div class="doctor-card">
-            <div class="doctor-image-wrapper">
-              <img
-                src="/images/doctor-4.jpg"
-                alt="Dr. Jordan"
-                class="doctor-image"
-              />
-              <span class="doctor-badge">TERSEDIA</span>
-            </div>
-            <div class="doctor-content">
-              <div class="doctor-header">
-                <div>
-                  <h3 class="doctor-name">Dr. Jordan Muhammad</h3>
-                  <p class="doctor-specialty">Spesialis Kardiologi</p>
-                </div>
-                <div class="doctor-rating">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    ></polygon>
-                  </svg>
-                  <span>4.9</span>
-                </div>
-              </div>
-              <div class="doctor-schedule">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>Chatting 8.11-4 (Jumat listing)</span>
-              </div>
-              <div class="doctor-tags">
-                <span class="tag">Rabu</span>
-                <span class="tag">Jum</span>
-                <span class="tag">Sab</span>
-                <span class="tag tag-more">+4</span>
-              </div>
-              <a href="/pasien/booking" class="btn btn-primary btn-full">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
-                  ></path>
-                </svg>
-                Buat Janji Temu
+                Lihat Jadwal
               </a>
             </div>
           </div>
@@ -506,108 +278,49 @@
         </div>
 
         <div class="appointments-list">
-          <!-- Appointment 1 -->
-          <div class="appointment-card">
-            <div class="appointment-avatar">
-              <img src="/images/doctor-female.jpg" alt="Dr. Sarah" />
-            </div>
-            <div class="appointment-info">
-              <div class="appointment-header">
-                <h3 class="appointment-doctor">dr. Sarah Wijaya, Sp.A</h3>
-                <span class="appointment-status status-confirmed"
-                  >Dikonfirmasi</span
-                >
-              </div>
-              <p class="appointment-meta">Spesialis Anak • RSIS Jakarta</p>
-              <div class="appointment-date">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>14 Okt 2025 • 10:30</span>
-              </div>
-            </div>
-            <div class="appointment-actions">
-              <button class="btn btn-outline btn-sm">Reschedule</button>
-              <button class="btn btn-danger btn-sm">Batalkan</button>
-            </div>
-          </div>
-
-          <!-- Appointment 2 -->
-          <div class="appointment-card">
+          <!-- Dynamic Appointments from Database -->
+          <div th:if="${appointments != null && !appointments.empty}" th:each="appointment : ${appointments}" class="appointment-card">
             <div class="appointment-avatar appointment-avatar-placeholder">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
             <div class="appointment-info">
               <div class="appointment-header">
-                <h3 class="appointment-doctor">dr. Ahmad Subiarjo, Sp.JP</h3>
-                <span class="appointment-status status-pending"
-                  >Menunggu Konfirmasi</span
-                >
+                <h3 class="appointment-doctor" th:text="${appointment.jadwal != null && appointment.jadwal.dokter != null ? appointment.jadwal.dokter.nama : 'Dokter'}">Nama Dokter</h3>
+                <span class="appointment-status" 
+                      th:class="'appointment-status ' + (${appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : ${appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled'})}"
+                      th:text="${appointment.status == 'DIKONFIRMASI' ? 'Dikonfirmasi' : ${appointment.status == 'MENUNGGU' ? 'Menunggu Konfirmasi' : appointment.status}}">
+                  Status
+                </span>
               </div>
-              <p class="appointment-meta">Spesialis Jantung • RSIS Malang</p>
+              <p class="appointment-meta" 
+                 th:text="${appointment.jadwal != null && appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? appointment.jadwal.dokter.spesialisasi.nama + ' • RSIS' : 'Spesialis • RSIS'}">
+                Spesialis • RSIS
+              </p>
               <div class="appointment-date">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span>18 Okt 2025 • 09:00</span>
+                <span th:text="${appointment.tanggalBooking != null ? appointment.tanggalBooking : 'Tanggal belum ditentukan'}">Tanggal</span>
               </div>
             </div>
             <div class="appointment-actions">
-              <button class="btn btn-outline btn-sm">Detail</button>
+              <a th:href="@{/appointment/detail/{id}(id=${appointment.idAppointment})}" class="btn btn-outline btn-sm">Detail</a>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- Emergency Section -->
-      <section class="emergency-section">
-        <div class="emergency-card">
-          <div class="emergency-content">
-            <h2 class="emergency-title">Butuh Konsultasi Mendesak?</h2>
-            <p class="emergency-text">
-              Kami memiliki tim dokter jaga yang siap membantu Anda kapan saja.
-              Temukan dokter yang sedang aktif sekarang.
-            </p>
-            <a href="/pasien/cari-dokter?status=online" class="btn btn-white"
-              >Cari Dokter Sekarang</a
-            >
+          
+          <!-- No Appointments Message -->
+          <div th:if="${appointments == null || appointments.empty}" class="no-appointments">
+            <p>Belum ada appointment yang dijadwalkan.</p>
+            <a th:href="@{/pasien/cari-dokter}" class="btn btn-primary">Cari Dokter Sekarang</a>
           </div>
-          <div class="emergency-decoration"></div>
         </div>
       </section>
     </main>
-
-    <!-- Footer Fragment -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
   </body>
 </html>

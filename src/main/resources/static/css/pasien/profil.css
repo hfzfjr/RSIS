@@ -52,7 +52,7 @@
 
 .nav-item.active {
   background: var(--color-brand-light, #E8F5F1);
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 .nav-item svg {
@@ -109,7 +109,7 @@
   right: 0;
   width: 24px;
   height: 24px;
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -170,7 +170,7 @@
 }
 
 .status-value.verified {
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 /* Profile Stats */
@@ -282,7 +282,7 @@
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
   box-shadow: 0 0 0 3px var(--color-brand-light, #E8F5F1);
 }
 
@@ -351,7 +351,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
   margin-bottom: 12px;
 }
 
@@ -364,7 +364,7 @@
 .medical-stat-card .stat-value-large {
   font-size: 32px;
   font-weight: 700;
-  color: var(--color-brand-dark, #006C5A);
+  color: var(--color-brand, #006C5A);
   line-height: 1;
 }
 
@@ -438,8 +438,8 @@
 }
 
 .btn-add-tag:hover {
-  border-color: var(--color-brand-dark, #006C5A);
-  color: var(--color-brand-dark, #006C5A);
+  border-color: var(--color-brand, #006C5A);
+  color: var(--color-brand, #006C5A);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -654,7 +654,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -663,7 +663,7 @@
 
 /* Security Banner */
 .security-banner {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   border-radius: 12px;
   padding: 24px;
 }

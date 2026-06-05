@@ -2,7 +2,7 @@
 /* Updated with new design - Dark Green Theme */
 
 .footer {
-  background: var(--color-brand-dark, #006C5A);
+  background: var(--color-brand, #006C5A);
   padding: 48px 24px 24px 24px;
   width: 100%;
 }

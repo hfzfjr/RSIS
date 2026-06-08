@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth - RSIS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/auth/auth.css" />
+    <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+  </head>
+  <body>
+    <main class="login-container">
+      <section class="login-left">
+        <div class="login-left-content">
+          <h1 class="login-headline">
+            Selamat Datang di Pusat Layanan Kesehatan RSIS
+          </h1>
+          <p class="login-subtitle">
+            Platform booking dokter terpercaya untuk kesehatan Anda dan
+            keluarga.
+          </p>
+        </div>
+        <div class="login-left-bg"></div>
+      </section>
+      
+      <section class="login-right">
+        <div class="login-form-container">
+          <h2 class="login-title">Mulai Sekarang</h2>
+          <p class="login-description">
+            Silakan masuk atau daftar untuk layanan medis terbaik.
+          </p>
+
+          <div class="login-tabs">
+            <button class="tab-button active" data-tab="login">Masuk</button>
+            <button class="tab-button" data-tab="register">Daftar</button>
+          </div>
+
+          <!-- Login Form Component -->
+          <div class="tab-content active" id="login-tab">
+            <div th:replace="~{fragments/auth/login-form :: login-form}"></div>
+          </div>
+
+          <!-- Register Form Component -->
+          <div class="tab-content" id="register-tab">
+            <div th:replace="~{fragments/auth/register-form :: register-form}"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Tab functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        // Check URL query parameter for default tab
+        const urlParams = new URLSearchParams(window.location.search);
+        const defaultTab = urlParams.get('tab');
+
+        // Function to activate a specific tab
+        function activateTab(tabName) {
+          const targetButton = document.querySelector(`[data-tab="${tabName}"]`);
+          const targetContent = document.getElementById(`${tabName}-tab`);
+          
+          // Remove active class from all buttons and contents
+          tabButtons.forEach((btn) => btn.classList.remove("active"));
+          tabContents.forEach((content) => content.classList.remove("active"));
+          
+          // Add active class to target button and content
+          targetButton.classList.add("active");
+          targetContent.classList.add("active");
+          
+          // Update URL without page reload
+          const newUrl = tabName === 'login' ? '/auth?tab=login' : '/auth?tab=register';
+          window.history.replaceState({}, '', newUrl);
+        }
+
+        // Activate default tab from URL parameter
+        if (defaultTab === 'register') {
+          activateTab('register');
+        } else if (defaultTab === 'login') {
+          activateTab('login');
+        }
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const targetTab = button.getAttribute("data-tab");
+            activateTab(targetTab);
+          });
+        });
+
+        // Password visibility toggle (only for login form)
+        const passwordToggle = document.getElementById("password-toggle");
+        const passwordInput = document.getElementById("password-input");
+        
+        if (passwordToggle && passwordInput) {
+          const eyeOpen = passwordToggle.querySelector(".eye-open");
+          const eyeClosed = passwordToggle.querySelector(".eye-closed");
+
+          passwordToggle.addEventListener("click", () => {
+            if (passwordInput.type === "password") {
+              passwordInput.type = "text";
+              eyeOpen.style.display = "none";
+              eyeClosed.style.display = "block";
+            } else {
+              passwordInput.type = "password";
+              eyeOpen.style.display = "block";
+              eyeClosed.style.display = "none";
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

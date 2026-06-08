@@ -12,4 +12,3 @@ public class AuthBeansConfig {
         return configuration.getAuthenticationManager();
     }
 }
-

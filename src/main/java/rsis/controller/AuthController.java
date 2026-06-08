@@ -33,6 +33,19 @@ public class AuthController {
         return "landing";
     }
 
+    @GetMapping("/auth")
+    public String authPage(@RequestParam(value = "tab", required = false) String tab,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "registered", required = false) String registered,
+            Model model) {
+        model.addAttribute("hasError", error != null);
+        model.addAttribute("hasLogout", logout != null);
+        model.addAttribute("hasRegistered", registered != null);
+        model.addAttribute("form", new RegisterForm());
+        return "auth/auth";
+    }
+
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
@@ -60,19 +73,22 @@ public class AuthController {
         // keep a tiny guard for required fields to avoid bad inserts.
         if (isBlank(form.namaLengkap()) || isBlank(form.email()) || isBlank(form.password())) {
             model.addAttribute("errorMessage", "Nama lengkap, email, dan password wajib diisi");
-            return "auth/register";
+            model.addAttribute("form", form);
+            return "auth/auth";
         }
 
         // Validate password confirmation
         if (!form.password().equals(form.confirmPassword())) {
             model.addAttribute("errorMessage", "Password dan konfirmasi password tidak cocok");
-            return "auth/register";
+            model.addAttribute("form", form);
+            return "auth/auth";
         }
 
         // Validate password length
         if (form.password().length() < 8) {
             model.addAttribute("errorMessage", "Password minimal 8 karakter");
-            return "auth/register";
+            model.addAttribute("form", form);
+            return "auth/auth";
         }
 
         try {
@@ -88,10 +104,12 @@ public class AuthController {
             return "redirect:/pasien/dashboard";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
-            return "auth/register";
+            model.addAttribute("form", form);
+            return "auth/auth";
         } catch (Exception ex) {
             model.addAttribute("errorMessage", "Terjadi kesalahan sistem: " + ex.getMessage());
-            return "auth/register";
+            model.addAttribute("form", form);
+            return "auth/auth";
         }
     }
 

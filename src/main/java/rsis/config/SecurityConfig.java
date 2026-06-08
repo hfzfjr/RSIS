@@ -52,14 +52,15 @@ public class SecurityConfig {
             throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**", "/landing")
+                        .requestMatchers("/", "/auth", "/login", "/register", "/css/**", "/js/**", "/images/**",
+                                "/landing")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/dokter/**").hasRole("DOKTER")
                         .requestMatchers("/pasien/**").hasRole("PASIEN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/auth?tab=login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
@@ -67,7 +68,7 @@ public class SecurityConfig {
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout"));
+                        .logoutSuccessUrl("/auth?logout"));
 
         return http.build();
     }

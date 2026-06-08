@@ -37,3 +37,20 @@ build/
 
 ### Database schema and data
 Daftar_Tabel_dan_Data_Database_RSIS.sql
+
+### AI/Agent Tools ###
+.agents/
+skills-lock.json
+
+### Database Files ###
+data/
+*.db
+*.trace.db
+
+### Log Files ###
+*.log
+run.log
+
+### OS Files ###
+.DS_Store
+Thumbs.db

@@ -1,10 +1,204 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appointment Dokter - RSIS</title>
+
+  <!-- External CSS Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/dokter/appointment.css" />
+  <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
+</head>
+
+<body>
+  <!-- Navbar Fragment -->
+  <div th:replace="layout/navbar-dokter :: navbar"></div>
+  <!-- Notifikasi Overlay -->
+  <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
+
+  <!-- Main Content Area -->
+  <main class="appointment-main">
+    <!-- Header Section -->
+    <div class="appointment-header">
+      <h1 class="appointment-title">Daftar Appointment</h1>
+      <div class="appointment-actions">
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-download"></i> Export Riwayat
+        </button>
+        <a href="/dokter/appointment/buat" class="btn btn-primary">
+          <i class="bi bi-plus-lg"></i> Janji Temu Baru
+        </a>
+      </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="appointment-filter">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Cari nama pasien..." class="form-control" />
+      </div>
+      <div class="filter-options">
+        <select class="form-select">
+          <option value="">Semua Status</option>
+          <option value="akan_datang">Akan Datang</option>
+          <option value="jadwal_ulang">Jadwal Ulang</option>
+          <option value="batal">Batal</option>
+          <option value="selesai">Selesai</option>
+        </select>
+        <select class="form-select">
+          <option value="">Semua Tanggal</option>
+          <option value="today">Hari Ini</option>
+          <option value="week">Minggu Ini</option>
+          <option value="month">Bulan Ini</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Appointment Table -->
+    <div class="appointment-table-container">
+      <table class="appointment-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Pasien</th>
+            <th>Tanggal Booking</th>
+            <th>Jadwal</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="patient-info">
+                <div class="patient-avatar">BS</div>
+                <div class="patient-details">
+                  <div class="patient-name">Budi Santoso</div>
+                  <div class="patient-id">P-001234</div>
+                </div>
+              </div>
+            </td>
+            <td>12 Jan 2026</td>
+            <td>15 Jan 2026, 09:00</td>
+            <td><span class="status-badge akan-datang">Akan Datang</span></td>
+            <td>
+              <button class="btn-action btn-view"><i class="bi bi-eye"></i></button>
+              <button class="btn-action btn-edit"><i class="bi bi-pencil"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="patient-info">
+                <div class="patient-avatar">SA</div>
+                <div class="patient-details">
+                  <div class="patient-name">Siti Aminah</div>
+                  <div class="patient-id">P-001235</div>
+                </div>
+              </div>
+            </td>
+            <td>10 Jan 2026</td>
+            <td>14 Jan 2026, 14:30</td>
+            <td><span class="status-badge jadwal-ulang">Jadwal Ulang</span></td>
+            <td>
+              <button class="btn-action btn-view"><i class="bi bi-eye"></i></button>
+              <button class="btn-action btn-edit"><i class="bi bi-pencil"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              <div class="patient-info">
+                <div class="patient-avatar">KP</div>
+                <div class="patient-details">
+                  <div class="patient-name">Kevin Pratama</div>
+                  <div class="patient-id">P-001236</div>
+                </div>
+              </div>
+            </td>
+            <td>08 Jan 2026</td>
+            <td>10 Jan 2026, 10:00</td>
+            <td><span class="status-badge batal">Batal</span></td>
+            <td>
+              <button class="btn-action btn-view"><i class="bi bi-eye"></i></button>
+              <button class="btn-action btn-edit"><i class="bi bi-pencil"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>
+              <div class="patient-info">
+                <div class="patient-avatar">AS</div>
+                <div class="patient-details">
+                  <div class="patient-name">Ahmad Subarjo</div>
+                  <div class="patient-id">P-001237</div>
+                </div>
+              </div>
+            </td>
+            <td>05 Jan 2026</td>
+            <td>08 Jan 2026, 11:00</td>
+            <td><span class="status-badge selesai">Selesai</span></td>
+            <td>
+              <button class="btn-action btn-view"><i class="bi bi-eye"></i></button>
+              <button class="btn-action btn-edit"><i class="bi bi-pencil"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Navbar Script -->
+  <script>
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        const notifikasiBtn = document.getElementById("notifikasiBtn");
+        const notifikasiOverlay = document.getElementById("notifikasiOverlay");
+        const closeNotifikasi = document.getElementById("closeNotifikasi");
+
+        if (notifikasiBtn && notifikasiOverlay) {
+          notifikasiBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            notifikasiOverlay.classList.toggle("active");
+          });
+
+          if (closeNotifikasi) {
+            closeNotifikasi.addEventListener("click", function (e) {
+              e.stopPropagation();
+              notifikasiOverlay.classList.remove("active");
+            });
+          }
+
+          document.addEventListener("click", function (e) {
+            if (
+              !notifikasiOverlay.contains(e.target) &&
+              e.target !== notifikasiBtn
+            ) {
+              notifikasiOverlay.classList.remove("active");
+            }
+          });
+        }
+
+        const usernameElement = document.querySelector(".nav-username");
+        const avatarInitialsElement = document.getElementById("avatarInitials");
+        if (usernameElement && avatarInitialsElement) {
+          const username = usernameElement.textContent.trim();
+          const firstLetter = username.charAt(0).toUpperCase();
+          avatarInitialsElement.textContent = firstLetter;
+        }
+      }, 100);
+    });
+  </script>
 </body>
+
 </html>

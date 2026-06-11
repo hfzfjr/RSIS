@@ -15,6 +15,7 @@ import rsis.service.UserService;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+    
     @Bean
     PasswordEncoder passwordEncoder() {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
@@ -44,6 +45,7 @@ public class SecurityConfig {
             PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(encoder);
+        provider.setHideUserNotFoundExceptions(false); // Membuka segel agar eror notfound terbaca
         return provider;
     }
 
@@ -65,7 +67,21 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(successHandler)
+                        .failureHandler((request, response, exception) -> {
+                            String errorType = "wrongpassword";
+                            
+                            // Cek apakah erornya karena email tidak ditemukan
+                            if (exception instanceof org.springframework.security.core.userdetails.UsernameNotFoundException) {
+                                errorType = "notfound";
+                            }
+                            
+                            // Redirect sambil membawa parameter error yang spesifik (hanya dipanggil 1 kali)
+                            response.sendRedirect("/auth?tab=login&error=" + errorType);
+                        })
                         .permitAll())
+                .rememberMe(remember -> remember
+                        .key("kunciRahasiaRSIS") 
+                        .tokenValiditySeconds(604800)) // Ingat user selama 7 hari
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/auth?logout"));

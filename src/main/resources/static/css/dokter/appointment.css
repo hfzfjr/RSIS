@@ -1,0 +1,350 @@
+/* Appointment Page Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.appointment-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 30px;
+}
+
+/* Header Section */
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.appointment-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.appointment-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.appointment-actions .btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.appointment-actions .btn-outline-primary {
+  background-color: white;
+  border: 2px solid #4a90e2;
+  color: #4a90e2;
+}
+
+.appointment-actions .btn-outline-primary:hover {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.appointment-actions .btn-primary {
+  background-color: #4a90e2;
+  border: none;
+  color: white;
+}
+
+.appointment-actions .btn-primary:hover {
+  background-color: #357abd;
+}
+
+/* Search and Filter Section */
+.appointment-filter {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 18px;
+}
+
+.search-box input {
+  padding-left: 45px;
+  padding-right: 20px;
+  height: 45px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.filter-options {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-options .form-select {
+  height: 45px;
+  padding: 8px 15px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  min-width: 150px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.filter-options .form-select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Appointment Table */
+.appointment-table-container {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.appointment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.appointment-table thead {
+  background-color: #f8f9fa;
+}
+
+.appointment-table th {
+  padding: 18px 20px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.appointment-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.appointment-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.appointment-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.appointment-table td {
+  padding: 20px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Patient Info */
+.patient-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.patient-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.patient-id {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.akan-datang {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.jadwal-ulang {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-badge.batal {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.selesai {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+/* Action Buttons */
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+}
+
+.btn-action:last-child {
+  margin-right: 0;
+}
+
+.btn-action.btn-view {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.btn-action.btn-view:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-action.btn-edit {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.btn-action.btn-edit:hover {
+  background-color: #bbdefb;
+  color: #0d47a1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .appointment-main {
+    padding: 30px 20px;
+  }
+
+  .appointment-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .filter-options {
+    flex-direction: column;
+  }
+
+  .filter-options .form-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .appointment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .appointment-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .appointment-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .appointment-table {
+    font-size: 12px;
+  }
+
+  .appointment-table th,
+  .appointment-table td {
+    padding: 12px 10px;
+  }
+
+  .patient-avatar {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+
+  .patient-name {
+    font-size: 13px;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+}

@@ -1,0 +1,594 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jadwal Praktik - RSIS</title>
+  <!-- External CSS Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" th:href="@{/css/dokter/jadwal-praktik.css}" />
+</head>
+
+<body>
+  <!-- Premium Navigation Header -->
+  <header class="rs-navbar">
+    <div class="rs-nav-container">
+      <a href="/dokter/dashboard" class="rs-logo-area">
+        <img src="/images/logo-rsis.png" alt="RSIS Logo" class="rs-logo-img" />
+        <div class="rs-logo-text-group">
+          <span class="rs-logo-title">RSIS</span>
+          <span class="rs-logo-subtitle">Rumah Sakit Inteligent System</span>
+        </div>
+      </a>
+      <ul class="rs-nav-links">
+        <li><a href="/dokter/dashboard" class="rs-nav-link">Dashboard</a></li>
+        <li><a href="/dokter/jadwal" class="rs-nav-link active">Jadwal Praktik</a></li>
+        <li><a href="/dokter/appointment/pending" class="rs-nav-link">Appointment</a></li>
+      </ul>
+      <div class="rs-nav-right">
+        <button class="rs-notif-btn" aria-label="Notifikasi">
+          <i class="bi bi-bell"></i>
+          <span class="rs-notif-badge"></span>
+        </button>
+        <div class="rs-nav-divider"></div>
+        <a href="/dokter/dashboard" class="rs-profile-widget">
+          <div class="rs-profile-info">
+            <span class="rs-profile-name">Ahmad Hafiz</span>
+            <span class="rs-profile-role">Dokter</span>
+          </div>
+          <img src="/images/dokter.png" alt="Dokter Avatar" class="rs-profile-avatar" />
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="rs-main-container">
+
+    <!-- Page Title & Create Button -->
+    <div class="rs-page-header">
+      <div class="rs-header-left">
+        <h1 class="rs-title">Jadwal Praktik</h1>
+        <span class="rs-subtitle">Kelola jadwal dan ketersediaan praktik Anda</span>
+      </div>
+      <button class="rs-btn rs-btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+        <i class="bi bi-plus-lg"></i> Tambah Jadwal
+      </button>
+    </div>
+
+    <!-- Feedback Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <span th:text="${success}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span th:text="${error}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Weekly Schedule Grid View -->
+    <div class="rs-section-header">
+      <h2 class="rs-section-title">Minggu Ini</h2>
+      <div class="rs-segmented-control">
+        <button class="rs-segment-btn">Minggu Lalu</button>
+        <button class="rs-segment-btn active">Minggu Ini</button>
+        <button class="rs-segment-btn">Minggu Depan</button>
+      </div>
+    </div>
+
+    <div class="rs-calendar-panel">
+      <div class="rs-calendar-grid">
+
+        <!-- Column 1: Senin -->
+        <div class="rs-calendar-col">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Sen</span>
+            <span class="rs-date-lbl">14 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'SENIN'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 12:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Placeholder when database is not empty but no Monday schedule -->
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SENIN\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+
+          <!-- Static Mock Fallback when database is empty -->
+          <div th:if="${jadwals.empty}" class="rs-schedule-card">
+            <span class="rs-card-time">08:00 - 12:00</span>
+            <span class="rs-card-poli">Poli Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif">Aktif</span>
+              <span class="rs-card-slots">15/20</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Selasa -->
+        <div class="rs-calendar-col">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Sel</span>
+            <span class="rs-date-lbl">15 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'SELASA'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">13:00
+              - 17:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SELASA\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+
+          <div th:if="${jadwals.empty}" class="rs-schedule-card">
+            <span class="rs-card-time">13:00 - 17:00</span>
+            <span class="rs-card-poli">Poli Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge penuh">Penuh</span>
+              <span class="rs-card-slots">20/20</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Rabu (Active Day Highlighted) -->
+        <div class="rs-calendar-col active">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Rab</span>
+            <span class="rs-date-lbl">16 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'RABU'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 12:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'RABU\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+
+          <div th:if="${jadwals.empty}" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="rs-schedule-card">
+              <span class="rs-card-time">08:00 - 12:00</span>
+              <span class="rs-card-poli">Poli Umum</span>
+              <div class="rs-card-bottom">
+                <span class="rs-status-badge aktif">Aktif</span>
+                <span class="rs-card-slots">5/20</span>
+              </div>
+            </div>
+            <div class="rs-schedule-card">
+              <span class="rs-card-time">13:00 - 17:00</span>
+              <span class="rs-card-poli">Poli Jantung</span>
+              <div class="rs-card-bottom">
+                <span class="rs-status-badge aktif">Aktif</span>
+                <span class="rs-card-slots">2/10</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 4: Kamis -->
+        <div class="rs-calendar-col">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Kam</span>
+            <span class="rs-date-lbl">17 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'KAMIS'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 17:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Cuti
+              Tahunan</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'KAMIS\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+
+          <div th:if="${jadwals.empty}" class="rs-schedule-card">
+            <span class="rs-card-time">08:00 - 17:00</span>
+            <span class="rs-card-poli">Cuti Tahunan</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge libur">Libur</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 5: Jumat -->
+        <div class="rs-calendar-col">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Jum</span>
+            <span class="rs-date-lbl">18 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'JUMAT'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 11:30</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'JUMAT\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+
+          <div th:if="${jadwals.empty}" class="rs-schedule-card">
+            <span class="rs-card-time">08:00 - 11:30</span>
+            <span class="rs-card-poli">Poli Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif">Aktif</span>
+              <span class="rs-card-slots">0/15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 6: Sabtu -->
+        <div class="rs-calendar-col">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Sab</span>
+            <span class="rs-date-lbl">19 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'SABTU'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 12:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SABTU\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+          <div th:if="${jadwals.empty}" class="rs-day-empty-text">Tidak ada jadwal</div>
+        </div>
+
+        <!-- Column 7: Minggu (Highlight Red Text) -->
+        <div class="rs-calendar-col rs-day-sunday">
+          <div class="rs-calendar-header">
+            <span class="rs-day-lbl">Min</span>
+            <span class="rs-date-lbl">20 Okt</span>
+          </div>
+
+          <!-- Real Database Cards -->
+          <div th:each="jadwal : ${jadwals}" th:if="${jadwal.hari == 'MINGGU'}" class="rs-schedule-card"
+            data-bs-toggle="modal" th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+            <span class="rs-card-time"
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">08:00
+              - 12:00</span>
+            <span class="rs-card-poli"
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli
+              Umum</span>
+            <div class="rs-card-bottom">
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+              <span class="rs-card-slots"
+                th:text="${(jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota}">0/20</span>
+            </div>
+          </div>
+
+          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'MINGGU\'')}" class="rs-day-empty-text">Tidak
+            ada jadwal</div>
+          <div th:if="${jadwals.empty}" class="rs-day-empty-text">Tidak ada jadwal</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Schedule Table Section -->
+    <h2 class="rs-section-title" style="margin-bottom: 20px;">Semua Jadwal Praktik</h2>
+
+    <div class="rs-table-panel">
+
+      <!-- Table Fallback when database is empty -->
+      <table th:if="${jadwals.empty}" class="rs-table">
+        <thead>
+          <tr>
+            <th>Hari</th>
+            <th>Jam</th>
+            <th>Poli</th>
+            <th>Kuota</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rs-td-bold">Senin</td>
+            <td>08:00 - 12:00</td>
+            <td>Poli Umum</td>
+            <td>20 Pasien</td>
+            <td><span class="rs-status-badge aktif">Aktif</span></td>
+            <td>
+              <div class="rs-action-group">
+                <button class="rs-action-btn edit" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="rs-action-btn delete" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Delete"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="rs-td-bold">Selasa</td>
+            <td>13:00 - 17:00</td>
+            <td>Poli Umum</td>
+            <td>20 Pasien</td>
+            <td><span class="rs-status-badge aktif">Aktif</span></td>
+            <td>
+              <div class="rs-action-group">
+                <button class="rs-action-btn edit" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="rs-action-btn delete" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Delete"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="rs-td-bold">Rabu</td>
+            <td>08:00 - 12:00</td>
+            <td>Poli Umum</td>
+            <td>20 Pasien</td>
+            <td><span class="rs-status-badge aktif">Aktif</span></td>
+            <td>
+              <div class="rs-action-group">
+                <button class="rs-action-btn edit" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="rs-action-btn delete" onclick="alert('Ini adalah data simulasi (mockup).')"
+                  aria-label="Delete"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Real Database Table View -->
+      <table th:if="${!jadwals.empty}" class="rs-table">
+        <thead>
+          <tr>
+            <th>Hari</th>
+            <th>Jam</th>
+            <th>Poli</th>
+            <th>Kuota</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="jadwal : ${jadwals}">
+            <td class="rs-td-bold" th:text="${#strings.capitalize(#strings.toLowerCase(jadwal.hari))}">Hari</td>
+            <td
+              th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">
+              Jam</td>
+            <td
+              th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">
+              Poli</td>
+            <td th:text="${jadwal.kuota + ' Pasien'}">Kuota</td>
+            <td>
+              <span class="rs-status-badge aktif"
+                th:class="'rs-status-badge ' + ${#strings.toLowerCase(jadwal.statusKetersediaan == 'TERSEDIA' ? 'aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'penuh' : 'libur'))}"
+                th:text="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'Aktif' : (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur')}">Aktif</span>
+            </td>
+            <td>
+              <div class="rs-action-group">
+                <button class="rs-action-btn edit" data-bs-toggle="modal"
+                  th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}" aria-label="Edit">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <form th:action="@{/dokter/jadwal/delete/{id}(id=${jadwal.idJadwal})}" method="post"
+                  style="display: inline">
+                  <button type="submit" class="rs-action-btn delete" onclick="return confirm('Hapus jadwal ini?');"
+                    aria-label="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+  </main>
+
+  <!-- Create Modal -->
+  <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content"
+        style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <div class="modal-header" style="background-color: var(--rs-primary); color: white; padding: 20px 24px;">
+          <h5 class="modal-title" id="createModalLabel" style="font-weight: 700;">Tambah Jadwal Praktik</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+          <form th:action="@{/dokter/jadwal/create}" method="post">
+            <div class="mb-3">
+              <label for="hari" class="form-label"
+                style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Hari Praktik</label>
+              <select class="form-select" id="hari" name="hari" required style="border-radius: 8px; padding: 10px;">
+                <option value="">-- Pilih Hari --</option>
+                <option value="SENIN">Senin</option>
+                <option value="SELASA">Selasa</option>
+                <option value="RABU">Rabu</option>
+                <option value="KAMIS">Kamis</option>
+                <option value="JUMAT">Jumat</option>
+                <option value="SABTU">Sabtu</option>
+                <option value="MINGGU">Minggu</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="jamMulai" class="form-label"
+                  style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Jam Mulai</label>
+                <input type="time" class="form-control" id="jamMulai" name="jamMulai" required
+                  style="border-radius: 8px; padding: 10px;" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="jamSelesai" class="form-label"
+                  style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Jam Selesai</label>
+                <input type="time" class="form-control" id="jamSelesai" name="jamSelesai" required
+                  style="border-radius: 8px; padding: 10px;" />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="kuota" class="form-label"
+                style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Kuota Pasien</label>
+              <input type="number" class="form-control" id="kuota" name="kuota" min="1" max="100" required
+                style="border-radius: 8px; padding: 10px;" placeholder="Contoh: 20" />
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+                style="border-radius: 8px; font-weight: 600;">Batal</button>
+              <button type="submit" class="btn text-white"
+                style="background-color: var(--rs-primary); border-radius: 8px; font-weight: 600; padding-left: 20px; padding-right: 20px;">Simpan
+                Jadwal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modals (Rendered dynamically for each schedule in the database) -->
+  <div th:each="jadwal : ${jadwals}" class="modal fade" th:id="'editModal-' + ${jadwal.idJadwal}" tabindex="-1"
+    aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content"
+        style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <div class="modal-header" style="background-color: var(--rs-primary); color: white; padding: 20px 24px;">
+          <h5 class="modal-title" style="font-weight: 700;">Edit Jadwal Praktik</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+          <form th:action="@{/dokter/jadwal/update}" method="post">
+            <!-- Hidden references to match spring binder attributes and retain state -->
+            <input type="hidden" name="idJadwal" th:value="${jadwal.idJadwal}" />
+            <input type="hidden" name="dokter.idDokter"
+              th:value="${jadwal.dokter != null ? jadwal.dokter.idDokter : ''}" />
+            <input type="hidden" name="statusKetersediaan" th:value="${jadwal.statusKetersediaan}" />
+            <input type="hidden" name="sisaKuota" th:value="${jadwal.sisaKuota}" />
+
+            <div class="mb-3">
+              <label for="edit-hari" class="form-label"
+                style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Hari Praktik</label>
+              <select class="form-select" id="edit-hari" name="hari" required
+                style="border-radius: 8px; padding: 10px;">
+                <option value="SENIN" th:selected="${jadwal.hari == 'SENIN'}">Senin</option>
+                <option value="SELASA" th:selected="${jadwal.hari == 'SELASA'}">Selasa</option>
+                <option value="RABU" th:selected="${jadwal.hari == 'RABU'}">Rabu</option>
+                <option value="KAMIS" th:selected="${jadwal.hari == 'KAMIS'}">Kamis</option>
+                <option value="JUMAT" th:selected="${jadwal.hari == 'JUMAT'}">Jumat</option>
+                <option value="SABTU" th:selected="${jadwal.hari == 'SABTU'}">Sabtu</option>
+                <option value="MINGGU" th:selected="${jadwal.hari == 'MINGGU'}">Minggu</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="edit-jamMulai" class="form-label"
+                  style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Jam Mulai</label>
+                <input type="time" class="form-control" id="edit-jamMulai" name="jamMulai" th:value="${jadwal.jamMulai}"
+                  required style="border-radius: 8px; padding: 10px;" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="edit-jamSelesai" class="form-label"
+                  style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Jam Selesai</label>
+                <input type="time" class="form-control" id="edit-jamSelesai" name="jamSelesai"
+                  th:value="${jadwal.jamSelesai}" required style="border-radius: 8px; padding: 10px;" />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="edit-kuota" class="form-label"
+                style="font-weight: 600; font-size: 13px; color: var(--rs-text-primary);">Kuota Pasien</label>
+              <input type="number" class="form-control" id="edit-kuota" name="kuota" th:value="${jadwal.kuota}" min="1"
+                max="100" required style="border-radius: 8px; padding: 10px;" />
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+                style="border-radius: 8px; font-weight: 600;">Batal</button>
+              <button type="submit" class="btn text-white"
+                style="background-color: var(--rs-primary); border-radius: 8px; font-weight: 600; padding-left: 20px; padding-right: 20px;">Simpan
+                Perubahan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -23,15 +23,15 @@
             >Dashboard</a
           >
           <a
-            href="/dokter/cari-dokter"
+            href="/dokter/jadwal-praktik"
             class="nav-link"
-            th:class="${activeMenu == 'cari-dokter'} ? 'nav-link active' : 'nav-link'"
+            th:class="${activeMenu == 'jadwal-praktik'} ? 'nav-link active' : 'nav-link'"
             >Jadwal Praktik</a
           >
           <a
-            href="/dokter/jadwal-riwayat"
+            href="/dokter/appointment"
             class="nav-link"
-            th:class="${activeMenu == 'jadwal'} ? 'nav-link active' : 'nav-link'"
+            th:class="${activeMenu == 'appointment'} ? 'nav-link active' : 'nav-link'"
             >Appointment</a
           >
         </div>
@@ -49,7 +49,7 @@
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
           </button>
-          <a href="/pasien/profil" class="nav-profile-link">
+          <a href="/dokter/profil" class="nav-profile-link">
             <div class="nav-profile">
               <div class="nav-user-info">
                 <span
@@ -70,7 +70,7 @@
       </div>
     </nav>
     <!-- Notifikasi Overlay -->
-    <div th:replace="fragments/notifikasi :: notifikasi-overlay"></div>
+    <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
     <script>
       // Wait for the page to fully load
       window.addEventListener('load', function() {

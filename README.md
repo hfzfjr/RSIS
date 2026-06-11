@@ -6,7 +6,7 @@ Sistem Informasi Rumah Sakit berbasis web yang dibangun dengan Spring Boot dan T
 
 Sebelum menjalankan project ini, pastikan Anda telah menginstal:
 
-- **Java JDK 17** atau versi yang lebih baru
+- **Java JDK 25** atau versi yang lebih baru
 - **Maven** (untuk dependency management dan build)
 - **PostgreSQL** (database)
 - **Git** (untuk clone repository)

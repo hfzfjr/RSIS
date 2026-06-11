@@ -5,8 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import rsis.model.AppUser;
+import rsis.repository.UserRepository;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
@@ -26,8 +30,27 @@ public class AdminController {
     @Autowired
     private AdminRSService adminRSService;
 
+    @Autowired
+    private rsis.service.NotifikasiService notifikasiService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private void addNotifikasiToModel(String userId, Model model) {
+        try {
+            var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
+            model.addAttribute("notifikasi", notifikasis);
+        } catch (Exception e) {
+            model.addAttribute("notifikasi", java.util.Collections.emptyList());
+        }
+    }
+
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        addNotifikasiToModel(appUser.getIdUser(), model);
         model.addAttribute("totalPasienHariIni",
                 safeDashboardValue("total pasien hari ini", adminRSService::getTotalPasienHariIni, 0L));
         model.addAttribute("totalPasienBulanIni",
@@ -40,6 +63,7 @@ public class AdminController {
                 safeDashboardValue("total dokter", adminRSService::getTotalDokter, 0L));
         model.addAttribute("totalPoli",
                 safeDashboardValue("total poli", adminRSService::getTotalPoli, 0L));
+        model.addAttribute("activeMenu", "dashboard");
         return "admin/dashboard";
     }
 
@@ -54,9 +78,14 @@ public class AdminController {
 
     // Dokter Management
     @GetMapping("/kelola-dokter")
-    public String kelolaDokter(Model model) {
+    public String kelolaDokter(@AuthenticationPrincipal UserDetails principal, Model model) {
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        addNotifikasiToModel(appUser.getIdUser(), model);
         List<Dokter> dokters = adminRSService.getAllDokter();
         model.addAttribute("dokters", dokters);
+        model.addAttribute("activeMenu", "kelola-dokter");
         return "admin/kelola-dokter";
     }
 
@@ -98,9 +127,14 @@ public class AdminController {
 
     // Poli Management
     @GetMapping("/kelola-poli")
-    public String kelolaPoli(Model model) {
+    public String kelolaPoli(@AuthenticationPrincipal UserDetails principal, Model model) {
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        addNotifikasiToModel(appUser.getIdUser(), model);
         List<Poli> polis = adminRSService.getAllPoli();
         model.addAttribute("polis", polis);
+        model.addAttribute("activeMenu", "kelola-poli");
         return "admin/kelola-poli";
     }
 
@@ -142,9 +176,14 @@ public class AdminController {
 
     // Spesialisasi Management
     @GetMapping("/kelola-spesialisasi")
-    public String kelolaSpesialisasi(Model model) {
+    public String kelolaSpesialisasi(@AuthenticationPrincipal UserDetails principal, Model model) {
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        addNotifikasiToModel(appUser.getIdUser(), model);
         List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
         model.addAttribute("spesialisasis", spesialisasis);
+        model.addAttribute("activeMenu", "kelola-spesialisasi");
         return "admin/kelola-spesialisasi";
     }
 
@@ -174,11 +213,16 @@ public class AdminController {
 
     // Jadwal Management
     @GetMapping("/kelola-jadwal")
-    public String kelolaJadwal(Model model) {
+    public String kelolaJadwal(@AuthenticationPrincipal UserDetails principal, Model model) {
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        addNotifikasiToModel(appUser.getIdUser(), model);
         List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
         List<Dokter> dokters = adminRSService.getAllDokter();
         model.addAttribute("jadwals", jadwals);
         model.addAttribute("dokters", dokters);
+        model.addAttribute("activeMenu", "kelola-jadwal");
         return "admin/kelola-jadwal";
     }
 

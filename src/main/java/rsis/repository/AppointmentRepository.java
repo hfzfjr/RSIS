@@ -44,7 +44,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIBATALKAN' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
     Long countCanceledAppointmentsByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT a.jadwal.dokter.idDokter, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.jadwal.dokter.idDokter ORDER BY COUNT(a) DESC")
+    @Query("SELECT a.jadwal.dokter.idDokter, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate AND a.jadwal IS NOT NULL AND a.jadwal.dokter IS NOT NULL GROUP BY a.jadwal.dokter.idDokter ORDER BY COUNT(a) DESC")
     List<Object[]> findBusiestDokterByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")

@@ -4,36 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSIS Dashboard</title>
-<link rel="stylesheet" href="rsis-dashboard.css">
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/admin/dashboard.css">
+<link rel="stylesheet" href="/css/layout/navbar.css" />
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">
-    <div class="nav-logo-icon">🏥</div>
-    <div class="nav-logo-text">
-      <strong>RSIS</strong>
-      <span>Rumah Sakit Intelligent System</span>
-    </div>
-  </div>
-
-  <ul class="nav-links">
-    <li><a href="#">Dashboard</a></li>
-    <li><a href="#">Laporan</a></li>
-    <li><a href="#">Manajemen Jadwal</a></li>
-  </ul>
-
-  <div class="nav-right">
-    <div class="nav-bell">🔔</div>
-    <div class="nav-user">
-      <div class="nav-user-info">
-        <strong>Ismail Isagg</strong>
-        <span>Admin</span>
-      </div>
-      <div class="nav-avatar">II</div>
-    </div>
-  </div>
-</nav>
+<div th:replace="~{layout/navbar-admin :: navbar('dashboard')}\"></div>
 
 <main>
 

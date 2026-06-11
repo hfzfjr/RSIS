@@ -29,24 +29,24 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     @Query("SELECT a FROM Appointment a WHERE a.jadwal.dokter.idDokter = :dokterId AND a.status = 'MENUNGGU' ORDER BY a.tanggalBooking ASC")
     List<Appointment> findPendingAppointmentsByDokterId(@Param("dokterId") String dokterId);
 
-    @Query("SELECT a FROM Appointment a WHERE FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
-    List<Appointment> findByBulanDanTahun(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT a FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+    List<Appointment> findByBulanDanTahun(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking = :tanggal")
     Long countConfirmedAppointmentsByDate(@Param("tanggal") LocalDate tanggal);
 
-    @Query("SELECT COUNT(a) FROM Appointment a WHERE FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
-    Long countAllByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+    Long countAllByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
-    Long countConfirmedAppointmentsByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+    Long countConfirmedAppointmentsByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIBATALKAN' AND FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
-    Long countCanceledAppointmentsByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIBATALKAN' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+    Long countCanceledAppointmentsByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT a.jadwal.dokter.idDokter, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun GROUP BY a.jadwal.dokter.idDokter ORDER BY COUNT(a) DESC")
-    List<Object[]> findBusiestDokterByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT a.jadwal.dokter.idDokter, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.jadwal.dokter.idDokter ORDER BY COUNT(a) DESC")
+    List<Object[]> findBusiestDokterByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT FUNCTION('DATE', a.tanggalBooking), COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun GROUP BY FUNCTION('DATE', a.tanggalBooking)")
-    List<Object[]> findPatientsPerDayByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
+    @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
+    List<Object[]> findPatientsPerDayByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

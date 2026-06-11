@@ -14,6 +14,7 @@ import rsis.repository.PoliRepository;
 import rsis.repository.SpesialisasiRepository;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,11 +125,12 @@ public class AdminRSService {
 
     public Long getTotalPasienBulanIni() {
         LocalDate today = LocalDate.now();
-        return appointmentRepository.countConfirmedAppointmentsByMonth(today.getMonthValue(), today.getYear());
+        return getTotalPasienBulanIni(today.getMonthValue(), today.getYear());
     }
 
     public Long getTotalPasienBulanIni(int bulan, int tahun) {
-        return appointmentRepository.countConfirmedAppointmentsByMonth(bulan, tahun);
+        YearMonth month = YearMonth.of(tahun, bulan);
+        return appointmentRepository.countConfirmedAppointmentsByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
     }
 
     public String getDokterTersibuk() {
@@ -137,7 +139,8 @@ public class AdminRSService {
     }
 
     public String getDokterTersibuk(int bulan, int tahun) {
-        List<Object[]> results = appointmentRepository.findBusiestDokterByMonth(bulan, tahun);
+        YearMonth month = YearMonth.of(tahun, bulan);
+        List<Object[]> results = appointmentRepository.findBusiestDokterByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
         if (results.isEmpty()) {
             return "N/A";
         }
@@ -153,11 +156,12 @@ public class AdminRSService {
     }
 
     public Map<String, Long> getPasienPerHari(int bulan, int tahun) {
-        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(bulan, tahun);
+        YearMonth month = YearMonth.of(tahun, bulan);
+        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
         Map<String, Long> pasienPerHari = new HashMap<>();
         for (Object[] result : results) {
             String date = result[0].toString();
-            Long count = (Long) result[1];
+            Long count = ((Number) result[1]).longValue();
             pasienPerHari.put(date, count);
         }
         return pasienPerHari;

@@ -8,7 +8,7 @@
     /* === BRAND COLORS (RSIS Green) === */
     --color-brand: #016d55;
     --color-brand-dark: #014d3d;
-    --color-brand-light: #E8F5F1;
+    --color-brand-light: #e8f4f0;
     --color-teal: #14A085;
     --color-teal-light: #CCFBF1;
 
@@ -27,7 +27,7 @@
 
     /* === SURFACE/BACKGROUND COLORS === */
     --color-white: #FFFFFF;
-    --color-surface: #FFFFFF;
+    --color-surface: #f8faf7;
     --color-surface-gray: #F3F4F6;
     --color-surface-gray-light: #F0F0F0;
     --color-surface-cream: #E8F5F1;
@@ -40,7 +40,7 @@
     /* === UTILITY === */
     --border-subtle: rgba(26, 26, 46, 0.08);
     --border-divider: #c8dce8;
-    --shadow-default: 0 20px 60px rgba(16, 24, 40, .13);
+    --shadow-default: 0 5px 12px rgba(16, 24, 40, .13);
     --shadow-subtle: rgba(0, 0, 0, 0.06);
 
     /* === RADIUS === */

@@ -2,9 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
   <div th:fragment="login-form">
-    <div class="auth-alert auth-alert--error" th:if="${hasError}">
-      Email atau kata sandi salah.
+    
+    <div class="auth-alert auth-alert--error" th:if="${errorMessage}" th:text="${errorMessage}">
     </div>
+
     <div
       class="auth-alert auth-alert--success"
       th:if="${hasRegistered}"

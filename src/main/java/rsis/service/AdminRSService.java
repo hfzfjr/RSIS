@@ -3,7 +3,6 @@ package rsis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rsis.dto.StatistikDTO;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
@@ -113,52 +112,31 @@ public class AdminRSService {
         return jadwalPraktikRepository.save(jadwal);
     }
 
-    // Statistik
-    public StatistikDTO getStatistikHariIni() {
+    public List<JadwalPraktik> getAllJadwal() {
+        return jadwalPraktikRepository.findAll();
+    }
+
+    // Statistik Methods (as per class diagram AdminRS)
+    public Long getTotalPasienHariIni() {
         LocalDate today = LocalDate.now();
-        Long totalPasienHariIni = appointmentRepository.countConfirmedAppointmentsByDate(today);
-        Long totalPasienBulanIni = appointmentRepository.countConfirmedAppointmentsByMonth(
-                today.getMonthValue(), today.getYear());
-
-        String dokterTersibuk = getDokterTersibuk(today.getMonthValue(), today.getYear());
-        Map<String, Long> pasienPerHari = getPasienPerHari(today.getMonthValue(), today.getYear());
-
-        Long totalDokter = dokterRepository.count();
-        Long totalPoli = poliRepository.count();
-
-        return new StatistikDTO(
-                totalPasienHariIni,
-                totalPasienBulanIni,
-                dokterTersibuk,
-                pasienPerHari,
-                totalPasienHariIni,
-                0L,
-                totalDokter,
-                totalPoli);
+        return appointmentRepository.countConfirmedAppointmentsByDate(today);
     }
 
-    public StatistikDTO getStatistikBulanan(int bulan, int tahun) {
-        Long totalPasienBulanIni = appointmentRepository.countConfirmedAppointmentsByMonth(bulan, tahun);
-        Long totalAppointmentBatal = appointmentRepository.countCanceledAppointmentsByMonth(bulan, tahun);
-
-        String dokterTersibuk = getDokterTersibuk(bulan, tahun);
-        Map<String, Long> pasienPerHari = getPasienPerHari(bulan, tahun);
-
-        Long totalDokter = dokterRepository.count();
-        Long totalPoli = poliRepository.count();
-
-        return new StatistikDTO(
-                0L,
-                totalPasienBulanIni,
-                dokterTersibuk,
-                pasienPerHari,
-                totalPasienBulanIni,
-                totalAppointmentBatal,
-                totalDokter,
-                totalPoli);
+    public Long getTotalPasienBulanIni() {
+        LocalDate today = LocalDate.now();
+        return appointmentRepository.countConfirmedAppointmentsByMonth(today.getMonthValue(), today.getYear());
     }
 
-    private String getDokterTersibuk(int bulan, int tahun) {
+    public Long getTotalPasienBulanIni(int bulan, int tahun) {
+        return appointmentRepository.countConfirmedAppointmentsByMonth(bulan, tahun);
+    }
+
+    public String getDokterTersibuk() {
+        LocalDate today = LocalDate.now();
+        return getDokterTersibuk(today.getMonthValue(), today.getYear());
+    }
+
+    public String getDokterTersibuk(int bulan, int tahun) {
         List<Object[]> results = appointmentRepository.findBusiestDokterByMonth(bulan, tahun);
         if (results.isEmpty()) {
             return "N/A";
@@ -166,10 +144,15 @@ public class AdminRSService {
         Object[] result = results.get(0);
         String dokterId = (String) result[0];
         Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
-        return dokterOpt.map(d -> d.getIdDokter()).orElse("N/A");
+        return dokterOpt.map(d -> d.getNama()).orElse("N/A");
     }
 
-    private Map<String, Long> getPasienPerHari(int bulan, int tahun) {
+    public Map<String, Long> getPasienPerHari() {
+        LocalDate today = LocalDate.now();
+        return getPasienPerHari(today.getMonthValue(), today.getYear());
+    }
+
+    public Map<String, Long> getPasienPerHari(int bulan, int tahun) {
         List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(bulan, tahun);
         Map<String, Long> pasienPerHari = new HashMap<>();
         for (Object[] result : results) {
@@ -178,6 +161,14 @@ public class AdminRSService {
             pasienPerHari.put(date, count);
         }
         return pasienPerHari;
+    }
+
+    public Long getTotalDokter() {
+        return dokterRepository.count();
+    }
+
+    public Long getTotalPoli() {
+        return poliRepository.count();
     }
 
     private String generateDokterId() {

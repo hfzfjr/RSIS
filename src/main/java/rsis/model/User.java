@@ -11,12 +11,23 @@ public abstract class User implements INotifiable {
     @Column(name = "id_user", nullable = false, length = 32)
     private String idUser;
 
+    @Column(name = "nomor_hp")
+    private String nomorHp;
+
     public String getIdUser() {
         return idUser;
     }
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
+    }
+
+    public String getNomorHp() {
+        return nomorHp;
+    }
+
+    public void setNomorHp(String nomorHp) {
+        this.nomorHp = nomorHp;
     }
 
     @Override
@@ -30,8 +41,6 @@ public abstract class User implements INotifiable {
     public abstract String getNama();
 
     public abstract String getPassword();
-
-    public abstract String getNomorHp();
 
     public abstract String getRole();
 

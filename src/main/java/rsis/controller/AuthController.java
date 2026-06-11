@@ -91,6 +91,13 @@ public class AuthController {
             return "auth/auth";
         }
 
+        // Validate email domain (must be @gmail.com)
+        if (!form.email().toLowerCase().endsWith("@gmail.com")) {
+            model.addAttribute("errorMessage", "Email harus menggunakan domain @gmail.com");
+            model.addAttribute("form", form);
+            return "auth/auth";
+        }
+
         try {
             authService.registerPasien(form.namaLengkap(), form.email(), form.password());
             Authentication auth = authenticationManager.authenticate(

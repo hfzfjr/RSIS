@@ -72,10 +72,6 @@ public class Appointment {
         return this.pasien;
     }
 
-    public Dokter getDokter() {
-        return this.jadwal != null ? this.jadwal.getDokter() : null;
-    }
-
     // Getters and Setters
     public String getIdAppointment() {
         return idAppointment;
@@ -95,6 +91,10 @@ public class Appointment {
 
     public void setJadwal(JadwalPraktik jadwal) {
         this.jadwal = jadwal;
+    }
+
+    public Dokter getDokter() {
+        return jadwal != null ? jadwal.getDokter() : null;
     }
 
     public LocalDate getTanggalBooking() {

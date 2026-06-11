@@ -24,14 +24,19 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
     List<Appointment> findByJadwal_Dokter_IdDokterAndStatus(String idDokter, String status);
 
+    List<Appointment> findByJadwal_IdJadwalAndStatusIn(String idJadwal, List<String> statuses);
+
     @Query("SELECT a FROM Appointment a WHERE a.jadwal.dokter.idDokter = :dokterId AND a.status = 'MENUNGGU' ORDER BY a.tanggalBooking ASC")
     List<Appointment> findPendingAppointmentsByDokterId(@Param("dokterId") String dokterId);
+
+    @Query("SELECT a FROM Appointment a WHERE FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
+    List<Appointment> findByBulanDanTahun(@Param("bulan") int bulan, @Param("tahun") int tahun);
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking = :tanggal")
     Long countConfirmedAppointmentsByDate(@Param("tanggal") LocalDate tanggal);
 
-    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIBATALKAN' AND a.tanggalBooking = :tanggal")
-    Long countCanceledAppointmentsByDate(@Param("tanggal") LocalDate tanggal);
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
+    Long countAllByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND FUNCTION('MONTH', a.tanggalBooking) = :bulan AND FUNCTION('YEAR', a.tanggalBooking) = :tahun")
     Long countConfirmedAppointmentsByMonth(@Param("bulan") int bulan, @Param("tahun") int tahun);

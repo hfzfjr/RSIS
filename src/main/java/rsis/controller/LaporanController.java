@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import rsis.dto.StatistikDTO;
 import rsis.service.AdminRSService;
 import rsis.service.LaporanBulananService;
 
@@ -29,8 +28,9 @@ public class LaporanController {
         int bulan = today.getMonthValue();
         int tahun = today.getYear();
 
-        StatistikDTO statistik = adminRSService.getStatistikBulanan(bulan, tahun);
-        model.addAttribute("statistik", statistik);
+        model.addAttribute("totalPasienBulanIni", adminRSService.getTotalPasienBulanIni(bulan, tahun));
+        model.addAttribute("totalDokter", adminRSService.getTotalDokter());
+        model.addAttribute("totalPoli", adminRSService.getTotalPoli());
         model.addAttribute("bulan", bulan);
         model.addAttribute("tahun", tahun);
         return "laporan/index";
@@ -40,8 +40,9 @@ public class LaporanController {
     public String laporanBulanan(@RequestParam(defaultValue = "#{T(java.time.LocalDate).now().monthValue}") int bulan,
             @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().year}") int tahun,
             Model model) {
-        StatistikDTO statistik = adminRSService.getStatistikBulanan(bulan, tahun);
-        model.addAttribute("statistik", statistik);
+        model.addAttribute("totalPasienBulanIni", adminRSService.getTotalPasienBulanIni(bulan, tahun));
+        model.addAttribute("totalDokter", adminRSService.getTotalDokter());
+        model.addAttribute("totalPoli", adminRSService.getTotalPoli());
         model.addAttribute("bulan", bulan);
         model.addAttribute("tahun", tahun);
         return "laporan/bulanan";

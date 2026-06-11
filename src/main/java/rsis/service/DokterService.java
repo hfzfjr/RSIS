@@ -38,11 +38,19 @@ public class DokterService {
     public JadwalPraktik createJadwal(JadwalPraktik jadwal) {
         String idJadwal = generateJadwalId();
         jadwal.setIdJadwal(idJadwal);
+        jadwal.setStatusKetersediaan("TERSEDIA");
+        jadwal.setSisaKuota(jadwal.getKuota());
         return jadwalPraktikRepository.save(jadwal);
     }
 
     @Transactional
     public void deleteJadwal(String jadwalId) {
+        // Check if there are any active appointments (MENUNGGU or DIKONFIRMASI)
+        List<Appointment> activeAppointments = appointmentRepository.findByJadwal_IdJadwalAndStatusIn(
+                jadwalId, List.of("MENUNGGU", "DIKONFIRMASI"));
+        if (!activeAppointments.isEmpty()) {
+            throw new RuntimeException("Cannot delete jadwal with active appointments");
+        }
         jadwalPraktikRepository.deleteById(jadwalId);
     }
 

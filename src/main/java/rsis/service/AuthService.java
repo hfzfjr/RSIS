@@ -5,31 +5,38 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rsis.model.AppUser;
 import rsis.model.Pasien;
-import rsis.repository.AppUserRepository;
-import rsis.repository.PasienRepository;
 import rsis.repository.UserRepository;
+import rsis.repository.PasienRepository;
 
 import java.time.Instant;
 
 @Service
 public class AuthService {
-    private final AppUserRepository appUserRepository;
-    private final PasienRepository pasienRepository;
     private final UserRepository userRepository;
+    private final PasienRepository pasienRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(AppUserRepository appUserRepository, PasienRepository pasienRepository,
-            UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.appUserRepository = appUserRepository;
-        this.pasienRepository = pasienRepository;
+    public AuthService(UserRepository userRepository, PasienRepository pasienRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.pasienRepository = pasienRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
     public void registerPasien(String nama, String email, String rawPassword) {
-        if (appUserRepository.existsByEmailIgnoreCase(email)) {
+        if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new IllegalArgumentException("Email sudah terdaftar");
+        }
+
+        // Validate email domain (must be @gmail.com)
+        if (!email.toLowerCase().endsWith("@gmail.com")) {
+            throw new IllegalArgumentException("Email harus menggunakan domain @gmail.com");
+        }
+
+        // Validate password length (minimum 8 characters)
+        if (rawPassword.length() < 8) {
+            throw new IllegalArgumentException("Password minimal 8 karakter");
         }
 
         String userId = nextUserId();
@@ -44,7 +51,7 @@ public class AuthService {
         appUser.setNomorHp(null);
         appUser.setRole("PASIEN");
         appUser.setCreatedAt(Instant.now());
-        appUserRepository.save(appUser);
+        userRepository.save(appUser);
 
         // Save to pasien table with FK to users
         Pasien pasien = new Pasien();

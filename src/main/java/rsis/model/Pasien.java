@@ -18,6 +18,9 @@ public class Pasien extends User {
     @Column(name = "id_pasien", nullable = false, length = 10)
     private String idPasien;
 
+    @Column(name = "id_user", nullable = false, length = 32)
+    private String idUser;
+
     @Column(name = "nomor_rekam_medis", unique = true)
     private String nomorRekamMedis;
 
@@ -26,9 +29,6 @@ public class Pasien extends User {
 
     @Column(name = "alamat")
     private String alamat;
-
-    @Column(name = "nomor_hp")
-    private String nomorHp;
 
     // Transient fields - only exist in users table, not in pasien table
     @Transient
@@ -75,6 +75,14 @@ public class Pasien extends User {
 
     public void setIdPasien(String idPasien) {
         this.idPasien = idPasien;
+    }
+
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
     }
 
     public boolean isProfileComplete() {
@@ -133,15 +141,6 @@ public class Pasien extends User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public String getNomorHp() {
-        return nomorHp;
-    }
-
-    public void setNomorHp(String nomorHp) {
-        this.nomorHp = nomorHp;
     }
 
     @Override

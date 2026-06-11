@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rsis.model.AppUser;
 import rsis.model.Notifikasi;
-import rsis.repository.AppUserRepository;
+import rsis.repository.UserRepository;
 import rsis.repository.NotifikasiRepository;
 
 import java.time.Instant;
@@ -19,11 +19,11 @@ public class NotifikasiService {
     private NotifikasiRepository notifikasiRepository;
 
     @Autowired
-    private AppUserRepository appUserRepository;
+    private UserRepository userRepository;
 
     @Transactional
     public Notifikasi kirimNotifikasi(String penerimaId, String pesan, String tipe) {
-        Optional<AppUser> penerimaOpt = appUserRepository.findById(penerimaId);
+        Optional<AppUser> penerimaOpt = userRepository.findById(penerimaId);
         if (penerimaOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
@@ -39,7 +39,7 @@ public class NotifikasiService {
     }
 
     public List<Notifikasi> getNotifikasiByPenerimaId(String penerimaId) {
-        return notifikasiRepository.findByPenerima_IdUser(penerimaId);
+        return notifikasiRepository.findByPenerima_IdUserOrderByTanggalKirimDesc(penerimaId);
     }
 
     @Transactional

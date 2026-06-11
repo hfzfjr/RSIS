@@ -3,9 +3,11 @@ package rsis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rsis.model.AppUser;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
+import rsis.repository.UserRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PasienRepository;
@@ -25,11 +27,30 @@ public class PasienService {
     @Autowired
     private JadwalPraktikRepository jadwalPraktikRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<Dokter> cariDokter(String keyword) {
+        List<Dokter> dokters;
         if (keyword == null || keyword.isEmpty()) {
-            return dokterRepository.findAll();
+            dokters = dokterRepository.findAll();
+        } else {
+            dokters = dokterRepository.searchBySpesialisasiOrNama(keyword);
         }
-        return dokterRepository.searchBySpesialisasiOrNama(keyword);
+        // Populate transient fields from users table
+        return populateDokterWithUserData(dokters);
+    }
+
+    private List<Dokter> populateDokterWithUserData(List<Dokter> dokters) {
+        return dokters.stream().map(dokter -> {
+            userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                dokter.setNama(user.getNama());
+                dokter.setEmail(user.getEmail());
+                dokter.setPassword(user.getPassword());
+                dokter.setRole(user.getRole());
+            });
+            return dokter;
+        }).toList();
     }
 
     public List<Dokter> cariDokterBySpesialisasi(String spesialisasi) {

@@ -19,11 +19,11 @@ public class AdminRS extends User {
     @Column(name = "id_admin", nullable = false, length = 10)
     private String idAdmin;
 
+    @Column(name = "id_user", nullable = false, length = 32)
+    private String idUser;
+
     @Column(name = "jabatan")
     private String jabatan;
-
-    @Column(name = "nomor_hp")
-    private String nomorHp;
 
     // Transient fields - only exist in users table, not in admin_rs table
     @Transient
@@ -79,6 +79,14 @@ public class AdminRS extends User {
         this.idAdmin = idAdmin;
     }
 
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
     public String getJabatan() {
         return jabatan;
     }
@@ -113,15 +121,6 @@ public class AdminRS extends User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public String getNomorHp() {
-        return nomorHp;
-    }
-
-    public void setNomorHp(String nomorHp) {
-        this.nomorHp = nomorHp;
     }
 
     @Override

@@ -20,6 +20,9 @@ public class Dokter extends User implements ISchedulable {
     @Column(name = "id_dokter", nullable = false, length = 10)
     private String idDokter;
 
+    @Column(name = "id_user", nullable = false, length = 32)
+    private String idUser;
+
     @Column(name = "nomor_str", unique = true)
     private String nomorStr;
 
@@ -31,8 +34,8 @@ public class Dokter extends User implements ISchedulable {
     @JoinColumn(name = "id_poli")
     private Poli poli;
 
-    @Column(name = "nomor_hp")
-    private String nomorHp;
+    @Column(name = "dokter_image")
+    private String dokterImage;
 
     // Transient fields - only exist in users table, not in dokter table
     @Transient
@@ -95,6 +98,14 @@ public class Dokter extends User implements ISchedulable {
         this.idDokter = idDokter;
     }
 
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
     public String getNomorStr() {
         return nomorStr;
     }
@@ -109,6 +120,14 @@ public class Dokter extends User implements ISchedulable {
 
     public void setPoli(Poli poli) {
         this.poli = poli;
+    }
+
+    public String getDokterImage() {
+        return dokterImage;
+    }
+
+    public void setDokterImage(String dokterImage) {
+        this.dokterImage = dokterImage;
     }
 
     // Implementations for abstract methods from User
@@ -137,15 +156,6 @@ public class Dokter extends User implements ISchedulable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public String getNomorHp() {
-        return nomorHp;
-    }
-
-    public void setNomorHp(String nomorHp) {
-        this.nomorHp = nomorHp;
     }
 
     @Override

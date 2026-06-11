@@ -5,13 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rsis.dto.StatistikDTO;
 import rsis.model.Dokter;
+import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
 import rsis.model.Spesialisasi;
 import rsis.service.AdminRSService;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -22,8 +23,12 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        StatistikDTO statistik = adminRSService.getStatistikHariIni();
-        model.addAttribute("statistik", statistik);
+        model.addAttribute("totalPasienHariIni", adminRSService.getTotalPasienHariIni());
+        model.addAttribute("totalPasienBulanIni", adminRSService.getTotalPasienBulanIni());
+        model.addAttribute("dokterTersibuk", adminRSService.getDokterTersibuk());
+        model.addAttribute("pasienPerHari", adminRSService.getPasienPerHari());
+        model.addAttribute("totalDokter", adminRSService.getTotalDokter());
+        model.addAttribute("totalPoli", adminRSService.getTotalPoli());
         return "admin/dashboard";
     }
 
@@ -150,8 +155,11 @@ public class AdminController {
     // Jadwal Management
     @GetMapping("/kelola-jadwal")
     public String kelolaJadwal(Model model) {
-        // This will be handled by JadwalController
-        return "redirect:/jadwal/list";
+        List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
+        List<Dokter> dokters = adminRSService.getAllDokter();
+        model.addAttribute("jadwals", jadwals);
+        model.addAttribute("dokters", dokters);
+        return "admin/kelola-jadwal";
     }
 
     // Laporan

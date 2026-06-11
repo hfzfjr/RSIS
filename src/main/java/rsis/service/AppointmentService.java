@@ -10,6 +10,8 @@ import rsis.model.Pasien;
 import rsis.repository.AppointmentRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PasienRepository;
+import rsis.repository.DokterRepository;
+import rsis.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +28,12 @@ public class AppointmentService {
 
     @Autowired
     private PasienRepository pasienRepository;
+
+    @Autowired
+    private DokterRepository dokterRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public Appointment bookAppointment(BookingRequestDTO bookingRequest) {
@@ -177,6 +185,33 @@ public class AppointmentService {
 
     public Optional<Appointment> getAppointmentById(String appointmentId) {
         return appointmentRepository.findById(appointmentId);
+    }
+
+    public Optional<JadwalPraktik> getJadwalById(String jadwalId) {
+        return jadwalPraktikRepository.findById(jadwalId);
+    }
+
+    public Optional<rsis.model.Dokter> getDokterById(String dokterId) {
+        Optional<rsis.model.Dokter> dokterOpt = dokterRepository.findById(dokterId);
+        if (dokterOpt.isPresent()) {
+            rsis.model.Dokter dokter = dokterOpt.get();
+            populateDokterWithUserData(dokter);
+            return Optional.of(dokter);
+        }
+        return dokterOpt;
+    }
+
+    private void populateDokterWithUserData(rsis.model.Dokter dokter) {
+        userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+            dokter.setNama(user.getNama());
+            dokter.setEmail(user.getEmail());
+            dokter.setPassword(user.getPassword());
+            dokter.setRole(user.getRole());
+        });
+    }
+
+    public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
+        return jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
     }
 
     private String generateAppointmentId() {

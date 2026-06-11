@@ -1,12 +1,149 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Kelola Jadwal - RSIS</title>
-  </head>
-  <body>
-    <script>
-      window.location.href = "/jadwal/list";
-    </script>
-  </body>
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSIS - Manajemen Jadwal</title>
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/layout/navbar.css" />
+<link rel="stylesheet" href="manajemen-jadwal.css">
+</head>
+<body>
+
+<div th:replace="~{layout/navbar-admin :: navbar(activeMenu='kelola-jadwal')}"></div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Manajemen Jadwal Praktik Dokter</h1>
+      <p>Kelola jadwal praktik dokter dan data poli rumah sakit</p>
+    </div>
+    <button class="btn-primary">＋ Tambah Jadwal</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab(this)">Jadwal Praktik</button>
+    <button class="tab" onclick="setTab(this)">Data Poli</button>
+    <button class="tab" onclick="setTab(this)">Data Dokter</button>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-strip-item green">
+      <div class="strip-icon green-icon">✔</div>
+      <div class="strip-info">
+        <span class="strip-label">Jadwal Aktif</span>
+        <span class="strip-value">87</span>
+      </div>
+    </div>
+    <div class="stat-strip-item orange">
+      <div class="strip-icon orange-icon">⚠</div>
+      <div class="strip-info">
+        <span class="strip-label">Jadwal Penuh</span>
+        <span class="strip-value orange-val">12</span>
+      </div>
+    </div>
+    <div class="stat-strip-item gray">
+      <div class="strip-icon gray-icon">📅</div>
+      <div class="strip-info">
+        <span class="strip-label">Jadwal Libur</span>
+        <span class="strip-value">5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <table class="jadwal-table">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Dokter</th>
+          <th>Poli</th>
+          <th>Hari</th>
+          <th>Jam Praktik</th>
+          <th>Kuota</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="no">1</td>
+          <td>
+            <div class="doctor-cell">
+              <div class="doc-avatar">👨‍⚕️</div>
+              <div class="doc-info">
+                <span class="doc-name">Dr. Budi Santoso</span>
+                <span class="doc-spec">Spesialis Jantung</span>
+              </div>
+            </div>
+          </td>
+          <td>Poli Jantung</td>
+          <td>Selasa</td>
+          <td>09:00 - 13:00</td>
+          <td>
+            <div class="kuota">
+              <span class="kuota-text red-text">8/10</span>
+              <div class="progress-bar">
+                <div class="progress-fill red-fill" style="width: 80%"></div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-penuh">Penuh</span></td>
+          <td>
+            <div class="aksi">
+              <button class="btn-icon edit">✏</button>
+              <button class="btn-icon delete">🗑</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="no">2</td>
+          <td>
+            <div class="doctor-cell">
+              <div class="doc-avatar">👩‍⚕️</div>
+              <div class="doc-info">
+                <span class="doc-name">Dr. Sarah Wijaya</span>
+                <span class="doc-spec">Spesialis Anak</span>
+              </div>
+            </div>
+          </td>
+          <td>Poli Anak</td>
+          <td>Rabu</td>
+          <td>10:00 - 15:00</td>
+          <td>
+            <div class="kuota">
+              <span class="kuota-text">3/15</span>
+              <div class="progress-bar">
+                <div class="progress-fill green-fill" style="width: 20%"></div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-tersedia">Tersedia</span></td>
+          <td>
+            <div class="aksi">
+              <button class="btn-icon edit">✏</button>
+              <button class="btn-icon delete">🗑</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+  function setTab(el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+
+</body>
 </html>

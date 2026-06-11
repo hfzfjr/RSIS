@@ -1,5 +1,7 @@
 package rsis.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,25 +13,43 @@ import rsis.model.Poli;
 import rsis.model.Spesialisasi;
 import rsis.service.AdminRSService;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private AdminRSService adminRSService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("totalPasienHariIni", adminRSService.getTotalPasienHariIni());
-        model.addAttribute("totalPasienBulanIni", adminRSService.getTotalPasienBulanIni());
-        model.addAttribute("dokterTersibuk", adminRSService.getDokterTersibuk());
-        model.addAttribute("pasienPerHari", adminRSService.getPasienPerHari());
-        model.addAttribute("totalDokter", adminRSService.getTotalDokter());
-        model.addAttribute("totalPoli", adminRSService.getTotalPoli());
+        model.addAttribute("totalPasienHariIni",
+                safeDashboardValue("total pasien hari ini", adminRSService::getTotalPasienHariIni, 0L));
+        model.addAttribute("totalPasienBulanIni",
+                safeDashboardValue("total pasien bulan ini", adminRSService::getTotalPasienBulanIni, 0L));
+        model.addAttribute("dokterTersibuk",
+                safeDashboardValue("dokter tersibuk", adminRSService::getDokterTersibuk, "N/A"));
+        model.addAttribute("pasienPerHari",
+                safeDashboardValue("pasien per hari", adminRSService::getPasienPerHari, Collections.emptyMap()));
+        model.addAttribute("totalDokter",
+                safeDashboardValue("total dokter", adminRSService::getTotalDokter, 0L));
+        model.addAttribute("totalPoli",
+                safeDashboardValue("total poli", adminRSService::getTotalPoli, 0L));
         return "admin/dashboard";
+    }
+
+    private <T> T safeDashboardValue(String label, Supplier<T> supplier, T fallback) {
+        try {
+            return supplier.get();
+        } catch (RuntimeException ex) {
+            log.warn("Gagal mengambil statistik dashboard admin: {}", label, ex);
+            return fallback;
+        }
     }
 
     // Dokter Management

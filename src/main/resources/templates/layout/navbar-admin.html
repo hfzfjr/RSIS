@@ -1,30 +1,143 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
+  </head>
   <body>
     <!-- Navbar Fragment untuk Admin -->
-    <header th:fragment="navbar" class="header">
-      <div class="container header-container">
-        <div class="logo">
-          <a href="/admin/dashboard">
-            <img src="/images/logo-rsis.png" alt="RSIS" height="32" />
+    <nav th:fragment="navbar(activeMenu)" class="navbar">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <img
+            src="/images/logo-tulisan-rsis.png"
+            alt="RSIS"
+            class="nav-logo"
+          />
+        </div>
+        <div class="nav-menu">
+          <a
+            href="/admin/dashboard"
+            class="nav-link active"
+            th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'"
+            >Dashboard</a
+          >
+          <a
+            href="/admin/kelola-dokter"
+            class="nav-link"
+            th:class="${activeMenu == 'kelola-dokter'} ? 'nav-link active' : 'nav-link'"
+            >Kelola Dokter</a
+          >
+          <a
+            href="/admin/kelola-poli"
+            class="nav-link"
+            th:class="${activeMenu == 'kelola-poli'} ? 'nav-link active' : 'nav-link'"
+            >Kelola Poli</a
+          >
+          <a
+            href="/admin/kelola-jadwal"
+            class="nav-link"
+            th:class="${activeMenu == 'kelola-jadwal'} ? 'nav-link active' : 'nav-link'"
+            >Kelola Jadwal</a
+          >
+          <a
+            href="/admin/laporan-bulanan"
+            class="nav-link"
+            th:class="${activeMenu == 'laporan'} ? 'nav-link active' : 'nav-link'"
+            >Laporan</a
+          >
+        </div>
+        <div class="nav-actions">
+          <button class="nav-btn nav-btn-icon" id="notifikasiBtn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <a href="/admin/profil" class="nav-profile-link">
+            <div class="nav-profile">
+              <div class="nav-user-info">
+                <span
+                  class="nav-username"
+                  th:text="${#authentication.principal.username}"
+                  >Admin</span
+                >
+                <span
+                  class="nav-userrole"
+                  >Admin</span
+                >
+              </div>
+              <div class="nav-avatar-initials" id="avatarInitials">A</div>
+            </div>
           </a>
         </div>
-        <nav class="nav">
-          <a href="/admin/dashboard" class="nav-link">Dashboard</a>
-          <a href="/admin/kelola-dokter" class="nav-link">Kelola Dokter</a>
-          <a href="/admin/kelola-poli" class="nav-link">Kelola Poli</a>
-          <a href="/admin/kelola-jadwal" class="nav-link">Kelola Jadwal</a>
-          <a href="/admin/laporan-bulanan" class="nav-link">Laporan</a>
-        </nav>
-        <div class="header-actions">
-          <span
-            class="user-name"
-            th:text="${#authentication.principal.username}"
-            >Admin</span
-          >
-          <a href="/logout" class="btn btn-outline btn-small">Keluar</a>
-        </div>
       </div>
-    </header>
+    </nav>
+    <!-- Notifikasi Overlay -->
+    <div th:replace="fragments/notifikasi :: notifikasi-overlay"></div>
+    <script>
+      // Wait for the page to fully load
+      window.addEventListener('load', function() {
+        console.log("Page fully loaded");
+        
+        // Use a small timeout to ensure Thymeleaf has rendered the fragment
+        setTimeout(function() {
+          console.log("Initializing notification overlay");
+          const notifikasiBtn = document.getElementById("notifikasiBtn");
+          const notifikasiOverlay = document.getElementById("notifikasiOverlay");
+          const closeNotifikasi = document.getElementById("closeNotifikasi");
+
+          console.log("notifikasiBtn:", notifikasiBtn);
+          console.log("notifikasiOverlay:", notifikasiOverlay);
+          console.log("closeNotifikasi:", closeNotifikasi);
+
+          if (notifikasiBtn && notifikasiOverlay) {
+            notifikasiBtn.addEventListener("click", function (e) {
+              e.stopPropagation();
+              console.log("Notification button clicked");
+              notifikasiOverlay.classList.toggle("active");
+              console.log("Overlay classes:", notifikasiOverlay.className);
+              console.log("Overlay display:", window.getComputedStyle(notifikasiOverlay).display);
+            });
+
+            if (closeNotifikasi) {
+              closeNotifikasi.addEventListener("click", function (e) {
+                e.stopPropagation();
+                notifikasiOverlay.classList.remove("active");
+              });
+            }
+
+            document.addEventListener("click", function (e) {
+              if (
+                !notifikasiOverlay.contains(e.target) &&
+                e.target !== notifikasiBtn
+              ) {
+                notifikasiOverlay.classList.remove("active");
+              }
+            });
+          } else {
+            console.error("Notification elements not found");
+            console.error("notifikasiBtn:", notifikasiBtn);
+            console.error("notifikasiOverlay:", notifikasiOverlay);
+          }
+
+          // Generate first letter from username
+          const usernameElement = document.querySelector(".nav-username");
+          const avatarInitialsElement = document.getElementById("avatarInitials");
+          if (usernameElement && avatarInitialsElement) {
+            const username = usernameElement.textContent.trim();
+            const firstLetter = username.charAt(0).toUpperCase();
+            avatarInitialsElement.textContent = firstLetter;
+          }
+        }, 100);
+      });
+    </script>
   </body>
 </html>

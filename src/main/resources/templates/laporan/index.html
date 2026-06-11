@@ -25,64 +25,53 @@
                         <h3>Laporan Bulanan</h3>
                     </div>
                     <div class="card-body">
-                        <div th:if="${statistik != null}">
-                            <div class="row mt-4">
-                                <div class="col-md-3">
-                                    <div class="card text-center">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Pasien Bulan Ini</h5>
-                                            <p class="card-text display-4" th:text="${statistik.totalPasienBulanIni}"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card text-center">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Pasien Hari Ini</h5>
-                                            <p class="card-text display-4" th:text="${statistik.totalPasienHariIni}"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card text-center">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Total Dokter</h5>
-                                            <p class="card-text display-4" th:text="${statistik.totalDokter}"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card text-center">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Total Poli</h5>
-                                            <p class="card-text display-4" th:text="${statistik.totalPoli}"></p>
-                                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pasien Bulan Ini</h5>
+                                        <p class="card-text display-4" th:text="${totalPasienBulanIni}"></p>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="row mt-4">
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>Dokter Tersibuk</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="card-text" th:text="${statistik.dokterTersibuk}"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>Appointment Dibatalkan</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="card-text" th:text="${statistik.totalAppointmentBatal}"></p>
-                                        </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Dokter</h5>
+                                        <p class="card-text display-4" th:text="${totalDokter}"></p>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Poli</h5>
+                                        <p class="card-text display-4" th:text="${totalPoli}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Bulan</h5>
+                                        <p class="card-text display-4" th:text="${bulan}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Tahun</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text" th:text="${tahun}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                             
                             <div class="row mt-4">
                                 <div class="col-md-12">

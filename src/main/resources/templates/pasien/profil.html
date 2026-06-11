@@ -27,7 +27,7 @@
             <div class="profile-header">
               <div class="profile-avatar-section">
                 <div class="profile-avatar">
-                  <img src="/images/avatar-pasien.jpg" alt="Budi Santoso" />
+                  <img src="/images/avatar-pasien.jpg" th:alt="${nama}" alt="Budi Santoso" />
                   <span class="verified-badge">
                     <svg
                       width="10"
@@ -43,7 +43,7 @@
                 </div>
                 <div class="profile-info">
                   <h1 class="profile-name">
-                    Budi Santoso
+                    <span th:text="${nama}">Budi Santoso</span>
                     <svg
                       width="16"
                       height="16"

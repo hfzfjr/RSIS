@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jadwal & Riwayat - RSIS</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/layout/navbar-pasien.css" />
-    <link rel="stylesheet" href="/css/layout/footer.css" />
+    <link rel="stylesheet" href="/css/layout/navbar.css" />
     <link rel="stylesheet" href="/css/pasien/jadwal-riwayat.css" />
   </head>
   <body>
@@ -14,52 +13,16 @@
     <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
 
     <main class="main-container">
-      <!-- Breadcrumb -->
-      <nav class="breadcrumb">
-        <a href="/pasien/dashboard">Portal Pasien</a>
-        <span class="breadcrumb-separator">›</span>
-        <span class="breadcrumb-current">Riwayat Janji Temu</span>
-      </nav>
-
       <!-- Header Section -->
       <section class="page-header">
         <div class="header-content">
           <div>
-            <h1 class="page-title">Riwayat Janji Temu</h1>
+            <h1 class="page-title">Jadwal & Riwayat Booking</h1>
             <p class="page-subtitle">
-              Lihat dan kelola semua riwayat konsultasi medis Anda.
+              Lihat dan kelola semua riwayat konsultasi medis Anda
             </p>
           </div>
           <div class="header-actions">
-            <button class="btn btn-outline">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export Riwayat
-            </button>
-            <button class="btn btn-primary">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Janji Temu Baru
-            </button>
           </div>
         </div>
       </section>
@@ -112,20 +75,6 @@
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </button>
-          <div class="status-legend">
-            <span class="legend-item">
-              <span class="legend-dot completed"></span>
-              Completed
-            </span>
-            <span class="legend-item">
-              <span class="legend-dot rescheduled"></span>
-              Rescheduled
-            </span>
-            <span class="legend-item">
-              <span class="legend-dot cancelled"></span>
-              Cancelled
-            </span>
-          </div>
         </div>
       </section>
 
@@ -147,7 +96,6 @@
           class="alert alert-info"
         >
           Belum ada appointment.
-          <a href="/appointment/booking">Booking appointment sekarang</a>
         </div>
 
         <div
@@ -237,84 +185,7 @@
             </tbody>
           </table>
         </div>
-
-        <!-- Table Footer -->
-        <div class="table-footer">
-          <span class="showing-text"
-            >Menampilkan 4 dari 28 riwayat janji temu</span
-          >
-          <div class="pagination">
-            <button class="pagination-btn" disabled>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Info Cards Section -->
-      <section class="info-cards">
-        <div class="info-card help-card">
-          <div class="help-content">
-            <h3 class="help-title">Butuh Bantuan dengan Jadwal Anda?</h3>
-            <p class="help-desc">
-              Tim admin kami siap membantu Anda menjadwalkan ulang atau mengatur
-              kunjungan medis berikutnya.
-            </p>
-            <button class="btn btn-light">Hubungi CS Kami</button>
-          </div>
-        </div>
-        <div class="info-card security-card">
-          <div class="security-header">
-            <div class="security-icon">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-            </div>
-            <div>
-              <h4 class="security-title">Data Aman</h4>
-              <p class="security-subtitle">Enkripsi End-to-End</p>
-            </div>
-          </div>
-          <p class="security-desc">
-            Semua riwayat medis dan janji temu Anda dilindungi oleh protokol
-            keamanan standar medis internasional.
-          </p>
-        </div>
       </section>
     </main>
-
-    <!-- Footer Fragment -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
   </body>
 </html>

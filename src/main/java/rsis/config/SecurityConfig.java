@@ -44,6 +44,7 @@ public class SecurityConfig {
             PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(encoder);
+        provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
 
@@ -65,13 +66,24 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(successHandler)
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/auth?logout"));
+                        .failureHandler((request, response, exception) -> {
+                        String errorType = "wrongpassword";
+                        
+                        // Cek apakah erornya karena email tidak ditemukan
+                        if (exception instanceof org.springframework.security.core.userdetails.UsernameNotFoundException) {
+                            errorType = "notfound";
+                        }
+                        
+                        // Redirect sambil membawa parameter error yang spesifik
+                        response.sendRedirect("/auth?tab=login&error=" + errorType);
+                    })
+                    .permitAll())
+            .logout(logout -> logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/auth?logout"));
 
-        return http.build();
-    }
+    return http.build();
+}
 
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler() {

@@ -527,13 +527,16 @@ body {
     .rs-calendar-grid {
         grid-template-columns: repeat(4, 1fr);
     }
+
     .rs-calendar-col {
         border-bottom: 1px solid var(--rs-border-light);
         min-height: 280px;
     }
+
     .rs-calendar-col:nth-child(4n) {
         border-right: none;
     }
+
     .rs-calendar-col.active {
         border: 2px solid var(--rs-primary-text);
     }
@@ -543,20 +546,25 @@ body {
     .rs-calendar-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .rs-calendar-col:nth-child(2n) {
         border-right: none;
     }
+
     .rs-page-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
+
     .rs-nav-links {
         display: none;
     }
+
     .rs-profile-info {
         display: none;
     }
+
     .rs-table-panel {
         overflow-x: auto;
     }
@@ -566,6 +574,7 @@ body {
     .rs-calendar-grid {
         grid-template-columns: 1fr;
     }
+
     .rs-calendar-col {
         border-right: none;
     }

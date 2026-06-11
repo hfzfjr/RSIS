@@ -1,13 +1,20 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rsis.model.Appointment;
+import rsis.model.AppUser;
+import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
+import rsis.repository.DokterRepository;
+import rsis.repository.UserRepository;
 import rsis.service.DokterService;
+import rsis.service.NotifikasiService;
 
 import java.security.Principal;
 import java.util.List;
@@ -19,18 +26,65 @@ public class DokterController {
     @Autowired
     private DokterService dokterService;
 
+    @Autowired
+    private NotifikasiService notifikasiService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private DokterRepository dokterRepository;
+
+    private void addNotifikasiToModel(String userId, Model model) {
+        try {
+            var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
+            model.addAttribute("notifikasi", notifikasis);
+        } catch (Exception e) {
+            model.addAttribute("notifikasi", List.of());
+        }
+    }
+
     @GetMapping("/dashboard")
-    public String dashboard(Model model, Principal principal) {
-        String dokterId = principal.getName();
+    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByEmail(appUser.getEmail()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", appUser.getNama());
+            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("activeMenu", "dashboard");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+        }
+
+        String dokterId = dokter != null ? dokter.getIdDokter() : "";
         model.addAttribute("dokterId", dokterId);
         return "dokter/dashboard";
     }
 
     @GetMapping("/jadwal")
-    public String jadwal(Model model, Principal principal) {
-        String dokterId = principal.getName();
-        List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
-        model.addAttribute("jadwals", jadwals);
+    public String jadwal(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByEmail(appUser.getEmail()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", appUser.getNama());
+            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("activeMenu", "jadwal");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+
+            String dokterId = dokter.getIdDokter();
+            List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
+            model.addAttribute("jadwals", jadwals);
+        }
+
         return "dokter/jadwal";
     }
 
@@ -73,19 +127,68 @@ public class DokterController {
     }
 
     @GetMapping("/daftar-pasien")
-    public String daftarPasien(Model model, Principal principal) {
-        String dokterId = principal.getName();
-        List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);
-        model.addAttribute("appointments", appointments);
+    public String daftarPasien(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByEmail(appUser.getEmail()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", appUser.getNama());
+            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("activeMenu", "jadwal");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+
+            String dokterId = dokter.getIdDokter();
+            List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);
+            model.addAttribute("appointments", appointments);
+        }
+
         return "dokter/daftar-pasien";
     }
 
     @GetMapping("/appointment/pending")
-    public String pendingAppointments(Model model, Principal principal) {
-        String dokterId = principal.getName();
-        List<Appointment> appointments = dokterService.getPendingAppointments(dokterId);
-        model.addAttribute("appointments", appointments);
+    public String pendingAppointments(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByEmail(appUser.getEmail()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", appUser.getNama());
+            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("activeMenu", "jadwal");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+
+            String dokterId = dokter.getIdDokter();
+            List<Appointment> appointments = dokterService.getPendingAppointments(dokterId);
+            model.addAttribute("appointments", appointments);
+        }
+
         return "dokter/appointment-pending";
+    }
+
+    @GetMapping("/profil")
+    public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByEmail(appUser.getEmail()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", appUser.getNama());
+            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("activeMenu", "profil");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+        }
+
+        return "dokter/profil";
     }
 
     @PostMapping("/appointment/konfirmasi/{id}")

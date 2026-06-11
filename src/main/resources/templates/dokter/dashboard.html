@@ -4,75 +4,486 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Dokter - RSIS</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <!-- CSRF Metadata for Spring Security -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <!-- External CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/dokter/dashboard.css}" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container">
-        <a class="navbar-brand" href="/">RSIS</a>
-        <div class="navbar-nav">
-          <a class="nav-link active" href="/dokter/dashboard">Dashboard</a>
-          <a class="nav-link" href="/dokter/jadwal">Jadwal Praktik</a>
-          <a class="nav-link" href="/dokter/daftar-pasien">Daftar Pasien</a>
-          <a class="nav-link" href="/dokter/appointment/pending"
-            >Appointment Pending</a
-          >
+    <!-- Premium Navigation Header -->
+    <header class="rs-navbar">
+      <div class="rs-nav-container">
+        <a href="/dokter/dashboard" class="rs-logo-area">
+          <img src="/images/logo-rsis.png" alt="RSIS Logo" class="rs-logo-img" />
+          <div class="rs-logo-text-group">
+            <span class="rs-logo-title">RSIS</span>
+            <span class="rs-logo-subtitle">Rumah Sakit Inteligent System</span>
+          </div>
+        </a>
+        <ul class="rs-nav-links">
+          <li><a href="/dokter/dashboard" class="rs-nav-link active">Dashboard</a></li>
+          <li><a href="/dokter/jadwal" class="rs-nav-link">Jadwal Praktik</a></li>
+          <li><a href="/dokter/appointment/pending" class="rs-nav-link">Appointment</a></li>
+        </ul>
+        <div class="rs-nav-right">
+          <button class="rs-notif-btn" aria-label="Notifikasi">
+            <i class="bi bi-bell"></i>
+            <span class="rs-notif-badge"></span>
+          </button>
+          <div class="rs-nav-divider"></div>
+          <a href="/dokter/dashboard" class="rs-profile-widget">
+            <div class="rs-profile-info">
+              <span class="rs-profile-name">Ahmad Hafiz</span>
+              <span class="rs-profile-role">Dokter</span>
+            </div>
+            <img src="/images/dokter.png" alt="Dokter Avatar" class="rs-profile-avatar" />
+          </a>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <div class="container mt-4">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header">
-              <h3>Selamat Datang, Dokter</h3>
+    <!-- Main Content Area -->
+    <main class="rs-main-content">
+      <!-- Row 1: Summary Statistics Cards -->
+      <div class="rs-stats-grid">
+        <!-- Card 1 -->
+        <div class="rs-stat-card">
+          <div class="rs-stat-icon-wrapper rs-icon-blue">
+            <i class="bi bi-calendar3"></i>
+          </div>
+          <div class="rs-stat-data">
+            <span class="rs-stat-title">Total Appointment Hari Ini</span>
+            <span class="rs-stat-value" id="count-today-appointments">7</span>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="rs-stat-card">
+          <div class="rs-stat-icon-wrapper rs-icon-red">
+            <i class="bi bi-clipboard-pulse"></i>
+          </div>
+          <div class="rs-stat-data">
+            <span class="rs-stat-title">Menunggu Konfirmasi</span>
+            <span class="rs-stat-value" id="count-pending">4</span>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="rs-stat-card">
+          <div class="rs-stat-icon-wrapper rs-icon-green">
+            <i class="bi bi-people"></i>
+          </div>
+          <div class="rs-stat-data">
+            <span class="rs-stat-title">Total Pasien Aktif</span>
+            <span class="rs-stat-value" id="count-total-pasien">47</span>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="rs-stat-card">
+          <div class="rs-stat-icon-wrapper rs-icon-purple">
+            <i class="bi bi-clock"></i>
+          </div>
+          <div class="rs-stat-data">
+            <span class="rs-stat-title">Sesi Praktik Aktif</span>
+            <span class="rs-stat-value" id="count-active-sessions">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Grid Layout -->
+      <div class="rs-layout-grid">
+        <!-- Left Column: Patient Queue and Confirmed Appointments -->
+        <div class="rs-column-left">
+          <!-- Patient Queue -->
+          <div>
+            <h2 class="rs-section-title">Antrian Pasien Saat Ini</h2>
+            <div class="rs-panel">
+              <div class="rs-list" id="queue-list">
+                <!-- Item 1 -->
+                <div class="rs-queue-item">
+                  <div class="rs-queue-left">
+                    <div class="rs-number-badge">01</div>
+                    <div class="rs-patient-info">
+                      <div class="rs-patient-name">Budi Santoso</div>
+                      <div class="rs-patient-meta">Perempuan, 3 Tahun • Imunisasi</div>
+                    </div>
+                  </div>
+                  <div class="rs-status-tag active">Sedang Berlangsung</div>
+                </div>
+                <!-- Item 2 -->
+                <div class="rs-queue-item">
+                  <div class="rs-queue-left">
+                    <div class="rs-number-badge">02</div>
+                    <div class="rs-patient-info">
+                      <div class="rs-patient-name">Siti Aminah</div>
+                      <div class="rs-patient-meta">Perempuan, 3 Tahun • Imunisasi</div>
+                    </div>
+                  </div>
+                  <div class="rs-status-tag waiting">Menunggu di ruang tunggu</div>
+                </div>
+                <!-- Item 3 -->
+                <div class="rs-queue-item">
+                  <div class="rs-queue-left">
+                    <div class="rs-number-badge">03</div>
+                    <div class="rs-patient-info">
+                      <div class="rs-patient-name">Kevin Pratama</div>
+                      <div class="rs-patient-meta">Laki-laki, 8 Tahun • Kontrol Demam</div>
+                    </div>
+                  </div>
+                  <div class="rs-status-tag absent">Belum Hadir</div>
+                </div>
+              </div>
+              <div class="rs-panel-footer">
+                <span class="rs-footer-text" id="queue-footer-text">+ 4 Pasien berikutnya</span>
+                <a href="/dokter/daftar-pasien" class="rs-footer-link">Lihat Semua</a>
+              </div>
             </div>
-            <div class="card-body">
-              <p>ID Dokter: <span th:text="${dokterId}"></span></p>
-              <div class="row mt-4">
-                <div class="col-md-3">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Appointment Hari Ini</h5>
-                      <p class="card-text display-4">0</p>
+          </div>
+
+          <!-- Pending Confirmations -->
+          <div>
+            <h2 class="rs-section-title">Appointment Menunggu Konfirmasi</h2>
+            <div class="rs-panel">
+              <div class="rs-list" id="pending-list">
+                <!-- Item 1 -->
+                <div class="rs-appoint-item">
+                  <div class="rs-appoint-left">
+                    <div class="rs-user-icon-circle">
+                      <i class="bi bi-person"></i>
+                    </div>
+                    <div class="rs-appoint-details">
+                      <div class="rs-appoint-name">Bpk. Ahmad Subarjo</div>
+                      <div class="rs-appoint-type">Konsultasi Anak Pertama</div>
+                      <div class="rs-badge-row">
+                        <span class="rs-date-badge">
+                          <i class="bi bi-calendar"></i> Besok, 09:00
+                        </span>
+                        <span class="rs-pending-badge">Menunggu Konfirmasi</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Pasien Total</h5>
-                      <p class="card-text display-4">0</p>
-                    </div>
+                  <div class="rs-appoint-actions">
+                    <button class="rs-btn rs-btn-outline" onclick="rejectAppointment('mock1')">Tolak</button>
+                    <button class="rs-btn rs-btn-primary" onclick="confirmAppointment('mock1')">Terima</button>
                   </div>
                 </div>
-                <div class="col-md-3">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Jadwal Aktif</h5>
-                      <p class="card-text display-4">0</p>
+                <!-- Item 2 -->
+                <div class="rs-appoint-item">
+                  <div class="rs-appoint-left">
+                    <div class="rs-user-icon-circle">
+                      <i class="bi bi-person"></i>
+                    </div>
+                    <div class="rs-appoint-details">
+                      <div class="rs-appoint-name">Ibu Kartini</div>
+                      <div class="rs-appoint-type">Kontrol Rutin</div>
+                      <div class="rs-badge-row">
+                        <span class="rs-date-badge">
+                          <i class="bi bi-calendar"></i> Lusa, 14:30
+                        </span>
+                        <span class="rs-pending-badge">Menunggu Konfirmasi</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Pending</h5>
-                      <p class="card-text display-4">0</p>
-                    </div>
+                  <div class="rs-appoint-actions">
+                    <button class="rs-btn rs-btn-outline" onclick="rejectAppointment('mock2')">Tolak</button>
+                    <button class="rs-btn rs-btn-primary" onclick="confirmAppointment('mock2')">Terima</button>
                   </div>
                 </div>
+              </div>
+              <div class="rs-panel-footer">
+                <span class="rs-footer-text" id="pending-footer-text">+ 2 Pasien berikutnya</span>
+                <a href="/dokter/appointment/pending" class="rs-footer-link">Lihat Semua</a>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
+        <!-- Right Column: Practice Schedule Timeline -->
+        <div class="rs-column-right">
+          <div>
+            <h2 class="rs-section-title">Jadwal Praktik Hari Ini</h2>
+            <div class="rs-schedule-panel">
+              <div class="rs-timeline" id="timeline-container">
+                <!-- Timeline Item 1 -->
+                <div class="rs-timeline-item">
+                  <div class="rs-timeline-dot active"></div>
+                  <div class="rs-timeline-content">
+                    <div class="rs-timeline-title">Poli Anak Lt. 2</div>
+                    <div class="rs-timeline-time">08:00 - 12:00</div>
+                    <div class="rs-timeline-sub">Sesi Pagi (Sedang Berlangsung)</div>
+                  </div>
+                </div>
+                <!-- Timeline Item 2 -->
+                <div class="rs-timeline-item">
+                  <div class="rs-timeline-dot"></div>
+                  <div class="rs-timeline-content">
+                    <div class="rs-timeline-title">Istirahat</div>
+                    <div class="rs-timeline-time">12:00 - 13:00</div>
+                  </div>
+                </div>
+                <!-- Timeline Item 3 -->
+                <div class="rs-timeline-item">
+                  <div class="rs-timeline-dot"></div>
+                  <div class="rs-timeline-content">
+                    <div class="rs-timeline-title">Poli Anak Lt. 2</div>
+                    <div class="rs-timeline-time">13:00 - 16:00</div>
+                    <div class="rs-timeline-sub">Sesi Siang</div>
+                  </div>
+                </div>
+              </div>
+              <a href="/dokter/jadwal" class="rs-btn rs-btn-wide">
+                <i class="bi bi-calendar-check"></i> Kelola Jadwal
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dynamic Dashboard Sync Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          // 1. Fetch pending appointments to update "Menunggu Konfirmasi" card and list
+          fetch('/dokter/appointment/pending')
+              .then(response => response.text())
+              .then(html => {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(html, 'text/html');
+                  const rows = doc.querySelectorAll('tbody tr');
+                  
+                  // Validate that we found rows and it's not the empty alert
+                  if (rows.length > 0 && !doc.querySelector('.alert-info')) {
+                      // Update card count
+                      const countBadge = document.getElementById('count-pending');
+                      if (countBadge) countBadge.textContent = rows.length;
+                      
+                      // Update pending lists
+                      const listContainer = document.getElementById('pending-list');
+                      if (listContainer) {
+                          listContainer.innerHTML = '';
+                          rows.forEach((row, index) => {
+                              if (index >= 3) return; // limit display to 3 items
+                              const cols = row.querySelectorAll('td');
+                              if (cols.length < 5) return;
+                              
+                              const id = cols[0].textContent.trim();
+                              const patientName = cols[1].textContent.trim();
+                              const bookingDate = cols[2].textContent.trim();
+                              const scheduleTime = cols[3].textContent.trim();
+                              const catatan = cols[4].textContent.trim();
+                              
+                              const itemHtml = `
+                                  <div class="rs-appoint-item">
+                                      <div class="rs-appoint-left">
+                                          <div class="rs-user-icon-circle">
+                                              <i class="bi bi-person"></i>
+                                          </div>
+                                          <div class="rs-appoint-details">
+                                              <div class="rs-appoint-name">${patientName}</div>
+                                              <div class="rs-appoint-type">${catatan || 'Konsultasi Umum'}</div>
+                                              <div class="rs-badge-row">
+                                                  <span class="rs-date-badge">
+                                                      <i class="bi bi-calendar"></i> ${scheduleTime || bookingDate}
+                                                  </span>
+                                                  <span class="rs-pending-badge">Menunggu Konfirmasi</span>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="rs-appoint-actions">
+                                          <button class="rs-btn rs-btn-outline" onclick="rejectAppointment('${id}')">Tolak</button>
+                                          <button class="rs-btn rs-btn-primary" onclick="confirmAppointment('${id}')">Terima</button>
+                                      </div>
+                                  </div>
+                              `;
+                              listContainer.insertAdjacentHTML('beforeend', itemHtml);
+                          });
+                          
+                          // Update footer count text
+                          const footerText = document.getElementById('pending-footer-text');
+                          if (footerText) {
+                              const remaining = rows.length - Math.min(3, rows.length);
+                              footerText.textContent = remaining > 0 ? `+ ${remaining} Pasien berikutnya` : '';
+                          }
+                      }
+                  }
+              }).catch(err => console.warn("Live pending appointments sync skipped:", err));
+
+          // 2. Fetch all appointments (daftar pasien)
+          fetch('/dokter/daftar-pasien')
+              .then(response => response.text())
+              .then(html => {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(html, 'text/html');
+                  const rows = doc.querySelectorAll('tbody tr');
+                  
+                  if (rows.length > 0 && !doc.querySelector('.alert-info')) {
+                      // Update total patients count card
+                      const totalPasienCard = document.getElementById('count-total-pasien');
+                      if (totalPasienCard) totalPasienCard.textContent = rows.length;
+                      
+                      let confirmedCount = 0;
+                      let activeQueueHtml = '';
+                      let queueIndex = 1;
+                      
+                      rows.forEach((row) => {
+                          const cols = row.querySelectorAll('td');
+                          if (cols.length < 5) return;
+                          
+                          const statusText = cols[3].textContent.trim();
+                          if (statusText === 'DIKONFIRMASI') {
+                              confirmedCount++;
+                              
+                              // Populate first 3 confirmed items in active queue
+                              if (queueIndex <= 3) {
+                                  const patientName = cols[1].textContent.trim();
+                                  const bookingDate = cols[2].textContent.trim();
+                                  const queueNum = cols[4].textContent.trim() || `${queueIndex}`;
+                                  
+                                  const details = `Pemeriksaan Tanggal: ${bookingDate}`;
+                                  const status = queueIndex === 1 ? 'Sedang Berlangsung' : 'Menunggu di ruang tunggu';
+                                  const statusClass = queueIndex === 1 ? 'active' : 'waiting';
+                                  
+                                  activeQueueHtml += `
+                                      <div class="rs-queue-item">
+                                          <div class="rs-queue-left">
+                                              <div class="rs-number-badge">${queueNum.padStart(2, '0')}</div>
+                                              <div class="rs-patient-info">
+                                                  <div class="rs-patient-name">${patientName}</div>
+                                                  <div class="rs-patient-meta">${details}</div>
+                                              </div>
+                                          </div>
+                                          <div class="rs-status-tag ${statusClass}">${status}</div>
+                                      </div>
+                                  `;
+                                  queueIndex++;
+                              }
+                          }
+                      });
+                      
+                      // Update total appointments count card
+                      const todayApptsCard = document.getElementById('count-today-appointments');
+                      if (todayApptsCard) todayApptsCard.textContent = confirmedCount;
+                      
+                      // Render dynamic active queues
+                      if (activeQueueHtml) {
+                          const queueList = document.getElementById('queue-list');
+                          if (queueList) queueList.innerHTML = activeQueueHtml;
+                          
+                          const queueFooterText = document.getElementById('queue-footer-text');
+                          if (queueFooterText) {
+                              const remaining = confirmedCount - Math.min(3, confirmedCount);
+                              queueFooterText.textContent = remaining > 0 ? `+ ${remaining} Pasien berikutnya` : '';
+                          }
+                      }
+                  }
+              }).catch(err => console.warn("Live patient list sync skipped:", err));
+
+          // 3. Fetch schedules to build the timeline
+          fetch('/dokter/jadwal')
+              .then(response => response.text())
+              .then(html => {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(html, 'text/html');
+                  const rows = doc.querySelectorAll('tbody tr');
+                  
+                  if (rows.length > 0 && !doc.querySelector('.alert-info')) {
+                      // Update active practice sessions count card
+                      const countSesi = document.getElementById('count-active-sessions');
+                      if (countSesi) countSesi.textContent = rows.length;
+                      
+                      // Rebuild schedule timeline
+                      const timelineContainer = document.getElementById('timeline-container');
+                      if (timelineContainer) {
+                          timelineContainer.innerHTML = '';
+                          rows.forEach((row, index) => {
+                              const cols = row.querySelectorAll('td');
+                              if (cols.length < 6) return;
+                              
+                              const day = cols[0].textContent.trim();
+                              const startTime = cols[1].textContent.trim();
+                              const endTime = cols[2].textContent.trim();
+                              const status = cols[5].textContent.trim();
+                              
+                              const isActive = index === 0 && status === 'TERSEDIA';
+                              const dotClass = isActive ? 'active' : '';
+                              const subtext = isActive ? 'Sesi Hari Ini (Aktif)' : 'Sesi Jadwal';
+                              
+                              const timelineItem = `
+                                  <div class="rs-timeline-item">
+                                      <div class="rs-timeline-dot ${dotClass}"></div>
+                                      <div class="rs-timeline-content">
+                                          <div class="rs-timeline-title">Poli Anak - Hari ${day}</div>
+                                          <div class="rs-timeline-time">${startTime.substring(0, 5)} - ${endTime.substring(0, 5)}</div>
+                                          <div class="rs-timeline-sub">${subtext}</div>
+                                      </div>
+                                  </div>
+                              `;
+                              timelineContainer.insertAdjacentHTML('beforeend', timelineItem);
+                          });
+                      }
+                  }
+              }).catch(err => console.warn("Live schedules sync skipped:", err));
+      });
+
+      // Submit confirmations dynamically with CSRF tokens
+      function confirmAppointment(id) {
+          if (id.startsWith('mock')) {
+              alert('Ini adalah data simulasi (mockup). Aksi hanya berfungsi untuk data pasien dari database.');
+              return;
+          }
+          if (confirm('Konfirmasi appointment ini?')) {
+              const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = `/dokter/appointment/konfirmasi/${id}`;
+              
+              const csrfInput = document.createElement('input');
+              csrfInput.type = 'hidden';
+              csrfInput.name = '_csrf';
+              csrfInput.value = csrfToken;
+              form.appendChild(csrfInput);
+              
+              document.body.appendChild(form);
+              form.submit();
+          }
+      }
+
+      // Submit rejections dynamically with reasons and CSRF tokens
+      function rejectAppointment(id) {
+          if (id.startsWith('mock')) {
+              alert('Ini adalah data simulasi (mockup). Aksi hanya berfungsi untuk data pasien dari database.');
+              return;
+          }
+          const reason = prompt('Masukkan alasan penolakan appointment:');
+          if (reason !== null) {
+              const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = `/dokter/appointment/tolak/${id}`;
+              
+              const csrfInput = document.createElement('input');
+              csrfInput.type = 'hidden';
+              csrfInput.name = '_csrf';
+              csrfInput.value = csrfToken;
+              form.appendChild(csrfInput);
+              
+              const inputReason = document.createElement('input');
+              inputReason.type = 'hidden';
+              inputReason.name = 'alasan';
+              inputReason.value = reason || 'Jadwal penuh';
+              form.appendChild(inputReason);
+              
+              document.body.appendChild(form);
+              form.submit();
+          }
+      }
+    </script>
   </body>
 </html>

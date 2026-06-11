@@ -35,12 +35,10 @@
             <button class="tab-button" data-tab="register">Daftar</button>
           </div>
 
-          <!-- Login Form Component -->
           <div class="tab-content active" id="login-tab">
             <div th:replace="~{fragments/auth/login-form :: login-form}"></div>
           </div>
 
-          <!-- Register Form Component -->
           <div class="tab-content" id="register-tab">
             <div th:replace="~{fragments/auth/register-form :: register-form}"></div>
           </div>
@@ -49,34 +47,27 @@
     </main>
 
     <script>
-      // Tab functionality
       document.addEventListener("DOMContentLoaded", function () {
         const tabButtons = document.querySelectorAll(".tab-button");
         const tabContents = document.querySelectorAll(".tab-content");
 
-        // Check URL query parameter for default tab
         const urlParams = new URLSearchParams(window.location.search);
         const defaultTab = urlParams.get('tab');
 
-        // Function to activate a specific tab
         function activateTab(tabName) {
           const targetButton = document.querySelector(`[data-tab="${tabName}"]`);
           const targetContent = document.getElementById(`${tabName}-tab`);
           
-          // Remove active class from all buttons and contents
           tabButtons.forEach((btn) => btn.classList.remove("active"));
           tabContents.forEach((content) => content.classList.remove("active"));
           
-          // Add active class to target button and content
           targetButton.classList.add("active");
           targetContent.classList.add("active");
           
-          // Update URL without page reload
           const newUrl = tabName === 'login' ? '/auth?tab=login' : '/auth?tab=register';
           window.history.replaceState({}, '', newUrl);
         }
 
-        // Activate default tab from URL parameter
         if (defaultTab === 'register') {
           activateTab('register');
         } else if (defaultTab === 'login') {
@@ -85,31 +76,36 @@
 
         tabButtons.forEach((button) => {
           button.addEventListener("click", () => {
+            // Logika disembunyikan DISINI, jadi hanya hilang saat tombol diklik!
+            const alerts = document.querySelectorAll('.auth-alert');
+            alerts.forEach(alert => alert.style.display = 'none');
+
             const targetTab = button.getAttribute("data-tab");
             activateTab(targetTab);
           });
         });
 
-        // Password visibility toggle (only for login form)
-        const passwordToggle = document.getElementById("password-toggle");
-        const passwordInput = document.getElementById("password-input");
+        const toggleButtons = document.querySelectorAll('.password-toggle');
         
-        if (passwordToggle && passwordInput) {
-          const eyeOpen = passwordToggle.querySelector(".eye-open");
-          const eyeClosed = passwordToggle.querySelector(".eye-closed");
+        toggleButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const input = this.previousElementSibling; 
+            const eyeOpen = this.querySelector('.eye-open');
+            const eyeClosed = this.querySelector('.eye-closed');
 
-          passwordToggle.addEventListener("click", () => {
-            if (passwordInput.type === "password") {
-              passwordInput.type = "text";
-              eyeOpen.style.display = "none";
-              eyeClosed.style.display = "block";
-            } else {
-              passwordInput.type = "password";
-              eyeOpen.style.display = "block";
-              eyeClosed.style.display = "none";
+            if (input && input.tagName === 'INPUT') { 
+                if (input.type === 'password') {
+                  input.type = 'text';
+                  eyeOpen.style.display = 'block';     
+                  eyeClosed.style.display = 'none';    
+                } else {
+                  input.type = 'password';
+                  eyeOpen.style.display = 'none';      
+                  eyeClosed.style.display = 'block';   
+                }
             }
           });
-        }
+        });
       });
     </script>
   </body>

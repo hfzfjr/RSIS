@@ -1,150 +1,139 @@
-<!doctype html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profil Informasi - RSIS</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/layout/navbar-pasien.css" />
-    <link rel="stylesheet" href="/css/layout/footer.css" />
-    <link rel="stylesheet" href="/css/pasien/profil.css" />
-  </head>
-  <body>
-    <!-- Navbar Fragment -->
-    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
+<th:block th:fragment="profil">
+  <main class="profil-main">
 
-    <main class="main-container">
-      <div class="profile-layout">
-        <!-- Left Sidebar Fragment -->
-        <div
-          th:replace="~{fragments/sidebar-profil :: sidebar-profil (activeMenu='informasi')}"
-        ></div>
-
-        <!-- Main Content -->
-        <section class="profile-content">
-          <!-- Profile Header -->
-          <div class="profile-header-card">
-            <div class="profile-header">
-              <div class="profile-avatar-section">
-                <div class="profile-avatar">
-                  <img src="/images/avatar-pasien.jpg" th:alt="${nama}" alt="Budi Santoso" />
-                  <span class="verified-badge">
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                      stroke="white"
-                      stroke-width="3"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </span>
-                </div>
-                <div class="profile-info">
-                  <h1 class="profile-name">
-                    <span th:text="${nama}">Budi Santoso</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="#006C5A"
-                      stroke="#006C5A"
-                      stroke-width="2"
-                    >
-                      <path
-                        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                      ></path>
-                      <polyline points="9 12 12 15 16 10"></polyline>
-                    </svg>
-                  </h1>
-                  <p class="profile-email">budisantoso@email.com</p>
-                  <div class="profile-meta">
-                    <span class="meta-id">ID: RS-2022-8812</span>
-                    <span class="separator">|</span>
-                    <span class="meta-status">
-                      <span class="status-label">Status:</span>
-                      <span class="status-value verified">Terverifikasi</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div class="profile-stats">
-                <div class="stat-card">
-                  <span class="stat-label">Kunjungan</span>
-                  <span class="stat-value">12</span>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-label">Resep</span>
-                  <span class="stat-value">05</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Personal Info Form -->
-          <div class="profile-form-card">
-            <div class="form-header">
-              <div>
-                <h2 class="form-title">Informasi Pribadi</h2>
-                <p class="form-subtitle">
-                  Kelola detail dasar akun Anda di sini.
-                </p>
-              </div>
-              <button class="btn btn-primary">Simpan Perubahan</button>
-            </div>
-
-            <form class="profile-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="namaLengkap">Nama Lengkap</label>
-                  <input
-                    type="text"
-                    id="namaLengkap"
-                    class="form-input"
-                    value="Budi Santoso"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="nomorTelepon">Nomor Telepon</label>
-                  <input
-                    type="text"
-                    id="nomorTelepon"
-                    class="form-input"
-                    value="+62 812 3456 7890"
-                  />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="tanggalLahir">Tanggal Lahir</label>
-                  <input
-                    type="text"
-                    id="tanggalLahir"
-                    class="form-input"
-                    value="05/12/1985"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="jenisKelamin">Jenis Kelamin</label>
-                  <select id="jenisKelamin" class="form-select">
-                    <option value="laki-laki" selected>Laki-laki</option>
-                    <option value="perempuan">Perempuan</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group full-width">
-                <label for="alamat">Alamat Lengkap</label>
-                <textarea id="alamat" class="form-textarea" rows="3">
-Jl. Kebayoran Baru No. 45, Jakarta Selatan, DKI Jakarta</textarea
-                >
-              </div>
-            </form>
-          </div>
-        </section>
+    <!-- ===== CARD 1: PROFILE HEADER ===== -->
+    <div class="profil-card profil-header-card">
+      <div class="profil-header-inner">
+        <div class="profil-avatar-wrap">
+          <img
+            th:src="${role == 'PASIEN' ? '/images/avatar-pasien.jpg' : (role == 'DOKTER' ? '/images/avatar-dokter.jpg' : '/images/avatar-admin.jpg')}"
+            th:alt="${nama}" class="profil-avatar-img" />
+        </div>
+        <div class="profil-header-info">
+          <h1 class="profil-nama" th:text="${nama}">Nama User</h1>
+          <p class="profil-email" th:text="${email}">email@example.com</p>
+          <p class="profil-id" th:text="'ID: ' + ${idUser}">ID: RS-2022-8812</p>
+        </div>
+        <div class="profil-header-action">
+          <a href="/auth?tab=login&logout" class="btn-logout">Logout</a>
+        </div>
       </div>
-    </main>
-  </body>
-</html>
+    </div>
+
+    <!-- ===== CARD 2: INFORMASI PRIBADI ===== -->
+    <div class="profil-card">
+      <div class="profil-card-header">
+        <h2 class="profil-card-title">Informasi Pribadi</h2>
+        <button type="submit" form="formInfoPribadi" class="btn-simpan">Simpan Perubahan</button>
+      </div>
+
+      <form id="formInfoPribadi" class="profil-form"
+        th:action="${role == 'PASIEN' ? '/pasien/profil' : (role == 'DOKTER' ? '/dokter/profil' : '/admin/profil')}"
+        method="post">
+
+        <!-- CSRF token (Spring Security) -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <!-- Row 1: Nama + Nomor Telepon (semua role) -->
+        <div class="profil-form-row">
+          <div class="profil-form-group">
+            <label for="namaLengkap">Nama Lengkap</label>
+            <input type="text" id="namaLengkap" name="namaLengkap" class="profil-input" th:value="${nama}"
+              placeholder="Masukkan nama lengkap" />
+          </div>
+          <div class="profil-form-group">
+            <label for="nomorTelepon">Nomor Telepon</label>
+            <input type="text" id="nomorTelepon" name="nomorTelepon" class="profil-input" th:value="${nomorHp}"
+              placeholder="Contoh: +62 812 3456 7890" />
+          </div>
+        </div>
+
+        <!-- Row 2 PASIEN: Tanggal Lahir + Nomor Rekam Medis -->
+        <div class="profil-form-row" th:if="${role == 'PASIEN'}">
+          <div class="profil-form-group">
+            <label for="tanggalLahir">Tanggal Lahir</label>
+            <input type="text" id="tanggalLahir" name="tanggalLahir" class="profil-input" th:value="${tanggalLahir}"
+              placeholder="DD/MM/YYYY" />
+          </div>
+          <div class="profil-form-group">
+            <label for="nomorRekamMedis">Nomor Rekam Medis</label>
+            <input type="text" id="nomorRekamMedis" name="nomorRekamMedis" class="profil-input profil-input-readonly"
+              th:value="${nomorRekamMedis}" readonly />
+          </div>
+          <div class="profil-form-group profil-form-group-full">
+            <label for="alamat">Alamat Lengkap</label>
+            <textarea id="alamat" name="alamat" class="profil-textarea" rows="3" th:text="${alamat}"
+              placeholder="Masukkan alamat lengkap"></textarea>
+          </div>
+        </div>
+
+        <!-- Row 2 DOKTER: Spesialisasi + Poli + Nomor STR -->
+        <div class="profil-form-row" th:if="${role == 'DOKTER'}">
+          <div class="profil-form-group">
+            <label for="spesialisasi">Spesialisasi</label>
+            <input type="text" id="spesialisasi" name="spesialisasi" class="profil-input profil-input-readonly"
+              th:value="${spesialisasi}" readonly />
+          </div>
+          <div class="profil-form-group">
+            <label for="poli">Poli</label>
+            <input type="text" id="poli" name="poli" class="profil-input profil-input-readonly" th:value="${poli}"
+              readonly />
+          </div>
+          <div class="profil-form-group">
+            <label for="nomorStr">Nomor STR</label>
+            <input type="text" id="nomorStr" name="nomorStr" class="profil-input profil-input-readonly"
+              th:value="${nomorStr}" readonly />
+          </div>
+        </div>
+
+        <!-- Row 2 ADMIN_RS: Jabatan -->
+        <div class="profil-form-row" th:if="${role == 'ADMIN_RS'}">
+          <div class="profil-form-group">
+            <label for="jabatan">Jabatan</label>
+            <input type="text" id="jabatan" name="jabatan" class="profil-input profil-input-readonly"
+              th:value="${jabatan}" readonly />
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== CARD 3: GANTI PASSWORD ===== -->
+    <div class="profil-card">
+      <div class="profil-card-header">
+        <h2 class="profil-card-title">Ganti Password</h2>
+        <button type="submit" form="formGantiPassword" class="btn-simpan">Simpan Perubahan</button>
+      </div>
+
+      <form id="formGantiPassword" class="profil-form"
+        th:action="${role == 'PASIEN' ? '/pasien/profil/password' : (role == 'DOKTER' ? '/dokter/profil/password' : '/admin/profil/password')}"
+        method="post">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="profil-form-group profil-form-group-full">
+          <label for="passwordLama">Masukkan kata sandi lama</label>
+          <input type="password" id="passwordLama" name="passwordLama" class="profil-input"
+            placeholder="••••••••••••••" />
+        </div>
+
+        <div class="profil-form-group profil-form-group-full">
+          <label for="passwordBaru">Masukkan kata sandi baru</label>
+          <input type="password" id="passwordBaru" name="passwordBaru" class="profil-input"
+            placeholder="••••••••••••••" />
+        </div>
+
+        <div class="profil-form-group profil-form-group-full">
+          <label for="konfirmasiPassword">Konfirmasi kata sandi baru</label>
+          <input type="password" id="konfirmasiPassword" name="konfirmasiPassword" class="profil-input"
+            placeholder="••••••••••••••" />
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${success}" class="profil-alert profil-alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="profil-alert profil-alert-error" th:text="${error}"></div>
+
+  </main>
+</th:block>

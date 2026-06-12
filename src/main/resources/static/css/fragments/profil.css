@@ -1,729 +1,265 @@
-/* Profile Page Styles - RSIS */
-/* Menggunakan variabel warna dari style.css */
+/* ============================================
+   PROFIL PAGE — RSIS
+   Mengikuti desain: single column, 3 card,
+   warna brand #006C5A, radius rounded
+   ============================================ */
 
-/* ===== MAIN CONTAINER ===== */
-.main-container {
+/* ===== MAIN WRAPPER ===== */
+.profil-main {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-  background: var(--color-background, #F8FAFC);
-  min-height: calc(100vh - 200px);
-}
-
-/* ===== PROFILE LAYOUT ===== */
-.profile-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 24px;
-}
-
-/* ===== LEFT SIDEBAR ===== */
-.profile-sidebar {
-  background: white;
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 12px;
-  padding: 16px;
-  height: fit-content;
-}
-
-.profile-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6B7280);
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.nav-item:hover {
-  background: var(--color-surface-gray, #F3F4F6);
-  color: var(--color-text-primary, #1A1A2E);
-}
-
-.nav-item.active {
-  background: var(--color-brand-light, #E8F5F1);
-  color: var(--color-brand, #006C5A);
-}
-
-.nav-item svg {
-  flex-shrink: 0;
-}
-
-/* ===== PROFILE CONTENT ===== */
-.profile-content {
+  margin: 32px auto;
+  padding: 0 16px 48px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Profile Header Card */
-.profile-header-card {
-  background: white;
-  border: 1px solid var(--border-subtle, #E5E7EB);
+/* ===== CARD BASE ===== */
+.profil-card {
+  background: #ffffff;
   border-radius: 16px;
-  padding: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.profile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-  flex-wrap: wrap;
+/* ===== CARD 1: PROFILE HEADER ===== */
+.profil-header-card {
+  padding: 24px 32px;
 }
 
-.profile-avatar-section {
+.profil-header-inner {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
-.profile-avatar {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.profil-avatar-wrap {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--color-brand-light, #E8F5F1);
+  flex-shrink: 0;
+  background: #E8F5F1;
+  border: 3px solid #E8F5F1;
 }
 
-.profile-avatar img {
+.profil-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.verified-badge {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 24px;
-  background: var(--color-brand, #006C5A);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-}
-
-.profile-info {
+.profil-header-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
-.profile-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.profil-nama {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-text-primary, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
+  line-height: 1.2;
 }
 
-.profile-email {
+.profil-email {
   font-size: 13px;
-  color: var(--color-text-muted, #9CA3AF);
+  color: #6B7280;
   margin: 0;
 }
 
-.profile-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.profil-id {
   font-size: 12px;
-  margin-top: 4px;
+  color: #9CA3AF;
+  margin: 0;
 }
 
-.meta-id {
-  color: var(--color-text-secondary, #6B7280);
+.profil-header-action {
+  flex-shrink: 0;
 }
 
-.separator {
-  color: var(--border-subtle, #E5E7EB);
-}
-
-.meta-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.status-label {
-  color: var(--color-text-muted, #9CA3AF);
-}
-
-.status-value {
-  font-weight: 600;
-}
-
-.status-value.verified {
-  color: var(--color-brand, #006C5A);
-}
-
-/* Profile Stats */
-.profile-stats {
-  display: flex;
-  gap: 12px;
-}
-
-.stat-card {
-  display: flex;
-  flex-direction: column;
+.btn-logout {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 70px;
-  padding: 12px 20px;
-  background: var(--color-surface-gray, #F3F4F6);
-  border-radius: 12px;
-  text-align: center;
+  padding: 10px 24px;
+  background: #EF4444;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
 }
 
-.stat-label {
-  font-size: 11px;
-  color: var(--color-text-muted, #9CA3AF);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.btn-logout:hover {
+  background: #DC2626;
 }
 
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--color-text-primary, #1A1A2E);
-  line-height: 1;
-  margin-top: 4px;
-}
-
-/* ===== PROFILE FORM CARD ===== */
-.profile-form-card {
-  background: white;
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.form-header {
+/* ===== CARD HEADER (title + button row) ===== */
+.profil-card-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
   margin-bottom: 24px;
   gap: 16px;
-  flex-wrap: wrap;
 }
 
-.form-title {
+.profil-card-title {
   font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-primary, #1A1A2E);
-  margin: 0 0 4px 0;
-}
-
-.form-subtitle {
-  font-size: 13px;
-  color: var(--color-text-secondary, #6B7280);
+  font-weight: 700;
+  color: #1A1A2E;
   margin: 0;
 }
 
-/* Profile Form */
-.profile-form {
+.btn-simpan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  background: #006C5A;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-simpan:hover {
+  background: #005749;
+}
+
+/* ===== FORM LAYOUT ===== */
+.profil-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
-.form-row {
+.profil-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
-.form-group {
+.profil-form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.form-group.full-width {
+.profil-form-group-full {
   grid-column: 1 / -1;
 }
 
-.form-group label {
+.profil-form-group label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-text-secondary, #6B7280);
+  color: #6B7280;
 }
 
-.form-input,
-.form-select,
-.form-textarea {
+/* ===== INPUTS ===== */
+.profil-input,
+.profil-textarea {
   padding: 12px 16px;
-  border: 1px solid var(--border-subtle, #E5E7EB);
+  border: 1px solid #E5E7EB;
   border-radius: 10px;
   font-size: 14px;
-  color: var(--color-text-primary, #1A1A2E);
-  background: white;
+  color: #1A1A2E;
+  background: #ffffff;
   outline: none;
-  transition: all 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-  border-color: var(--color-brand, #006C5A);
-  box-shadow: 0 0 0 3px var(--color-brand-light, #E8F5F1);
+.profil-input:focus,
+.profil-textarea:focus {
+  border-color: #006C5A;
+  box-shadow: 0 0 0 3px rgba(0, 108, 90, 0.1);
 }
 
-.form-textarea {
+.profil-input-readonly {
+  background: #F9FAFB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.profil-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 96px;
 }
 
-.form-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+/* Password placeholder dots */
+input[type="password"]::placeholder {
+  letter-spacing: 2px;
+  color: #C4C4C4;
 }
 
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 600;
+/* ===== FLASH ALERTS ===== */
+.profil-alert {
+  padding: 12px 16px;
   border-radius: 10px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  background: none;
-}
-
-.btn-primary {
-  background: #7ED7C1;
-  color: var(--color-text-primary, #1A1A2E);
-}
-
-.btn-primary:hover {
-  background: #6BC4AE;
-}
-
-/* ===== MEDICAL PROFILE STYLES ===== */
-.medical-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.medical-stat-card {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background: var(--color-surface-gray, #F8FAFC);
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 12px;
-}
-
-.medical-stat-card .stat-icon {
-  width: 36px;
-  height: 36px;
-  background: #7ED7C1;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-brand, #006C5A);
-  margin-bottom: 12px;
-}
-
-.medical-stat-card .stat-label {
-  font-size: 12px;
-  color: var(--color-text-secondary, #6B7280);
-  margin-bottom: 8px;
-}
-
-.medical-stat-card .stat-value-large {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--color-brand, #006C5A);
-  line-height: 1;
-}
-
-.stat-value-large .stat-unit {
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-muted, #9CA3AF);
-  margin-left: 2px;
 }
 
-/* Medical Details */
-.medical-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+.profil-alert-success {
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
 }
 
-.medical-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 12px;
-  background: white;
-}
-
-.section-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6B7280);
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.medical-tag {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.medical-tag.alergi {
-  background: #FFE4E6;
-  color: #E11D48;
-}
-
-.medical-tag.kronis {
-  background: #F3F4F6;
-  color: var(--color-text-secondary, #6B7280);
-}
-
-.btn-add-tag {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  background: transparent;
-  border: 1px dashed var(--border-subtle, #E5E7EB);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6B7280);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-add-tag:hover {
-  border-color: var(--color-brand, #006C5A);
-  color: var(--color-brand, #006C5A);
+.profil-alert-error {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .profile-layout {
-    grid-template-columns: 220px 1fr;
-    gap: 20px;
+@media (max-width: 640px) {
+  .profil-main {
+    margin: 16px auto;
+    padding: 0 12px 32px;
   }
-  
-  .profile-avatar {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .profile-name {
-    font-size: 18px;
-  }
-  
-  .stat-card {
-    padding: 10px 16px;
-  }
-  
-  .stat-value {
-    font-size: 20px;
-  }
-}
 
-@media (max-width: 768px) {
-  .main-container {
-    padding: 16px;
+  .profil-card {
+    padding: 20px 20px;
   }
-  
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
-  
-  .profile-sidebar {
-    order: 2;
-  }
-  
-  .profile-nav {
-    flex-direction: row;
+
+  .profil-header-inner {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 16px;
   }
-  
-  .nav-item {
-    flex: 1;
-    min-width: 140px;
-    justify-content: center;
-  }
-  
-  .profile-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .profile-stats {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .btn-primary {
+
+  .profil-header-action {
     width: 100%;
   }
-  
-  /* Medical Profile Responsive */
-  .medical-stats {
-    grid-template-columns: repeat(3, 1fr);
+
+  .btn-logout {
+    width: 100%;
   }
-  
-  .medical-details {
+
+  .profil-form-row {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 480px) {
-  .profile-avatar-section {
+  .profil-card-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
-  .profile-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  
-  .separator {
-    display: none;
-  }
-  
-  .nav-item {
-    min-width: 100%;
-    justify-content: flex-start;
-  }
-  
-  /* Mobile Medical Profile */
-  .medical-stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .medical-stat-card .stat-value-large {
-    font-size: 24px;
-  }
-}
 
-/* ===== NOTIFICATION STYLES ===== */
-.notification-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.notification-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  background: var(--color-surface-gray, #F8FAFC);
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 12px;
-  gap: 16px;
-}
-
-.notification-info {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  flex: 1;
-}
-
-.notification-icon {
-  width: 40px;
-  height: 40px;
-  background: white;
-  border: 1px solid var(--border-subtle, #E5E7EB);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary, #6B7280);
-  flex-shrink: 0;
-}
-
-.notification-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.notification-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary, #1A1A2E);
-  margin: 0;
-}
-
-.notification-desc {
-  font-size: 12px;
-  color: var(--color-text-muted, #9CA3AF);
-  margin: 0;
-}
-
-/* Toggle Switch */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #E5E7EB;
-  border-radius: 26px;
-  transition: 0.3s;
-}
-
-.toggle-slider:before {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background: var(--color-brand, #006C5A);
-}
-
-.toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(22px);
-}
-
-/* Security Banner */
-.security-banner {
-  background: var(--color-brand, #006C5A);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.security-banner-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.security-banner-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  margin: 0 0 8px 0;
-}
-
-.security-banner-text {
-  font-size: 13px;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.6;
-  margin: 0;
-  max-width: 500px;
-}
-
-.btn-light {
-  background: white;
-  color: var(--color-text-primary, #1A1A2E);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-light:hover {
-  background: var(--color-surface-gray, #F3F4F6);
-}
-
-/* Responsive Notification */
-@media (max-width: 768px) {
-  .notification-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .toggle-switch {
-    align-self: flex-end;
-  }
-  
-  .security-banner-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .btn-light {
+  .btn-simpan {
     width: 100%;
   }
 }

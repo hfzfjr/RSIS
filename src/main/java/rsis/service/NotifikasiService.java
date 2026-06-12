@@ -3,7 +3,7 @@ package rsis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rsis.model.AppUser;
+import rsis.model.User;
 import rsis.model.Notifikasi;
 import rsis.repository.UserRepository;
 import rsis.repository.NotifikasiRepository;
@@ -23,7 +23,7 @@ public class NotifikasiService {
 
     @Transactional
     public Notifikasi kirimNotifikasi(String penerimaId, String pesan, String tipe) {
-        Optional<AppUser> penerimaOpt = userRepository.findById(penerimaId);
+        Optional<User> penerimaOpt = userRepository.findById(penerimaId);
         if (penerimaOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }

@@ -5,12 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rsis.model.AdminRS;
-import rsis.model.AppUser;
+import rsis.model.User;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
@@ -34,57 +35,41 @@ public class AdminController {
     private AdminRSService adminRSService;
 
     @Autowired
-<<<<<<< HEAD
-    private rsis.service.NotifikasiService notifikasiService;
-=======
     private NotifikasiService notifikasiService;
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
 
     @Autowired
     private UserRepository userRepository;
 
-<<<<<<< HEAD
-=======
     @Autowired
     private AdminRSRepository adminRSRepository;
 
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private void addNotifikasiToModel(String userId, Model model) {
         try {
             var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
             model.addAttribute("notifikasi", notifikasis);
         } catch (Exception e) {
-<<<<<<< HEAD
-            model.addAttribute("notifikasi", java.util.Collections.emptyList());
-=======
             model.addAttribute("notifikasi", List.of());
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         }
     }
 
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
-<<<<<<< HEAD
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        addNotifikasiToModel(appUser.getIdUser(), model);
-=======
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "dashboard");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         }
-
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         model.addAttribute("totalPasienHariIni",
                 safeDashboardValue("total pasien hari ini", adminRSService::getTotalPasienHariIni, 0L));
         model.addAttribute("totalPasienBulanIni",
@@ -113,27 +98,19 @@ public class AdminController {
     // Dokter Management
     @GetMapping("/kelola-dokter")
     public String kelolaDokter(@AuthenticationPrincipal UserDetails principal, Model model) {
-<<<<<<< HEAD
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        addNotifikasiToModel(appUser.getIdUser(), model);
-=======
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "kelola-dokter");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         }
-
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         List<Dokter> dokters = adminRSService.getAllDokter();
         model.addAttribute("dokters", dokters);
         model.addAttribute("activeMenu", "kelola-dokter");
@@ -179,27 +156,19 @@ public class AdminController {
     // Poli Management
     @GetMapping("/kelola-poli")
     public String kelolaPoli(@AuthenticationPrincipal UserDetails principal, Model model) {
-<<<<<<< HEAD
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        addNotifikasiToModel(appUser.getIdUser(), model);
-=======
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "kelola-poli");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         }
-
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         List<Poli> polis = adminRSService.getAllPoli();
         model.addAttribute("polis", polis);
         model.addAttribute("activeMenu", "kelola-poli");
@@ -245,27 +214,19 @@ public class AdminController {
     // Spesialisasi Management
     @GetMapping("/kelola-spesialisasi")
     public String kelolaSpesialisasi(@AuthenticationPrincipal UserDetails principal, Model model) {
-<<<<<<< HEAD
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        addNotifikasiToModel(appUser.getIdUser(), model);
-=======
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "kelola-spesialisasi");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         }
-
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
         model.addAttribute("spesialisasis", spesialisasis);
         model.addAttribute("activeMenu", "kelola-spesialisasi");
@@ -299,27 +260,19 @@ public class AdminController {
     // Jadwal Management
     @GetMapping("/kelola-jadwal")
     public String kelolaJadwal(@AuthenticationPrincipal UserDetails principal, Model model) {
-<<<<<<< HEAD
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        addNotifikasiToModel(appUser.getIdUser(), model);
-=======
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "kelola-jadwal");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         }
-
->>>>>>> 380ff672ff07d305b8ec7560155cfe11ea2ea739
         List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
         List<Dokter> dokters = adminRSService.getAllDokter();
         model.addAttribute("jadwals", jadwals);
@@ -332,13 +285,13 @@ public class AdminController {
     @GetMapping("/laporan-bulanan")
     public String laporanBulanan(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "laporan");
 
             // Get notifications
@@ -352,19 +305,94 @@ public class AdminController {
     @GetMapping("/profil")
     public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AdminRS admin = adminRSRepository.findByEmail(appUser.getEmail()).orElse(null);
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (admin != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("email", user.getEmail());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("activeMenu", "profil");
+            model.addAttribute("idUser", admin.getIdUser());
+            model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
+            model.addAttribute("alamat", ""); // AdminRS doesn't have alamat field
+            model.addAttribute("jabatan", admin.getJabatan() != null ? admin.getJabatan() : "");
 
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("email", user.getEmail());
+            model.addAttribute("role", user.getRole());
+            model.addAttribute("activeMenu", "profil");
+            model.addAttribute("idUser", user.getIdUser());
+            model.addAttribute("nomorHp", "");
+            model.addAttribute("alamat", "");
+            model.addAttribute("jabatan", "");
         }
 
         return "admin/profil";
+    }
+
+    @PostMapping("/profil")
+    public String updateProfile(@RequestParam String namaLengkap,
+            @RequestParam String nomorTelepon,
+            @AuthenticationPrincipal UserDetails principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Update nama and nomorHp in user
+            user.setNama(namaLengkap);
+            user.setNomorHp(nomorTelepon);
+            userRepository.save(user);
+
+            redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/profil";
+    }
+
+    @PostMapping("/profil/password")
+    public String changePassword(@RequestParam String passwordLama,
+            @RequestParam String passwordBaru,
+            @RequestParam String konfirmasiPassword,
+            @AuthenticationPrincipal UserDetails principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Validate old password
+            if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
+                redirectAttributes.addFlashAttribute("error", "Kata sandi lama tidak sesuai");
+                return "redirect:/admin/profil";
+            }
+
+            // Validate new password length
+            if (passwordBaru.length() < 8) {
+                redirectAttributes.addFlashAttribute("error", "Kata sandi baru minimal 8 karakter");
+                return "redirect:/admin/profil";
+            }
+
+            // Validate password confirmation
+            if (!passwordBaru.equals(konfirmasiPassword)) {
+                redirectAttributes.addFlashAttribute("error",
+                        "Konfirmasi kata sandi baru harus sama dengan kata sandi baru");
+                return "redirect:/admin/profil";
+            }
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(passwordBaru));
+            userRepository.save(user);
+
+            redirectAttributes.addFlashAttribute("success", "Kata sandi berhasil diperbarui!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/profil";
     }
 }

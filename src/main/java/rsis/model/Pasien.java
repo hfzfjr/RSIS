@@ -2,9 +2,8 @@ package rsis.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,14 +11,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "pasien")
+@PrimaryKeyJoinColumn(name = "id_user")
 public class Pasien extends User {
 
-    @Id
     @Column(name = "id_pasien", nullable = false, length = 10)
     private String idPasien;
-
-    @Column(name = "id_user", nullable = false, length = 32)
-    private String idUser;
 
     @Column(name = "nomor_rekam_medis", unique = true)
     private String nomorRekamMedis;
@@ -30,17 +26,17 @@ public class Pasien extends User {
     @Column(name = "alamat")
     private String alamat;
 
-    // Transient fields - only exist in users table, not in pasien table
-    @Transient
-    private String nama;
-    @Transient
-    private String email;
-    @Transient
-    private String password;
-    @Transient
-    private String role;
-
     public Pasien() {
+        super();
+    }
+
+    public Pasien(String idPasien, String idUser, String nama, String email,
+            String password, String nomorRekamMedis, LocalDate tanggalLahir, String alamat) {
+        super(idUser, nama, email, password, "PASIEN");
+        this.idPasien = idPasien;
+        this.nomorRekamMedis = nomorRekamMedis;
+        this.tanggalLahir = tanggalLahir;
+        this.alamat = alamat;
     }
 
     // Business methods
@@ -77,16 +73,8 @@ public class Pasien extends User {
         this.idPasien = idPasien;
     }
 
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
-
     public boolean isProfileComplete() {
-        return getNomorHp() != null && !getNomorHp().isEmpty()
+        return nomorRekamMedis != null && !nomorRekamMedis.isEmpty()
                 && tanggalLahir != null
                 && alamat != null && !alamat.isEmpty();
     }
@@ -115,40 +103,9 @@ public class Pasien extends User {
         this.alamat = alamat;
     }
 
-    // Implementations for abstract methods from User
     @Override
-    public String getNama() {
-        return nama;
-    }
-
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Implementasi spesifik untuk Pasien
+        System.out.println("Pasien menerima notifikasi: " + notif.getPesan());
     }
 }

@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AdminRSRepository extends JpaRepository<AdminRS, String> {
 
-    @Query("SELECT a FROM AdminRS a WHERE a.idAdmin IN (SELECT u.id FROM AppUser u WHERE u.email = :email)")
-    Optional<AdminRS> findByEmail(@Param("email") String email);
+    @Query("SELECT a FROM AdminRS a WHERE a.idUser = :idUser")
+    Optional<AdminRS> findByIdUser(@Param("idUser") String idUser);
 }

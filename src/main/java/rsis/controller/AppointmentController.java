@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rsis.dto.BookingRequestDTO;
 import rsis.model.Appointment;
-import rsis.model.AppUser;
+import rsis.model.User;
 import rsis.model.JadwalPraktik;
 import rsis.repository.UserRepository;
 import rsis.service.AppointmentService;
@@ -47,15 +47,15 @@ public class AppointmentController {
             @RequestParam(required = false) String dokterId,
             Model model) {
         // Add navbar attributes
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "booking");
 
         // Get notifications
-        addNotifikasiToModel(appUser.getIdUser(), model);
+        addNotifikasiToModel(user.getIdUser(), model);
 
         // If jadwalId is provided, fetch doctor and schedule data
         if (jadwalId != null && !jadwalId.isEmpty()) {
@@ -127,11 +127,11 @@ public class AppointmentController {
     @GetMapping("/my-appointments")
     public String showMyAppointments(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Add navbar attributes
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
@@ -175,15 +175,15 @@ public class AppointmentController {
             @AuthenticationPrincipal UserDetails principal,
             Model model) {
         // Add navbar attributes
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
-        addNotifikasiToModel(appUser.getIdUser(), model);
+        addNotifikasiToModel(user.getIdUser(), model);
 
         Appointment appointment = appointmentService.getAppointmentById(id).orElse(null);
         model.addAttribute("appointment", appointment);

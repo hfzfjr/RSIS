@@ -2,11 +2,10 @@ package rsis.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import rsis.model.interfaces.ISchedulable;
 
 import java.util.ArrayList;
@@ -14,14 +13,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "dokter")
+@PrimaryKeyJoinColumn(name = "id_user")
 public class Dokter extends User implements ISchedulable {
 
-    @Id
     @Column(name = "id_dokter", nullable = false, length = 10)
     private String idDokter;
-
-    @Column(name = "id_user", nullable = false, length = 32)
-    private String idUser;
 
     @Column(name = "nomor_str", unique = true)
     private String nomorStr;
@@ -37,17 +33,17 @@ public class Dokter extends User implements ISchedulable {
     @Column(name = "dokter_image")
     private String dokterImage;
 
-    // Transient fields - only exist in users table, not in dokter table
-    @Transient
-    private String nama;
-    @Transient
-    private String email;
-    @Transient
-    private String password;
-    @Transient
-    private String role;
-
     public Dokter() {
+        super();
+    }
+
+    public Dokter(String idDokter, String idUser, String nama, String email,
+            String password, String nomorStr, Spesialisasi spesialisasi, Poli poli) {
+        super(idUser, nama, email, password, "DOKTER");
+        this.idDokter = idDokter;
+        this.nomorStr = nomorStr;
+        this.spesialisasi = spesialisasi;
+        this.poli = poli;
     }
 
     @Override
@@ -98,14 +94,6 @@ public class Dokter extends User implements ISchedulable {
         this.idDokter = idDokter;
     }
 
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
-
     public String getNomorStr() {
         return nomorStr;
     }
@@ -130,40 +118,9 @@ public class Dokter extends User implements ISchedulable {
         this.dokterImage = dokterImage;
     }
 
-    // Implementations for abstract methods from User
     @Override
-    public String getNama() {
-        return nama;
-    }
-
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Implementasi spesifik untuk Dokter
+        System.out.println("Dokter menerima notifikasi: " + notif.getPesan());
     }
 }

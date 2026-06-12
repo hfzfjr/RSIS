@@ -3,12 +3,13 @@ package rsis.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rsis.model.Appointment;
-import rsis.model.AppUser;
+import rsis.model.User;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
@@ -39,6 +40,9 @@ public class PasienController {
     @Autowired
     private PasienRepository pasienRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private void addNotifikasiToModel(String userId, Model model) {
         try {
             var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
@@ -50,26 +54,26 @@ public class PasienController {
 
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Get pasien data
-        Pasien pasien = pasienRepository.findByEmail(appUser.getEmail()).orElse(null);
+        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (pasien != null) {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
             model.addAttribute("nomorRekamMedis", pasien.getNomorRekamMedis());
             model.addAttribute("pasienId", pasien.getIdPasien());
         } else {
-            model.addAttribute("nama", appUser.getNama());
-            model.addAttribute("role", appUser.getRole());
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
         }
 
         // Set active menu
         model.addAttribute("activeMenu", "dashboard");
 
         // Get statistics
-        String pasienId = pasien != null ? pasien.getIdPasien() : appUser.getIdUser();
+        String pasienId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
         model.addAttribute("totalAppointment", appointments.size());
 
@@ -105,45 +109,108 @@ public class PasienController {
 
     @GetMapping("/profil")
     public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Pasien pasien = pasienRepository.findByEmail(appUser.getEmail()).orElse(null);
+        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("email", appUser.getEmail());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "profil");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : appUser.getIdUser();
+        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        model.addAttribute("idUser", userId);
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
-            model.addAttribute("idPasien", pasien.getIdPasien());
+            model.addAttribute("idUser", pasien.getIdPasien());
             model.addAttribute("nomorRekamMedis", pasien.getNomorRekamMedis());
-            model.addAttribute("nomorHp", pasien.getNomorHp());
-            model.addAttribute("tanggalLahir", pasien.getTanggalLahir());
-            model.addAttribute("alamat", pasien.getAlamat());
+            model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
+            model.addAttribute("tanggalLahir",
+                    pasien.getTanggalLahir() != null ? pasien.getTanggalLahir().toString() : "");
+            model.addAttribute("alamat", pasien.getAlamat() != null ? pasien.getAlamat() : "");
+
+            // Get statistics for pasien
+            List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasien.getIdPasien());
+            model.addAttribute("totalKunjungan", appointments.size());
+            model.addAttribute("totalResep", 0); // TODO: Implement when resep feature is available
+        } else {
+            model.addAttribute("idUser", user.getIdUser());
+            model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
+            model.addAttribute("tanggalLahir", "");
+            model.addAttribute("nomorRekamMedis", "");
+            model.addAttribute("alamat", "");
+            model.addAttribute("totalKunjungan", 0);
+            model.addAttribute("totalResep", 0);
         }
 
         return "pasien/profil";
     }
 
     @PostMapping("/profil")
-    public String updateProfile(@RequestParam String nomorRekamMedis,
+    public String updateProfile(@RequestParam String namaLengkap,
+            @RequestParam String nomorTelepon,
             @RequestParam String tanggalLahir,
             @RequestParam String alamat,
-            @RequestParam String nomorHp,
+            @RequestParam String nomorRekamMedis,
             @AuthenticationPrincipal UserDetails principal,
             RedirectAttributes redirectAttributes) {
         try {
-            AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            Pasien pasien = pasienRepository.findByEmail(appUser.getEmail())
+            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
-            pasienService.updateProfil(pasien.getIdPasien(), nomorRekamMedis, tanggalLahir, alamat, nomorHp);
+
+            // Update nama and nomorHp in user
+            user.setNama(namaLengkap);
+            user.setNomorHp(nomorTelepon);
+            userRepository.save(user);
+
+            // Update pasien fields
+            pasienService.updateProfil(pasien.getIdPasien(), namaLengkap, nomorRekamMedis, tanggalLahir, alamat);
             redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/pasien/profil";
+    }
+
+    @PostMapping("/profil/password")
+    public String changePassword(@RequestParam String passwordLama,
+            @RequestParam String passwordBaru,
+            @RequestParam String konfirmasiPassword,
+            @AuthenticationPrincipal UserDetails principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Validate old password
+            if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
+                redirectAttributes.addFlashAttribute("error", "Kata sandi lama tidak sesuai");
+                return "redirect:/pasien/profil";
+            }
+
+            // Validate new password length
+            if (passwordBaru.length() < 8) {
+                redirectAttributes.addFlashAttribute("error", "Kata sandi baru minimal 8 karakter");
+                return "redirect:/pasien/profil";
+            }
+
+            // Validate password confirmation
+            if (!passwordBaru.equals(konfirmasiPassword)) {
+                redirectAttributes.addFlashAttribute("error",
+                        "Konfirmasi kata sandi baru harus sama dengan kata sandi baru");
+                return "redirect:/pasien/profil";
+            }
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(passwordBaru));
+            userRepository.save(user);
+
+            redirectAttributes.addFlashAttribute("success", "Kata sandi berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -155,18 +222,18 @@ public class PasienController {
             @AuthenticationPrincipal UserDetails principal,
             Model model) {
         // Get user and pasien data
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Pasien pasien = pasienRepository.findByEmail(appUser.getEmail()).orElse(null);
+        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
 
         // Add navbar attributes
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "cari-dokter");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : appUser.getIdUser();
+        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
@@ -190,15 +257,15 @@ public class PasienController {
             @AuthenticationPrincipal UserDetails principal,
             Model model) {
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
-        addNotifikasiToModel(appUser.getIdUser(), model);
+        addNotifikasiToModel(user.getIdUser(), model);
 
         // Get doctor schedule
         List<JadwalPraktik> jadwals = pasienService.lihatJadwalDokter(dokterId);
@@ -210,17 +277,17 @@ public class PasienController {
     @GetMapping("/jadwal-riwayat")
     public String jadwalRiwayat(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar
-        AppUser appUser = userRepository.findByEmailIgnoreCase(principal.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Pasien pasien = pasienRepository.findByEmail(appUser.getEmail()).orElse(null);
+        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
 
-        model.addAttribute("nama", appUser.getNama());
-        model.addAttribute("role", appUser.getRole());
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : appUser.getIdUser();
+        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
@@ -228,7 +295,7 @@ public class PasienController {
         }
 
         // Get all appointments for the pasien
-        String pasienId = pasien != null ? pasien.getIdPasien() : appUser.getIdUser();
+        String pasienId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
         model.addAttribute("appointments", appointments);
 

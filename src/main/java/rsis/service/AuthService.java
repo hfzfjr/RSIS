@@ -3,12 +3,9 @@ package rsis.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rsis.model.AppUser;
 import rsis.model.Pasien;
 import rsis.repository.UserRepository;
 import rsis.repository.PasienRepository;
-
-import java.time.Instant;
 
 @Service
 public class AuthService {
@@ -42,27 +39,15 @@ public class AuthService {
         String userId = nextUserId();
         String pasienId = nextPasienId();
 
-        // Save to users table (AppUser)
-        AppUser appUser = new AppUser();
-        appUser.setIdUser(userId);
-        appUser.setNama(nama);
-        appUser.setEmail(email);
-        appUser.setPassword(passwordEncoder.encode(rawPassword));
-        appUser.setNomorHp(null);
-        appUser.setRole("PASIEN");
-        appUser.setCreatedAt(Instant.now());
-        userRepository.save(appUser);
-
-        // Save to pasien table with FK to users
+        // With Joined Table Inheritance, saving Pasien will automatically create
+        // entries in both users and pasien tables
         Pasien pasien = new Pasien();
         pasien.setIdPasien(pasienId);
         pasien.setIdUser(userId);
         pasien.setNama(nama);
         pasien.setEmail(email);
-        pasien.setPassword(appUser.getPassword());
-        pasien.setNomorHp(null);
+        pasien.setPassword(passwordEncoder.encode(rawPassword));
         pasien.setRole("PASIEN");
-        // created_at only in users table, not in pasien table
         pasienRepository.save(pasien);
     }
 

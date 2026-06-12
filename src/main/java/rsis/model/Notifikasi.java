@@ -19,7 +19,7 @@ public class Notifikasi {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private AppUser penerima;
+    private User penerima;
 
     @Column(name = "pesan", nullable = false)
     private String pesan;
@@ -58,11 +58,11 @@ public class Notifikasi {
         this.idNotifikasi = idNotifikasi;
     }
 
-    public AppUser getPenerima() {
+    public User getPenerima() {
         return penerima;
     }
 
-    public void setPenerima(AppUser penerima) {
+    public void setPenerima(User penerima) {
         this.penerima = penerima;
     }
 

@@ -2,9 +2,8 @@ package rsis.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,29 +12,24 @@ import java.util.Map;
 
 @Entity
 @Table(name = "admin_rs")
+@PrimaryKeyJoinColumn(name = "id_user")
 public class AdminRS extends User {
 
-    @Id
     @Column(name = "id_admin", nullable = false, length = 10)
     private String idAdmin;
-
-    @Column(name = "id_user", nullable = false, length = 32)
-    private String idUser;
 
     @Column(name = "jabatan")
     private String jabatan;
 
-    // Transient fields - only exist in users table, not in admin_rs table
-    @Transient
-    private String nama;
-    @Transient
-    private String email;
-    @Transient
-    private String password;
-    @Transient
-    private String role;
-
     public AdminRS() {
+        super();
+    }
+
+    public AdminRS(String idAdmin, String idUser, String nama, String email,
+            String password, String jabatan) {
+        super(idUser, nama, email, password, "ADMIN_RS");
+        this.idAdmin = idAdmin;
+        this.jabatan = jabatan;
     }
 
     public void kelolaDataDokter(Dokter dokter) {
@@ -79,14 +73,6 @@ public class AdminRS extends User {
         this.idAdmin = idAdmin;
     }
 
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
-
     public String getJabatan() {
         return jabatan;
     }
@@ -95,40 +81,13 @@ public class AdminRS extends User {
         this.jabatan = jabatan;
     }
 
-    // Implementations for abstract methods from User
-    @Override
-    public String getNama() {
-        return nama;
-    }
-
-    public void setNama(String nama) {
-        this.nama = nama;
+    public boolean hasManagementAccess() {
+        return jabatan != null && !jabatan.isEmpty();
     }
 
     @Override
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Implementasi spesifik untuk AdminRS
+        System.out.println("Admin menerima notifikasi: " + notif.getPesan());
     }
 }

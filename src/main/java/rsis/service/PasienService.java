@@ -3,7 +3,6 @@ package rsis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rsis.model.AppUser;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
@@ -62,14 +61,17 @@ public class PasienService {
     }
 
     @Transactional
-    public Pasien updateProfil(String pasienId, String nomorRekamMedis, String tanggalLahir, String alamat,
-            String nomorHp) {
+    public Pasien updateProfil(String pasienId, String namaLengkap, String nomorRekamMedis, String tanggalLahir,
+            String alamat) {
         Optional<Pasien> pasienOpt = pasienRepository.findById(pasienId);
         if (pasienOpt.isEmpty()) {
             throw new RuntimeException("Pasien not found");
         }
 
         Pasien pasien = pasienOpt.get();
+        if (namaLengkap != null) {
+            pasien.setNama(namaLengkap);
+        }
         if (nomorRekamMedis != null) {
             pasien.setNomorRekamMedis(nomorRekamMedis);
         }
@@ -78,9 +80,6 @@ public class PasienService {
         }
         if (alamat != null) {
             pasien.setAlamat(alamat);
-        }
-        if (nomorHp != null) {
-            pasien.setNomorHp(nomorHp);
         }
 
         return pasienRepository.save(pasien);
@@ -91,7 +90,12 @@ public class PasienService {
     }
 
     public Optional<Pasien> getPasienByEmail(String email) {
-        return pasienRepository.findByEmail(email);
+        // Find user by email first, then find pasien by user id
+        Optional<rsis.model.User> userOpt = userRepository.findByEmailIgnoreCase(email);
+        if (userOpt.isPresent()) {
+            return pasienRepository.findByIdUser(userOpt.get().getIdUser());
+        }
+        return Optional.empty();
     }
 
     @Transactional

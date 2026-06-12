@@ -16,10 +16,10 @@ public interface DokterRepository extends JpaRepository<Dokter, String> {
 
     List<Dokter> findByPoli_IdPoli(String idPoli);
 
-    @Query("SELECT d FROM Dokter d WHERE d.idDokter IN (SELECT u.id FROM AppUser u WHERE u.email = :email)")
-    Optional<Dokter> findByEmail(@Param("email") String email);
+    @Query("SELECT d FROM Dokter d WHERE d.idUser = :idUser")
+    Optional<Dokter> findByIdUser(@Param("idUser") String idUser);
 
-    @Query("SELECT d FROM Dokter d WHERE d.idDokter IN (SELECT u.id FROM AppUser u WHERE u.nama LIKE %:keyword%) OR d.idDokter IN (SELECT u.id FROM AppUser u WHERE u.email LIKE %:keyword%)")
+    @Query("SELECT d FROM Dokter d WHERE d.nama LIKE %:keyword% OR d.email LIKE %:keyword%")
     List<Dokter> searchBySpesialisasiOrNama(@Param("keyword") String keyword);
 
     @Query(value = "SELECT id_dokter FROM dokter WHERE id_dokter LIKE 'dkt-%' ORDER BY CAST(SUBSTRING(id_dokter FROM 5) AS INTEGER) DESC LIMIT 1", nativeQuery = true)

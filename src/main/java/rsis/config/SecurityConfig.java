@@ -15,7 +15,7 @@ import rsis.service.UserService;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    
+
     @Bean
     PasswordEncoder passwordEncoder() {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
@@ -69,22 +69,23 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .failureHandler((request, response, exception) -> {
                             String errorType = "wrongpassword";
-                            
+
                             // Cek apakah erornya karena email tidak ditemukan
                             if (exception instanceof org.springframework.security.core.userdetails.UsernameNotFoundException) {
                                 errorType = "notfound";
                             }
-                            
-                            // Redirect sambil membawa parameter error yang spesifik (hanya dipanggil 1 kali)
+
+                            // Redirect sambil membawa parameter error yang spesifik (hanya dipanggil 1
+                            // kali)
                             response.sendRedirect("/auth?tab=login&error=" + errorType);
                         })
                         .permitAll())
                 .rememberMe(remember -> remember
-                        .key("kunciRahasiaRSIS") 
+                        .key("kunciRahasiaRSIS")
                         .tokenValiditySeconds(604800)) // Ingat user selama 7 hari
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/auth?logout"));
+                        .logoutSuccessUrl("/auth?tab=login&logout"));
 
         return http.build();
     }

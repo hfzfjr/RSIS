@@ -62,7 +62,7 @@ public class AppointmentService {
         // Create appointment
         Appointment appointment = new Appointment();
         appointment.setIdAppointment(generateAppointmentId());
-        appointment.setPasien(pasien);
+        appointment.setUser(pasien);
         appointment.setJadwal(jadwal);
         appointment.setTanggalBooking(LocalDate.now());
         appointment.setStatus("MENUNGGU");
@@ -172,11 +172,11 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointmentsByPasienId(String pasienId) {
-        return appointmentRepository.findByPasien_IdPasien(pasienId);
+        return appointmentRepository.findByUser_IdUser(pasienId);
     }
 
     public List<Appointment> getAppointmentsByDokterId(String dokterId) {
-        return appointmentRepository.findByJadwal_Dokter_IdDokter(dokterId);
+        return appointmentRepository.findByJadwal_Dokter_IdUser(dokterId);
     }
 
     public List<Appointment> getPendingAppointmentsByDokterId(String dokterId) {
@@ -211,7 +211,7 @@ public class AppointmentService {
     }
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        return jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
+        return jadwalPraktikRepository.findByDokter_IdUser(dokterId);
     }
 
     private String generateAppointmentId() {

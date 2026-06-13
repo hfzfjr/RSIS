@@ -15,9 +15,6 @@ import java.util.Map;
 @PrimaryKeyJoinColumn(name = "id_user")
 public class AdminRS extends User {
 
-    @Column(name = "id_admin", nullable = false, length = 10)
-    private String idAdmin;
-
     @Column(name = "jabatan")
     private String jabatan;
 
@@ -25,10 +22,9 @@ public class AdminRS extends User {
         super();
     }
 
-    public AdminRS(String idAdmin, String idUser, String nama, String email,
+    public AdminRS(String idUser, String nama, String email,
             String password, String jabatan) {
         super(idUser, nama, email, password, "ADMIN_RS");
-        this.idAdmin = idAdmin;
         this.jabatan = jabatan;
     }
 
@@ -65,14 +61,6 @@ public class AdminRS extends User {
     }
 
     // Getters and Setters
-    public String getIdAdmin() {
-        return idAdmin;
-    }
-
-    public void setIdAdmin(String idAdmin) {
-        this.idAdmin = idAdmin;
-    }
-
     public String getJabatan() {
         return jabatan;
     }

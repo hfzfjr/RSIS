@@ -14,9 +14,6 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id_user")
 public class Pasien extends User {
 
-    @Column(name = "id_pasien", nullable = false, length = 10)
-    private String idPasien;
-
     @Column(name = "nomor_rekam_medis", unique = true)
     private String nomorRekamMedis;
 
@@ -30,10 +27,9 @@ public class Pasien extends User {
         super();
     }
 
-    public Pasien(String idPasien, String idUser, String nama, String email,
+    public Pasien(String idUser, String nama, String email,
             String password, String nomorRekamMedis, LocalDate tanggalLahir, String alamat) {
         super(idUser, nama, email, password, "PASIEN");
-        this.idPasien = idPasien;
         this.nomorRekamMedis = nomorRekamMedis;
         this.tanggalLahir = tanggalLahir;
         this.alamat = alamat;
@@ -65,14 +61,6 @@ public class Pasien extends User {
     }
 
     // Getters and Setters
-    public String getIdPasien() {
-        return idPasien;
-    }
-
-    public void setIdPasien(String idPasien) {
-        this.idPasien = idPasien;
-    }
-
     public boolean isProfileComplete() {
         return nomorRekamMedis != null && !nomorRekamMedis.isEmpty()
                 && tanggalLahir != null

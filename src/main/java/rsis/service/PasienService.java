@@ -100,19 +100,7 @@ public class PasienService {
 
     @Transactional
     public Pasien createPasien(Pasien pasien) {
-        String idPasien = generatePasienId();
-        pasien.setIdPasien(idPasien);
         pasien.setRole("PASIEN");
         return pasienRepository.save(pasien);
-    }
-
-    private String generatePasienId() {
-        Optional<String> latestId = pasienRepository.findLatestPasienId();
-        if (latestId.isPresent()) {
-            String id = latestId.get();
-            int num = Integer.parseInt(id.substring(4));
-            return String.format("psn-%04d", num + 1);
-        }
-        return "psn-0001";
     }
 }

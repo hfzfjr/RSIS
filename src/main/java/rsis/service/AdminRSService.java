@@ -45,8 +45,6 @@ public class AdminRSService {
     // Dokter Management
     @Transactional
     public Dokter createDokter(Dokter dokter) {
-        String idDokter = generateDokterId();
-        dokter.setIdDokter(idDokter);
         dokter.setRole("DOKTER");
         return dokterRepository.save(dokter);
     }
@@ -202,16 +200,6 @@ public class AdminRSService {
 
     public Long getTotalPoli() {
         return poliRepository.count();
-    }
-
-    private String generateDokterId() {
-        Optional<String> latestId = dokterRepository.findLatestDokterId();
-        if (latestId.isPresent()) {
-            String id = latestId.get();
-            int num = Integer.parseInt(id.substring(4));
-            return String.format("dkt-%04d", num + 1);
-        }
-        return "dkt-0001";
     }
 
     private String generatePoliId() {

@@ -64,7 +64,7 @@ public class DokterController {
             addNotifikasiToModel(dokter.getIdUser(), model);
         }
 
-        String dokterId = dokter != null ? dokter.getIdDokter() : "";
+        String dokterId = dokter != null ? dokter.getIdUser() : "";
         model.addAttribute("dokterId", dokterId);
         return "dokter/dashboard";
     }
@@ -84,7 +84,7 @@ public class DokterController {
             // Get notifications
             addNotifikasiToModel(dokter.getIdUser(), model);
 
-            String dokterId = dokter.getIdDokter();
+            String dokterId = dokter.getIdUser();
             List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
             model.addAttribute("jadwals", jadwals);
         }
@@ -145,7 +145,7 @@ public class DokterController {
             // Get notifications
             addNotifikasiToModel(dokter.getIdUser(), model);
 
-            String dokterId = dokter.getIdDokter();
+            String dokterId = dokter.getIdUser();
             List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);
             model.addAttribute("appointments", appointments);
         }
@@ -168,7 +168,7 @@ public class DokterController {
             // Get notifications
             addNotifikasiToModel(dokter.getIdUser(), model);
 
-            String dokterId = dokter.getIdDokter();
+            String dokterId = dokter.getIdUser();
             List<Appointment> appointments = dokterService.getPendingAppointments(dokterId);
             model.addAttribute("appointments", appointments);
         }
@@ -200,7 +200,7 @@ public class DokterController {
             addNotifikasiToModel(dokter.getIdUser(), model);
 
             // Get statistics for dokter
-            String dokterId = dokter.getIdDokter();
+            String dokterId = dokter.getIdUser();
             List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
             model.addAttribute("totalJadwal", jadwals.size());
 

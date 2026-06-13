@@ -31,7 +31,7 @@ public class DokterService {
     private UserRepository userRepository;
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
+        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findByDokter_IdUser(dokterId);
         // Populate transient fields for each jadwal's dokter
         for (JadwalPraktik jadwal : jadwals) {
             if (jadwal.getDokter() != null) {
@@ -78,7 +78,7 @@ public class DokterService {
     }
 
     public List<Appointment> getDaftarPasien(String dokterId) {
-        return appointmentRepository.findByJadwal_Dokter_IdDokter(dokterId);
+        return appointmentRepository.findByJadwal_Dokter_IdUser(dokterId);
     }
 
     public List<Appointment> getPendingAppointments(String dokterId) {

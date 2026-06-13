@@ -19,8 +19,8 @@ public class Appointment {
     private String idAppointment;
 
     @ManyToOne
-    @JoinColumn(name = "id_pasien", nullable = false)
-    private Pasien pasien;
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "id_jadwal", nullable = false)
@@ -68,8 +68,8 @@ public class Appointment {
         return this.status;
     }
 
-    public Pasien getPasien() {
-        return this.pasien;
+    public User getUser() {
+        return user;
     }
 
     // Getters and Setters
@@ -81,8 +81,8 @@ public class Appointment {
         this.idAppointment = idAppointment;
     }
 
-    public void setPasien(Pasien pasien) {
-        this.pasien = pasien;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public JadwalPraktik getJadwal() {

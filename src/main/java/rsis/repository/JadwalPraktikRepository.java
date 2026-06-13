@@ -11,15 +11,15 @@ import java.util.List;
 @Repository
 public interface JadwalPraktikRepository extends JpaRepository<JadwalPraktik, String> {
 
-    List<JadwalPraktik> findByDokter_IdDokter(String idDokter);
+    List<JadwalPraktik> findByDokter_IdUser(String idUser);
 
     List<JadwalPraktik> findByDokter_Poli_IdPoli(String idPoli);
 
     List<JadwalPraktik> findByHari(String hari);
 
-    List<JadwalPraktik> findByDokter_IdDokterAndHari(String idDokter, String hari);
+    List<JadwalPraktik> findByDokter_IdUserAndHari(String idUser, String hari);
 
-    @Query("SELECT j FROM JadwalPraktik j WHERE j.dokter.idDokter = :dokterId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
+    @Query("SELECT j FROM JadwalPraktik j WHERE j.dokter.idUser = :dokterId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
     List<JadwalPraktik> findAvailableJadwalByDokterId(@Param("dokterId") String dokterId);
 
     @Query("SELECT j FROM JadwalPraktik j WHERE j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")

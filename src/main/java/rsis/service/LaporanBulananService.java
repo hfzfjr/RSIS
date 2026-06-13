@@ -37,8 +37,8 @@ public class LaporanBulananService {
             csvPrinter.printRecord(
                     apt.getIdAppointment(),
                     apt.getTanggalBooking(),
-                    apt.getPasien() != null ? apt.getPasien().getIdPasien() : "N/A",
-                    apt.getDokter() != null ? apt.getDokter().getIdDokter() : "N/A",
+                    apt.getUser() != null ? apt.getUser().getIdUser() : "N/A",
+                    apt.getDokter() != null ? apt.getDokter().getIdUser() : "N/A",
                     apt.getStatus());
         }
 

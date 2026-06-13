@@ -65,7 +65,7 @@ public class PasienController {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
             model.addAttribute("nomorRekamMedis", pasien.getNomorRekamMedis());
-            model.addAttribute("pasienId", pasien.getIdPasien());
+            model.addAttribute("pasienId", pasien.getIdUser());
         } else {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -75,7 +75,7 @@ public class PasienController {
         model.addAttribute("activeMenu", "dashboard");
 
         // Get statistics
-        String pasienId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String pasienId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
         model.addAttribute("totalAppointment", appointments.size());
 
@@ -122,12 +122,12 @@ public class PasienController {
         model.addAttribute("activeMenu", "profil");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String userId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         model.addAttribute("idUser", userId);
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
-            model.addAttribute("idUser", pasien.getIdPasien());
+            model.addAttribute("idUser", pasien.getIdUser());
             model.addAttribute("nomorRekamMedis", pasien.getNomorRekamMedis());
             model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
             model.addAttribute("tanggalLahir",
@@ -135,7 +135,7 @@ public class PasienController {
             model.addAttribute("alamat", pasien.getAlamat() != null ? pasien.getAlamat() : "");
 
             // Get statistics for pasien
-            List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasien.getIdPasien());
+            List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasien.getIdUser());
             model.addAttribute("totalKunjungan", appointments.size());
             model.addAttribute("totalResep", 0); // TODO: Implement when resep feature is available
         } else {
@@ -171,7 +171,7 @@ public class PasienController {
             userRepository.save(user);
 
             // Update pasien fields
-            pasienService.updateProfil(pasien.getIdPasien(), namaLengkap, nomorRekamMedis, tanggalLahir, alamat);
+            pasienService.updateProfil(pasien.getIdUser(), namaLengkap, nomorRekamMedis, tanggalLahir, alamat);
             redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -235,7 +235,7 @@ public class PasienController {
         model.addAttribute("activeMenu", "cari-dokter");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String userId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
@@ -289,7 +289,7 @@ public class PasienController {
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
-        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String userId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         addNotifikasiToModel(userId, model);
 
         if (pasien != null) {
@@ -297,7 +297,7 @@ public class PasienController {
         }
 
         // Get all appointments for the pasien
-        String pasienId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String pasienId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
         model.addAttribute("appointments", appointments);
 
@@ -314,7 +314,7 @@ public class PasienController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
-        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+        String userId = pasien != null ? pasien.getIdUser() : user.getIdUser();
 
         model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
@@ -378,12 +378,12 @@ public class PasienController {
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
             // Set pasienId from logged-in user
-            bookingRequest.setPasienId(pasien.getIdPasien());
+            bookingRequest.setPasienId(pasien.getIdUser());
 
             Appointment appointment = appointmentService.bookAppointment(bookingRequest);
 
             // Send notification to pasien
-            notifikasiService.kirimNotifikasi(pasien.getIdPasien(),
+            notifikasiService.kirimNotifikasi(pasien.getIdUser(),
                     "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment(),
                     "BOOKING");
 

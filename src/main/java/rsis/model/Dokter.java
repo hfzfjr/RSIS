@@ -16,9 +16,6 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id_user")
 public class Dokter extends User implements ISchedulable {
 
-    @Column(name = "id_dokter", nullable = false, length = 10)
-    private String idDokter;
-
     @Column(name = "nomor_str", unique = true)
     private String nomorStr;
 
@@ -37,10 +34,9 @@ public class Dokter extends User implements ISchedulable {
         super();
     }
 
-    public Dokter(String idDokter, String idUser, String nama, String email,
+    public Dokter(String idUser, String nama, String email,
             String password, String nomorStr, Spesialisasi spesialisasi, Poli poli) {
         super(idUser, nama, email, password, "DOKTER");
-        this.idDokter = idDokter;
         this.nomorStr = nomorStr;
         this.spesialisasi = spesialisasi;
         this.poli = poli;
@@ -86,14 +82,6 @@ public class Dokter extends User implements ISchedulable {
     }
 
     // Getters and Setters
-    public String getIdDokter() {
-        return idDokter;
-    }
-
-    public void setIdDokter(String idDokter) {
-        this.idDokter = idDokter;
-    }
-
     public String getNomorStr() {
         return nomorStr;
     }

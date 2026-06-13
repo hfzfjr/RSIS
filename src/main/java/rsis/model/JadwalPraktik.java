@@ -19,7 +19,7 @@ public class JadwalPraktik {
     private String idJadwal;
 
     @ManyToOne
-    @JoinColumn(name = "id_dokter", nullable = false)
+    @JoinColumn(name = "id_user", nullable = false)
     private Dokter dokter;
 
     @Column(name = "hari", nullable = false)

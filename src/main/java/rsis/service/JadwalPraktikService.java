@@ -33,7 +33,7 @@ public class JadwalPraktikService {
     }
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        return jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
+        return jadwalPraktikRepository.findByDokter_IdUser(dokterId);
     }
 
     public List<JadwalPraktik> getJadwalByPoliId(String poliId) {
@@ -82,8 +82,8 @@ public class JadwalPraktikService {
 
         return new JadwalDTO(
                 jadwal.getIdJadwal(),
-                dokter != null ? dokter.getIdDokter() : null,
-                dokter != null ? dokter.getIdDokter() : null,
+                dokter != null ? dokter.getIdUser() : null,
+                dokter != null ? dokter.getIdUser() : null,
                 poli != null ? poli.getIdPoli() : null,
                 jadwal.getHari(),
                 null,

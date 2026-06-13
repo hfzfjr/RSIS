@@ -37,12 +37,10 @@ public class AuthService {
         }
 
         String userId = nextUserId();
-        String pasienId = nextPasienId();
 
         // With Joined Table Inheritance, saving Pasien will automatically create
         // entries in both users and pasien tables
         Pasien pasien = new Pasien();
-        pasien.setIdPasien(pasienId);
         pasien.setIdUser(userId);
         pasien.setNama(nama);
         pasien.setEmail(email);
@@ -64,21 +62,5 @@ public class AuthService {
                 .orElse(0) + 1;
 
         return String.format("usr-%03d", next);
-    }
-
-    private String nextPasienId() {
-        int next = pasienRepository.findLatestPasienId()
-                .map(id -> {
-                    // Skip "psn-" (4 characters) to get the numeric part
-                    String suffix = id.length() > 4 ? id.substring(4) : "0";
-                    try {
-                        return Integer.parseInt(suffix);
-                    } catch (NumberFormatException e) {
-                        return 0;
-                    }
-                })
-                .orElse(0) + 1;
-
-        return String.format("psn-%03d", next);
     }
 }

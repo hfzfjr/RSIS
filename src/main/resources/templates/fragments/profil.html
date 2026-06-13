@@ -5,9 +5,7 @@
     <div class="profil-card profil-header-card">
       <div class="profil-header-inner">
         <div class="profil-avatar-wrap">
-          <img
-            th:src="${role == 'PASIEN' ? '/images/avatar-pasien.jpg' : (role == 'DOKTER' ? '/images/avatar-dokter.jpg' : '/images/avatar-admin.jpg')}"
-            th:alt="${nama}" class="profil-avatar-img" />
+          <div class="profil-avatar-initials" th:text="${role == 'PASIEN' ? 'P' : (role == 'DOKTER' ? 'D' : 'A')}">P</div>
         </div>
         <div class="profil-header-info">
           <h1 class="profil-nama" th:text="${nama}">Nama User</h1>

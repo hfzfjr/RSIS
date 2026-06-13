@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rsis.model.Appointment;
+import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
 import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.JadwalPraktikRepository;
+import rsis.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +27,24 @@ public class DokterService {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        return jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
+        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findByDokter_IdDokter(dokterId);
+        // Populate transient fields for each jadwal's dokter
+        for (JadwalPraktik jadwal : jadwals) {
+            if (jadwal.getDokter() != null) {
+                Dokter dokter = jadwal.getDokter();
+                userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                    dokter.setNama(user.getNama());
+                    dokter.setEmail(user.getEmail());
+                    dokter.setPassword(user.getPassword());
+                    dokter.setRole(user.getRole());
+                });
+            }
+        }
+        return jadwals;
     }
 
     @Transactional

@@ -12,6 +12,7 @@ import rsis.repository.DokterRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PoliRepository;
 import rsis.repository.SpesialisasiRepository;
+import rsis.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -38,6 +39,9 @@ public class AdminRSService {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // Dokter Management
     @Transactional
     public Dokter createDokter(Dokter dokter) {
@@ -58,7 +62,17 @@ public class AdminRSService {
     }
 
     public List<Dokter> getAllDokter() {
-        return dokterRepository.findAll();
+        List<Dokter> dokters = dokterRepository.findAll();
+        // Populate transient fields from users table
+        return dokters.stream().map(dokter -> {
+            userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                dokter.setNama(user.getNama());
+                dokter.setEmail(user.getEmail());
+                dokter.setPassword(user.getPassword());
+                dokter.setRole(user.getRole());
+            });
+            return dokter;
+        }).toList();
     }
 
     public Optional<Dokter> getDokterById(String dokterId) {
@@ -114,7 +128,20 @@ public class AdminRSService {
     }
 
     public List<JadwalPraktik> getAllJadwal() {
-        return jadwalPraktikRepository.findAll();
+        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findAll();
+        // Populate transient fields for each jadwal's dokter
+        for (JadwalPraktik jadwal : jadwals) {
+            if (jadwal.getDokter() != null) {
+                Dokter dokter = jadwal.getDokter();
+                userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                    dokter.setNama(user.getNama());
+                    dokter.setEmail(user.getEmail());
+                    dokter.setPassword(user.getPassword());
+                    dokter.setRole(user.getRole());
+                });
+            }
+        }
+        return jadwals;
     }
 
     // Statistik Methods (as per class diagram AdminRS)
@@ -140,7 +167,8 @@ public class AdminRSService {
 
     public String getDokterTersibuk(int bulan, int tahun) {
         YearMonth month = YearMonth.of(tahun, bulan);
-        List<Object[]> results = appointmentRepository.findBusiestDokterByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
+        List<Object[]> results = appointmentRepository.findBusiestDokterByMonth(month.atDay(1),
+                month.plusMonths(1).atDay(1));
         if (results.isEmpty()) {
             return "N/A";
         }
@@ -157,7 +185,8 @@ public class AdminRSService {
 
     public Map<String, Long> getPasienPerHari(int bulan, int tahun) {
         YearMonth month = YearMonth.of(tahun, bulan);
-        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
+        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(month.atDay(1),
+                month.plusMonths(1).atDay(1));
         Map<String, Long> pasienPerHari = new HashMap<>();
         for (Object[] result : results) {
             String date = result[0].toString();

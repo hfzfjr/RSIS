@@ -69,8 +69,8 @@ public class DokterController {
         return "dokter/dashboard";
     }
 
-    @GetMapping("/jadwal")
-    public String jadwal(@AuthenticationPrincipal UserDetails principal, Model model) {
+    @GetMapping("/jadwal-praktik")
+    public String jadwalPraktik(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar
         User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -79,7 +79,7 @@ public class DokterController {
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "jadwal");
+            model.addAttribute("activeMenu", "jadwal-praktik");
 
             // Get notifications
             addNotifikasiToModel(dokter.getIdUser(), model);
@@ -89,7 +89,7 @@ public class DokterController {
             model.addAttribute("jadwals", jadwals);
         }
 
-        return "dokter/jadwal";
+        return "dokter/jadwal-praktik";
     }
 
     @PostMapping("/jadwal/create")
@@ -103,7 +103,7 @@ public class DokterController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/dokter/jadwal";
+        return "redirect:/dokter/jadwal-praktik";
     }
 
     @PostMapping("/jadwal/update")
@@ -115,7 +115,7 @@ public class DokterController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/dokter/jadwal";
+        return "redirect:/dokter/jadwal-praktik";
     }
 
     @PostMapping("/jadwal/delete/{id}")
@@ -127,7 +127,7 @@ public class DokterController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/dokter/jadwal";
+        return "redirect:/dokter/jadwal-praktik";
     }
 
     @GetMapping("/daftar-pasien")
@@ -153,8 +153,8 @@ public class DokterController {
         return "dokter/daftar-pasien";
     }
 
-    @GetMapping("/appointment/pending")
-    public String pendingAppointments(@AuthenticationPrincipal UserDetails principal, Model model) {
+    @GetMapping("/appointment")
+    public String appointment(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar
         User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -163,7 +163,7 @@ public class DokterController {
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "jadwal");
+            model.addAttribute("activeMenu", "appointment");
 
             // Get notifications
             addNotifikasiToModel(dokter.getIdUser(), model);
@@ -173,7 +173,7 @@ public class DokterController {
             model.addAttribute("appointments", appointments);
         }
 
-        return "dokter/appointment-pending";
+        return "dokter/appointment";
     }
 
     @GetMapping("/profil")
@@ -295,7 +295,7 @@ public class DokterController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/dokter/appointment/pending";
+        return "redirect:/dokter/appointment";
     }
 
     @PostMapping("/appointment/tolak/{id}")
@@ -309,6 +309,6 @@ public class DokterController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/dokter/appointment/pending";
+        return "redirect:/dokter/appointment";
     }
 }

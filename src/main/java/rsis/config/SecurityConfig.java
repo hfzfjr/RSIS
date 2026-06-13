@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/auth", "/login", "/register", "/css/**", "/js/**", "/images/**",
                                 "/landing")
                         .permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "ADMIN_RS")
                         .requestMatchers("/dokter/**").hasRole("DOKTER")
                         .requestMatchers("/pasien/**").hasRole("PASIEN")
                         .anyRequest().authenticated())
@@ -99,7 +99,8 @@ public class SecurityConfig {
     }
 
     private String resolveTargetUrl(Authentication authentication) {
-        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_ADMIN_RS"))) {
             return "/admin/dashboard";
         }
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOKTER"))) {

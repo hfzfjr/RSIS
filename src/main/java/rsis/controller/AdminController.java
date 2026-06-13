@@ -62,13 +62,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "dashboard");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "dashboard");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
         model.addAttribute("totalPasienHariIni",
                 safeDashboardValue("total pasien hari ini", adminRSService::getTotalPasienHariIni, 0L));
@@ -103,13 +107,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "kelola-dokter");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "kelola-dokter");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
         List<Dokter> dokters = adminRSService.getAllDokter();
         model.addAttribute("dokters", dokters);
@@ -161,13 +169,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "kelola-poli");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "kelola-poli");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
         List<Poli> polis = adminRSService.getAllPoli();
         model.addAttribute("polis", polis);
@@ -219,13 +231,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "kelola-spesialisasi");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "kelola-spesialisasi");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
         List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
         model.addAttribute("spesialisasis", spesialisasis);
@@ -265,13 +281,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "kelola-jadwal");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "kelola-jadwal");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
         List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
         List<Dokter> dokters = adminRSService.getAllDokter();
@@ -289,13 +309,17 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "laporan");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "laporan");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
 
         // This will be handled by LaporanController
@@ -309,27 +333,22 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        if (admin != null) {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("email", user.getEmail());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "profil");
-            model.addAttribute("idUser", admin.getIdUser());
-            model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
-            model.addAttribute("alamat", ""); // AdminRS doesn't have alamat field
-            model.addAttribute("jabatan", admin.getJabatan() != null ? admin.getJabatan() : "");
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "profil");
+        model.addAttribute("idUser", user.getIdUser());
+        model.addAttribute("nomorHp", user.getNomorHp() != null ? user.getNomorHp() : "");
+        model.addAttribute("alamat", ""); // AdminRS doesn't have alamat field
+        model.addAttribute("jabatan", admin != null && admin.getJabatan() != null ? admin.getJabatan() : "");
 
+        if (admin != null) {
             // Get notifications
             addNotifikasiToModel(admin.getIdUser(), model);
         } else {
-            model.addAttribute("nama", user.getNama());
-            model.addAttribute("email", user.getEmail());
-            model.addAttribute("role", user.getRole());
-            model.addAttribute("activeMenu", "profil");
-            model.addAttribute("idUser", user.getIdUser());
-            model.addAttribute("nomorHp", "");
-            model.addAttribute("alamat", "");
-            model.addAttribute("jabatan", "");
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
         }
 
         return "admin/profil";

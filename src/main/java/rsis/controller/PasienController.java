@@ -18,8 +18,10 @@ import rsis.repository.PasienRepository;
 import rsis.service.AppointmentService;
 import rsis.service.NotifikasiService;
 import rsis.service.PasienService;
+import rsis.dto.BookingRequestDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/pasien")
@@ -300,5 +302,96 @@ public class PasienController {
         model.addAttribute("appointments", appointments);
 
         return "pasien/jadwal-riwayat";
+    }
+
+    @GetMapping("/booking")
+    public String showBookingForm(@AuthenticationPrincipal UserDetails principal,
+            @RequestParam(required = false) String jadwalId,
+            @RequestParam(required = false) String dokterId,
+            Model model) {
+        // Add navbar attributes
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        String userId = pasien != null ? pasien.getIdPasien() : user.getIdUser();
+
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "booking");
+
+        // Get notifications
+        addNotifikasiToModel(userId, model);
+
+        // If jadwalId is provided, fetch doctor and schedule data
+        if (jadwalId != null && !jadwalId.isEmpty()) {
+            Optional<JadwalPraktik> jadwalOpt = appointmentService.getJadwalById(jadwalId);
+            if (jadwalOpt.isPresent()) {
+                JadwalPraktik jadwal = jadwalOpt.get();
+                model.addAttribute("jadwal", jadwal);
+                model.addAttribute("dokter", jadwal.getDokter());
+                model.addAttribute("spesialisasi", jadwal.getDokter().getSpesialisasi());
+                model.addAttribute("poli", jadwal.getDokter().getPoli());
+
+                // Pre-fill bookingRequest with jadwalId
+                BookingRequestDTO bookingRequest = new BookingRequestDTO();
+                bookingRequest.setJadwalId(jadwalId);
+                model.addAttribute("bookingRequest", bookingRequest);
+            } else {
+                model.addAttribute("error", "Jadwal tidak ditemukan");
+                model.addAttribute("bookingRequest", new BookingRequestDTO());
+            }
+        } else if (dokterId != null && !dokterId.isEmpty()) {
+            // If dokterId is provided, fetch doctor data and available schedules
+            Optional<rsis.model.Dokter> dokterOpt = appointmentService.getDokterById(dokterId);
+            if (dokterOpt.isPresent()) {
+                rsis.model.Dokter dokter = dokterOpt.get();
+                model.addAttribute("dokter", dokter);
+                model.addAttribute("spesialisasi", dokter.getSpesialisasi());
+                model.addAttribute("poli", dokter.getPoli());
+
+                // Fetch available schedules for this doctor
+                List<JadwalPraktik> availableJadwal = appointmentService.getJadwalByDokterId(dokterId);
+                model.addAttribute("availableDates", availableJadwal);
+
+                model.addAttribute("bookingRequest", new BookingRequestDTO());
+            } else {
+                model.addAttribute("error", "Dokter tidak ditemukan");
+                model.addAttribute("bookingRequest", new BookingRequestDTO());
+            }
+        } else {
+            model.addAttribute("bookingRequest", new BookingRequestDTO());
+        }
+
+        return "pasien/booking";
+    }
+
+    @PostMapping("/booking")
+    public String bookAppointment(@ModelAttribute BookingRequestDTO bookingRequest,
+            @AuthenticationPrincipal UserDetails principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Get pasien data
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+                    .orElseThrow(() -> new RuntimeException("Pasien not found"));
+
+            // Set pasienId from logged-in user
+            bookingRequest.setPasienId(pasien.getIdPasien());
+
+            Appointment appointment = appointmentService.bookAppointment(bookingRequest);
+
+            // Send notification to pasien
+            notifikasiService.kirimNotifikasi(pasien.getIdPasien(),
+                    "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment(),
+                    "BOOKING");
+
+            redirectAttributes.addFlashAttribute("success", "Appointment berhasil dibuat!");
+            return "redirect:/pasien/jadwal-riwayat";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/pasien/booking";
+        }
     }
 }

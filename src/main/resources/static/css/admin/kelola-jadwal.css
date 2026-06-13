@@ -1,0 +1,365 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    min-height: 100vh;
+}
+
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 30px;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon-blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stat-icon-orange {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.stat-icon-green {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.table-section {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.table-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: #f8f9fa;
+}
+
+.data-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.data-table td {
+    padding: 20px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #333;
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doctor-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.doctor-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-full {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+.btn-edit {
+    background: #3498db;
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #e74c3c;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+    font-size: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 30px 20px;
+    }
+
+    .stats-cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .table-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px 16px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .data-table {
+        font-size: 13px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px 10px;
+    }
+
+    .doctor-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .doctor-name {
+        font-size: 14px;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+}

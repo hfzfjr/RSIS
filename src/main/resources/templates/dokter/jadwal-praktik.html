@@ -79,7 +79,7 @@
           </div>
 
           <!-- Dynamic Placeholder when database is not empty but no Monday schedule -->
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SENIN\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'SENIN'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
 
           <!-- Static Mock Fallback when database is empty -->
@@ -118,7 +118,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SELASA\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'SELASA'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
 
           <div th:if="${jadwals.empty}" class="rs-schedule-card">
@@ -156,7 +156,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'RABU\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'RABU'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
 
           <div th:if="${jadwals.empty}" style="display: flex; flex-direction: column; gap: 12px;">
@@ -204,7 +204,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'KAMIS\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'KAMIS'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
 
           <div th:if="${jadwals.empty}" class="rs-schedule-card">
@@ -241,7 +241,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'JUMAT\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'JUMAT'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
 
           <div th:if="${jadwals.empty}" class="rs-schedule-card">
@@ -279,7 +279,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'SABTU\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'SABTU'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
           <div th:if="${jadwals.empty}" class="rs-day-empty-text">Tidak ada jadwal</div>
         </div>
@@ -309,7 +309,7 @@
             </div>
           </div>
 
-          <div th:if="${!jadwals.empty and !#lists.any(jadwals, 'hari == \'MINGGU\'')}" class="rs-day-empty-text">Tidak
+          <div th:if="${!jadwals.empty and #lists.isEmpty(jadwals.?[hari == 'MINGGU'])}" class="rs-day-empty-text">Tidak
             ada jadwal</div>
           <div th:if="${jadwals.empty}" class="rs-day-empty-text">Tidak ada jadwal</div>
         </div>

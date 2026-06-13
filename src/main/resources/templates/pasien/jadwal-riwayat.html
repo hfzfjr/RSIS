@@ -81,13 +81,14 @@
               <td class="col-doctor">
                 <div class="doctor-info">
                   <div class="doctor-avatar">
-                    <img src="/images/doctor-avatar-1.jpg" alt="Doctor" />
+                    <img th:src="${appointment.jadwal.dokter.dokterImage != null ? appointment.jadwal.dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
+                      class="doctor-avatar-image" />
                   </div>
                   <div class="doctor-details">
                     <span class="doctor-name"
                       th:text="${appointment.jadwal.dokter != null ? appointment.jadwal.dokter.nama : 'N/A'}"></span>
                     <span class="doctor-specialty"
-                      th:text="${appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? appointment.jadwal.dokter.spesialisasi.nama : 'N/A'}"></span>
+                      th:text="${appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? 'Spesialis ' + appointment.jadwal.dokter.spesialisasi.nama : 'Spesialis'}"></span>
                   </div>
                 </div>
               </td>

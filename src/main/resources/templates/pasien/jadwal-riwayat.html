@@ -101,7 +101,7 @@
               <td class="col-type">Konsultasi</td>
               <td class="col-status">
                 <span class="status-badge"
-                  th:class="'status-badge status-' + (appointment.status == 'DIKONFIRMASI' ? 'completed' : appointment.status == 'MENUNGGU' ? 'ongoing' : appointment.status == 'DIBATALKAN' ? 'cancelled' : 'rescheduled')">
+                  th:class="${'status-badge ' + (appointment.status == 'DIKONFIRMASI' ? 'status-completed' : appointment.status == 'MENUNGGU' ? 'status-ongoing' : appointment.status == 'DIBATALKAN' ? 'status-cancelled' : 'status-rescheduled')}">
                   <span class="status-dot"></span>
                   <span th:text="${appointment.status}"></span>
                 </span>

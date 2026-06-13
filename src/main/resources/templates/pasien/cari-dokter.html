@@ -1,152 +1,106 @@
 <!doctype html>
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cari Dokter - RSIS</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
-    <link rel="stylesheet" href="/css/pasien/cari-dokter.css" />
-    <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
-  </head>
-  <body>
-    <!-- Navbar Fragment -->
-    <div th:replace="~{layout/navbar-pasien :: navbar}"></div>
 
-    <main class="main-container">
-      <!-- Welcome Section -->
-      <section class="welcome-section">
-        <!-- Search Bar -->
-        <form class="search-bar" method="get" action="/pasien/cari-dokter">
-          <div class="search-input-wrapper">
-            <svg
-              class="search-icon"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-            <input
-              type="text"
-              name="keyword"
-              class="search-input"
-              placeholder="Cari dokter, spesialisasi, atau poli..."
-              th:value="${keyword}"
-            />
-          </div>
-          <button type="submit" class="btn btn-primary search-btn">
-            Cari Sekarang
-          </button>
-        </form>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cari Dokter - RSIS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
+  <link rel="stylesheet" href="/css/pasien/cari-dokter.css" />
+  <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+</head>
 
-        <!-- Quick Categories -->
-        <div class="quick-categories">
-          <a href="/pasien/cari-dokter?keyword=umum" class="category-pill"
-            >Umum</a
-          >
-          <a href="/pasien/cari-dokter?keyword=jantung" class="category-pill"
-            >Jantung</a
-          >
-          <a href="/pasien/cari-dokter?keyword=anak" class="category-pill"
-            >Anak</a
-          >
-          <a href="/pasien/cari-dokter?keyword=kulit" class="category-pill"
-            >Kulit</a
-          >
-          <a href="/pasien/cari-dokter?keyword=gigi" class="category-pill"
-            >Gigi</a
-          >
+<body>
+  <!-- Navbar Fragment -->
+  <div th:replace="~{layout/navbar :: navbar('cari-dokter')}"></div>
+
+  <main class="main-container">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <!-- Search Bar -->
+      <form class="search-bar" method="get" action="/pasien/cari-dokter">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input type="text" name="keyword" class="search-input" placeholder="Cari dokter, spesialisasi, atau poli..."
+            th:value="${keyword}" />
         </div>
-      </section>
+        <button type="submit" class="btn btn-primary search-btn">
+          Cari Sekarang
+        </button>
+      </form>
 
-      <!-- Doctors Grid -->
-      <section class="doctors-section">
-        <div class="doctors-grid">
-          <!-- Dynamic Doctor Cards from Database -->
-          <div th:each="dokter : ${dokters}" class="doctor-card">
-            <div class="doctor-image-wrapper">
-              <img th:src="${dokter.dokterImage != null ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter" class="doctor-avatar-image" />
-            </div>
-            <div class="doctor-content">
-              <div class="doctor-header">
-                <div>
-                  <h3 class="doctor-name" th:text="${dokter.nama != null ? 'dr. ' + dokter.nama : ''}"></h3>
-                  <p
-                    class="doctor-specialty"
-                    th:text="${dokter.spesialisasi != null ? 'Spesialis ' + dokter.spesialisasi.nama : 'Spesialis'}"
-                  >
-                    Spesialis
-                  </p>
-                </div>
-              </div>
-              <div class="doctor-meta">
-                <div class="meta-item">
-                  <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                  <svg 
-                    width="16px" 
-                    height="16px" 
-                    viewBox="0 0 24 24" 
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 9.77806V16.2C19 17.8801 19 18.7202 18.673 19.3619C18.3854 19.9264 17.9265 20.3854 17.362 20.673C16.7202 21 15.8802 21 14.2 21H9.8C8.11984 21 7.27976 21 6.63803 20.673C6.07354 20.3854 5.6146 19.9264 5.32698 19.3619C5 18.7202 5 17.8801 5 16.2V9.7774M21 12L15.5668 5.96393C14.3311 4.59116 13.7133 3.90478 12.9856 3.65138C12.3466 3.42882 11.651 3.42887 11.0119 3.65153C10.2843 3.90503 9.66661 4.59151 8.43114 5.96446L3 12M14 12C14 13.1045 13.1046 14 12 14C10.8954 14 10 13.1045 10 12C10 10.8954 10.8954 9.99996 12 9.99996C13.1046 9.99996 14 10.8954 14 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span 
-                    th:text="${dokter.poli != null ? dokter.poli.namaPoli : 'Poli'}" 
-                    class="text-sm"
-                  >
-                    Poli
-                  </span>
-                </div>
-                <div class="meta-item">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="black"
-                    stroke-width="2"
-                  >
-                    <path
-                      d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-                    ></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  <span 
-                    th:text="${dokter.poli != null ? dokter.poli.lokasiRuangan : 'Lokasi'}"
-                    class="text-sm"
-                  >
-                    Lokasi
-                  </span>
-                </div>
-              </div>
-              <a
-                th:href="@{/appointment/booking(dokterId=${dokter.idDokter})}"
-                class="btn btn-primary btn-full"
-              >
-                Booking
-              </a>
-            </div>
+      <!-- Quick Categories -->
+      <div class="quick-categories">
+        <a href="/pasien/cari-dokter?keyword=umum" class="category-pill">Umum</a>
+        <a href="/pasien/cari-dokter?keyword=jantung" class="category-pill">Jantung</a>
+        <a href="/pasien/cari-dokter?keyword=anak" class="category-pill">Anak</a>
+        <a href="/pasien/cari-dokter?keyword=kulit" class="category-pill">Kulit</a>
+        <a href="/pasien/cari-dokter?keyword=gigi" class="category-pill">Gigi</a>
+      </div>
+    </section>
+
+    <!-- Doctors Grid -->
+    <section class="doctors-section">
+      <div class="doctors-grid">
+        <!-- Dynamic Doctor Cards from Database -->
+        <div th:each="dokter : ${dokters}" class="doctor-card">
+          <div class="doctor-image-wrapper">
+            <img th:src="${dokter.dokterImage != null ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
+              class="doctor-avatar-image" />
           </div>
-
-          <!-- Empty State -->
-          <div
-            th:if="${dokters == null || dokters.empty}"
-            style="grid-column: 1 / -1; text-align: center; padding: 40px"
-          >
-            <p style="color: var(--color-text-secondary); margin-bottom: 16px">
-              Tidak ada dokter yang ditemukan.
-            </p>
-            <a href="/pasien/cari-dokter" class="btn btn-primary"
-              >Lihat Semua Dokter</a
-            >
+          <div class="doctor-content">
+            <div class="doctor-header">
+              <div>
+                <h3 class="doctor-name" th:text="${dokter.nama != null ? 'dr. ' + dokter.nama : ''}"></h3>
+                <p class="doctor-specialty"
+                  th:text="${dokter.spesialisasi != null ? 'Spesialis ' + dokter.spesialisasi.nama : 'Spesialis'}">
+                  Spesialis
+                </p>
+              </div>
+            </div>
+            <div class="doctor-meta">
+              <div class="meta-item">
+                <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M19 9.77806V16.2C19 17.8801 19 18.7202 18.673 19.3619C18.3854 19.9264 17.9265 20.3854 17.362 20.673C16.7202 21 15.8802 21 14.2 21H9.8C8.11984 21 7.27976 21 6.63803 20.673C6.07354 20.3854 5.6146 19.9264 5.32698 19.3619C5 18.7202 5 17.8801 5 16.2V9.7774M21 12L15.5668 5.96393C14.3311 4.59116 13.7133 3.90478 12.9856 3.65138C12.3466 3.42882 11.651 3.42887 11.0119 3.65153C10.2843 3.90503 9.66661 4.59151 8.43114 5.96446L3 12M14 12C14 13.1045 13.1046 14 12 14C10.8954 14 10 13.1045 10 12C10 10.8954 10.8954 9.99996 12 9.99996C13.1046 9.99996 14 10.8954 14 12Z"
+                    stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span th:text="${dokter.poli != null ? dokter.poli.namaPoli : 'Poli'}" class="text-sm">
+                  Poli
+                </span>
+              </div>
+              <div class="meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span th:text="${dokter.poli != null ? dokter.poli.lokasiRuangan : 'Lokasi'}" class="text-sm">
+                  Lokasi
+                </span>
+              </div>
+            </div>
+            <a th:href="@{/pasien/booking(dokterId=${dokter.idDokter})}" class="btn btn-primary btn-full">
+              Booking
+            </a>
           </div>
         </div>
-      </section>
-    </main>
-  </body>
+
+        <!-- Empty State -->
+        <div th:if="${dokters == null || dokters.empty}" style="grid-column: 1 / -1; text-align: center; padding: 40px">
+          <p style="color: var(--color-text-secondary); margin-bottom: 16px">
+            Tidak ada dokter yang ditemukan.
+          </p>
+          <a href="/pasien/cari-dokter" class="btn btn-primary">Lihat Semua Dokter</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+
 </html>

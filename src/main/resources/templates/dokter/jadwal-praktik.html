@@ -5,47 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jadwal Praktik - RSIS</title>
-  <!-- External CSS Libraries -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" th:href="@{/css/dokter/jadwal-praktik.css}" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/dokter/jadwal-praktik.css" />
+  <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
 <body>
-  <!-- Premium Navigation Header -->
-  <header class="rs-navbar">
-    <div class="rs-nav-container">
-      <a href="/dokter/dashboard" class="rs-logo-area">
-        <img src="/images/logo-rsis.png" alt="RSIS Logo" class="rs-logo-img" />
-        <div class="rs-logo-text-group">
-          <span class="rs-logo-title">RSIS</span>
-          <span class="rs-logo-subtitle">Rumah Sakit Inteligent System</span>
-        </div>
-      </a>
-      <ul class="rs-nav-links">
-        <li><a href="/dokter/dashboard" class="rs-nav-link">Dashboard</a></li>
-        <li><a href="/dokter/jadwal" class="rs-nav-link active">Jadwal Praktik</a></li>
-        <li><a href="/dokter/appointment/pending" class="rs-nav-link">Appointment</a></li>
-      </ul>
-      <div class="rs-nav-right">
-        <button class="rs-notif-btn" aria-label="Notifikasi">
-          <i class="bi bi-bell"></i>
-          <span class="rs-notif-badge"></span>
-        </button>
-        <div class="rs-nav-divider"></div>
-        <a href="/dokter/dashboard" class="rs-profile-widget">
-          <div class="rs-profile-info">
-            <span class="rs-profile-name">Ahmad Hafiz</span>
-            <span class="rs-profile-role">Dokter</span>
-          </div>
-          <img src="/images/dokter.png" alt="Dokter Avatar" class="rs-profile-avatar" />
-        </a>
-      </div>
-    </div>
-  </header>
+  <div th:replace="layout/navbar :: navbar('jadwal-praktik')"></div>
+  <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
 
   <!-- Main Content Area -->
   <main class="rs-main-container">

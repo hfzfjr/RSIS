@@ -9,6 +9,7 @@
             padding: 2rem;
             background: #1a1a1a;
             color: #f0f0f0;
+            margin: 0;
         }
 
         .error-box {
@@ -25,8 +26,18 @@
             padding: 1rem;
             border-radius: 4px;
             margin-bottom: 1rem;
-            font-size: 1rem;
             color: #ff6666;
+        }
+
+        .solution-box {
+            background: #0d2d0d;
+            border-left: 4px solid #2ecc71;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            color: #a8e6a8;
+            white-space: pre-wrap;
+            line-height: 1.6;
         }
 
         .trace-box {
@@ -35,93 +46,215 @@
             border-radius: 4px;
             overflow-x: auto;
             white-space: pre-wrap;
-            font-size: 0.8rem;
-            color: #e74c3c;
-            max-height: 400px;
+            font-size: 0.75rem;
+            color: #888;
+            max-height: 300px;
             overflow-y: auto;
         }
 
         h1 {
             color: #e74c3c;
+            margin-bottom: 1.5rem;
         }
 
         h2 {
             color: #f39c12;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            margin: 1.5rem 0 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         label {
             color: #aaa;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         p {
-            margin: 0.3rem 0 1rem;
+            margin: 0.2rem 0 0.8rem;
+            font-size: 0.95rem;
         }
 
-        .tag {
+        .loading {
+            color: #f39c12;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .badge {
             display: inline-block;
-            background: #f39c12;
-            color: #000;
-            padding: 0.1rem 0.5rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 3px;
             font-size: 0.75rem;
-            margin-right: 0.5rem;
+            margin-right: 0.4rem;
+        }
+
+        .badge-red {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-green {
+            background: #2ecc71;
+            color: #000;
+        }
+
+        details summary {
+            cursor: pointer;
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        details summary:hover {
+            color: #f0f0f0;
         }
     </style>
 </head>
 
 <body>
+
     <h1>🔴 Internal Server Error (500)</h1>
 
     <div class="error-box">
         <label>URL</label>
         <p th:text="${path}">-</p>
-
         <label>Message</label>
         <p th:text="${message}">-</p>
+        <label>Exception</label>
+        <p th:text="${exception}">-</p>
     </div>
 
-    <!-- Ekstrak baris error dari trace -->
     <h2>🎯 Lokasi Error</h2>
     <div id="error-location" class="highlight">Menganalisis...</div>
 
-    <h2>📋 Full Stack Trace</h2>
-    <div class="trace-box" id="trace" th:text="${trace}">No trace available</div>
+    <h2>🤖 Solusi AI</h2>
+    <div id="ai-solution" class="solution-box">
+        <span class="loading">⏳ Menganalisis error dan mencari solusi...</span>
+    </div>
 
-    <script th:if="${trace != null}" th:inline="javascript">
-        /*<![CDATA[*/
+    <details>
+        <summary>📋 Lihat Full Stack Trace</summary>
+        <div class="trace-box" id="trace" th:text="${trace}">No trace available</div>
+    </details>
+
+    <script>
+        const GEMINI_API_KEY = 'isi_dengan_api_gemini';
+    </script>
+
+    <script th:inline="javascript">
         const trace = /*[[${trace}]]*/ '';
-        const lines = trace.split('\n');
-        const results = [];
+        const message = /*[[${message}]]*/ '';
+        const exception = /*[[${exception}]]*/ '';
+        const path = /*[[${path}]]*/ '';
+
+        // === Ekstrak lokasi error ===
+        const lines = (trace || '').split('\n');
+        const locationResults = [];
+        const causedByLines = [];
 
         lines.forEach(line => {
             const trimmed = line.trim();
 
-            // Cari baris yang menyebut template + line number
             const templateMatch = trimmed.match(/template: "([^"]+)" - line (\d+), col (\d+)/);
             if (templateMatch) {
-                results.push(`📄 Template : ${templateMatch[1]}.html\n🔢 Baris    : ${templateMatch[2]}, Kolom: ${templateMatch[3]}`);
+                locationResults.push(`📄 Template : ${templateMatch[1]}.html\n🔢 Baris    : ${templateMatch[2]}, Kolom: ${templateMatch[3]}`);
             }
 
-            // Cari caused by (root cause)
             if (trimmed.startsWith('Caused by:')) {
-                results.push(`💥 Caused By: ${trimmed.replace('Caused by: ', '')}`);
+                causedByLines.push(trimmed);
+            }
+
+            // Controller/Service error
+            const javaMatch = trimmed.match(/at rsis\.(controller|service|model|repository)\.(\S+)\((\S+\.java):(\d+)\)/);
+            if (javaMatch) {
+                locationResults.push(`☕ ${javaMatch[1].toUpperCase()} : ${javaMatch[2]}\n📁 File     : ${javaMatch[3]}, Baris: ${javaMatch[4]}`);
             }
         });
 
-        const el = document.getElementById('error-location');
-        if (results.length > 0) {
-            el.innerText = results.join('\n\n');
+        const locationEl = document.getElementById('error-location');
+        if (locationResults.length > 0 || causedByLines.length > 0) {
+            const all = [...new Set([...locationResults, ...causedByLines])];
+            locationEl.innerText = all.join('\n\n');
         } else {
-            el.innerText = 'Tidak dapat mengekstrak lokasi error dari trace.';
+            locationEl.innerText = message || 'Tidak dapat mengekstrak lokasi error.';
         }
-        /*]]>*/
+
+        // === Kirim ke Anthropic API untuk solusi ===
+        async function getAISolution() {
+            const solutionEl = document.getElementById('ai-solution');
+
+            // Ambil baris trace yang paling relevan (max 3000 char)
+            const relevantTrace = lines
+                .filter(l => l.includes('Caused by') || l.includes('rsis.') || l.includes('template:') || l.includes('line '))
+                .join('\n')
+                .substring(0, 3000);
+
+            const prompt = `Kamu adalah expert Spring Boot developer. Analisis error berikut dan berikan solusi yang jelas dan langsung.
+
+URL: ${path}
+Exception: ${exception}
+Message: ${message}
+
+Relevant Stack Trace:
+${relevantTrace}
+
+Berikan respons dalam format:
+1. PENYEBAB: (jelaskan root cause dalam 1-2 kalimat)
+2. LOKASI: (file dan baris mana yang perlu diperbaiki)
+3. SOLUSI: (langkah fix yang konkret dengan contoh kode jika perlu)
+4. TIPS: (tips singkat agar error ini tidak terulang)
+
+Gunakan Bahasa Indonesia. Langsung to the point, tidak perlu basa-basi.`;
+
+            try {
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: prompt }]
+                            }]
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                // Tambah ini untuk debug
+                console.log('Status:', response.status);
+                console.log('Response:', JSON.stringify(data, null, 2));
+
+                if (data.error) {
+                    solutionEl.innerText = `❌ API Error ${data.error.code}: ${data.error.message}`;
+                    return;
+                }
+
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Tidak ada respons dari AI.';
+                solutionEl.innerText = text;
+
+            } catch (err) {
+                solutionEl.innerText = '❌ Gagal: ' + err.message;
+                console.error(err);
+            }
+        }
+
+        getAISolution();
     </script>
-    <script th:unless="${trace != null}">
-        document.getElementById('error-location').innerText = 'Tidak ada stack trace tersedia.';
-    </script>
+
 </body>
 
 </html>

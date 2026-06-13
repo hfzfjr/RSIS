@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Error 500</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 2rem;
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .error-box {
+            background: #2d2d2d;
+            border-left: 4px solid #e74c3c;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            background: #3d0000;
+            border-left: 4px solid #ff4444;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #ff6666;
+        }
+
+        .trace-box {
+            background: #111;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 0.8rem;
+            color: #e74c3c;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #e74c3c;
+        }
+
+        h2 {
+            color: #f39c12;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        label {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        p {
+            margin: 0.3rem 0 1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #f39c12;
+            color: #000;
+            padding: 0.1rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔴 Internal Server Error (500)</h1>
+
+    <div class="error-box">
+        <label>URL</label>
+        <p th:text="${path}">-</p>
+
+        <label>Message</label>
+        <p th:text="${message}">-</p>
+    </div>
+
+    <!-- Ekstrak baris error dari trace -->
+    <h2>🎯 Lokasi Error</h2>
+    <div id="error-location" class="highlight">Menganalisis...</div>
+
+    <h2>📋 Full Stack Trace</h2>
+    <div class="trace-box" id="trace" th:text="${trace}">No trace available</div>
+
+    <script th:if="${trace != null}" th:inline="javascript">
+        /*<![CDATA[*/
+        const trace = /*[[${trace}]]*/ '';
+        const lines = trace.split('\n');
+        const results = [];
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+
+            // Cari baris yang menyebut template + line number
+            const templateMatch = trimmed.match(/template: "([^"]+)" - line (\d+), col (\d+)/);
+            if (templateMatch) {
+                results.push(`📄 Template : ${templateMatch[1]}.html\n🔢 Baris    : ${templateMatch[2]}, Kolom: ${templateMatch[3]}`);
+            }
+
+            // Cari caused by (root cause)
+            if (trimmed.startsWith('Caused by:')) {
+                results.push(`💥 Caused By: ${trimmed.replace('Caused by: ', '')}`);
+            }
+        });
+
+        const el = document.getElementById('error-location');
+        if (results.length > 0) {
+            el.innerText = results.join('\n\n');
+        } else {
+            el.innerText = 'Tidak dapat mengekstrak lokasi error dari trace.';
+        }
+        /*]]>*/
+    </script>
+    <script th:unless="${trace != null}">
+        document.getElementById('error-location').innerText = 'Tidak ada stack trace tersedia.';
+    </script>
+</body>
+
+</html>

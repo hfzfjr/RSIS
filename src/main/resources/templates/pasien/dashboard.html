@@ -160,7 +160,7 @@
                 </span>
               </div>
             </div>
-            <a th:href="@{/pasien/booking(dokterId=${dokter.idDokter})}" class="btn btn-primary btn-full">
+            <a th:href="@{/pasien/booking(dokterId=${dokter.idUser})}" class="btn btn-primary btn-full">
               Booking
             </a>
           </div>
@@ -200,8 +200,8 @@
                 Nama Dokter
               </h3>
               <span class="appointment-status"
-                th:class="'appointment-status ' + (${appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : ${appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled'})}"
-                th:text="${appointment.status == 'DIKONFIRMASI' ? 'Dikonfirmasi' : ${appointment.status == 'MENUNGGU' ? 'Menunggu Konfirmasi' : appointment.status}}">
+                th:class="'appointment-status ' + (appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled')"
+                th:text="${appointment.status == 'DIKONFIRMASI' ? 'Dikonfirmasi' : appointment.status == 'MENUNGGU' ? 'Menunggu Konfirmasi' : appointment.status}">
                 Status
               </span>
             </div>

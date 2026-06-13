@@ -505,8 +505,7 @@
           <form th:action="@{/dokter/jadwal/update}" method="post">
             <!-- Hidden references to match spring binder attributes and retain state -->
             <input type="hidden" name="idJadwal" th:value="${jadwal.idJadwal}" />
-            <input type="hidden" name="dokter.idDokter"
-              th:value="${jadwal.dokter != null ? jadwal.dokter.idDokter : ''}" />
+            <input type="hidden" name="dokter.idUser" th:value="${jadwal.dokter != null ? jadwal.dokter.idUser : ''}" />
             <input type="hidden" name="statusKetersediaan" th:value="${jadwal.statusKetersediaan}" />
             <input type="hidden" name="sisaKuota" th:value="${jadwal.sisaKuota}" />
 

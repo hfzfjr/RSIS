@@ -22,8 +22,8 @@
       <aside class="doctor-sidebar">
         <div class="doctor-profile-card">
           <div class="doctor-image-wrapper">
-            <img th:src="@{/images/doctor-large.jpg}" src="/images/doctor-large.jpg" alt="Foto Dokter"
-              class="doctor-image" />
+            <img th:src="${dokter.dokterImage != null ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
+              class="doctor-avatar-image" />
           </div>
           <div class="doctor-info">
             <h1 class="doctor-name" th:text="${dokter != null ? 'dr. ' + dokter.nama : 'Dokter'}">

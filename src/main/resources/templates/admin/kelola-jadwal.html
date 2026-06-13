@@ -93,29 +93,44 @@
                             <td>
                                 <div class="doctor-info">
                                     <div class="doctor-avatar">
-                                        <span th:text="${jadwal.dokter != null and jadwal.dokter.nama != null ? jadwal.dokter.nama.substring(0, 1).toUpperCase() : 'D'}">D</span>
+                                        <span
+                                            th:text="${jadwal.dokter != null and jadwal.dokter.nama != null ? jadwal.dokter.nama.substring(0, 1).toUpperCase() : 'D'}">D</span>
                                     </div>
-                                    <span class="doctor-name" th:text="${jadwal.dokter != null ? jadwal.dokter.nama : '-'}">Dr. Ahmad Hafiz</span>
+                                    <span class="doctor-name"
+                                        th:text="${jadwal.dokter != null ? jadwal.dokter.nama : '-'}">Dr. Ahmad
+                                        Hafiz</span>
                                 </div>
                             </td>
-                            <td th:text="${jadwal.dokter != null and jadwal.dokter.poli != null ? jadwal.dokter.poli.nama : '-'}">Poli Penyakit Dalam</td>
+                            <td
+                                th:text="${jadwal.dokter != null and jadwal.dokter.poli != null ? jadwal.dokter.poli.nama : '-'}">
+                                Poli Penyakit Dalam</td>
                             <td th:text="${jadwal.hari != null ? jadwal.hari : '-'}">Senin</td>
-                            <td th:text="${jadwal.waktuMulai != null and jadwal.waktuSelesai != null ? jadwal.waktuMulai + ' - ' + jadwal.waktuSelesai : '-'}">08:00 - 12:00</td>
+                            <td
+                                th:text="${jadwal.jamMulai != null and jadwal.jamSelesai != null ? jadwal.jamMulai + ' - ' + jadwal.jamSelesai : '-'}">
+                                08:00 - 12:00</td>
                             <td>
-                                <span class="status-badge" th:class="${jadwal.status == 'AKTIF' ? 'status-badge status-active' : jadwal.status == 'PENUH' ? 'status-badge status-full' : 'status-badge status-inactive'}" th:text="${jadwal.status != null ? jadwal.status : '-'}">Aktif</span>
+                                <span class="status-badge"
+                                    th:class="${jadwal.statusKetersediaan == 'TERSEDIA' ? 'status-badge status-active' : jadwal.statusKetersediaan == 'PENUH' ? 'status-badge status-full' : 'status-badge status-inactive'}"
+                                    th:text="${jadwal.statusKetersediaan != null ? jadwal.statusKetersediaan : '-'}">Aktif</span>
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-action btn-edit" th:onclick="'editJadwal(\'' + ${jadwal.idJadwal} + '\')'" title="Edit">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <button class="btn-action btn-edit"
+                                        th:onclick="'editJadwal(\'' + ${jadwal.idJadwal} + '\')'" title="Edit">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
                                     </button>
-                                    <button class="btn-action btn-delete" th:onclick="'deleteJadwal(\'' + ${jadwal.idJadwal} + '\')'" title="Hapus">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <button class="btn-action btn-delete"
+                                        th:onclick="'deleteJadwal(\'' + ${jadwal.idJadwal} + '\')'" title="Hapus">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
                                             <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
                                         </svg>
                                     </button>
                                 </div>

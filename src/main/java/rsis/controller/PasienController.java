@@ -299,6 +299,20 @@ public class PasienController {
         // Get all appointments for the pasien
         String pasienId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
+
+        // Populate transient fields for dokter in each appointment
+        for (Appointment appointment : appointments) {
+            if (appointment.getJadwal() != null && appointment.getJadwal().getDokter() != null) {
+                Dokter dokter = appointment.getJadwal().getDokter();
+                userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
+                    dokter.setNama(fetchedUser.getNama());
+                    dokter.setEmail(fetchedUser.getEmail());
+                    dokter.setPassword(fetchedUser.getPassword());
+                    dokter.setRole(fetchedUser.getRole());
+                });
+            }
+        }
+
         model.addAttribute("appointments", appointments);
 
         return "pasien/jadwal-riwayat";

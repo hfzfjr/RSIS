@@ -87,7 +87,7 @@
                     <span class="doctor-name"
                       th:text="${appointment.jadwal.dokter != null ? appointment.jadwal.dokter.nama : 'N/A'}"></span>
                     <span class="doctor-specialty"
-                      th:text="${appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? appointment.jadwal.dokter.spesialisasi.namaSpesialisasi : 'N/A'}"></span>
+                      th:text="${appointment.jadwal.dokter != null && appointment.jadwal.dokter.spesialisasi != null ? appointment.jadwal.dokter.spesialisasi.nama : 'N/A'}"></span>
                   </div>
                 </div>
               </td>
@@ -101,7 +101,7 @@
               <td class="col-type">Konsultasi</td>
               <td class="col-status">
                 <span class="status-badge"
-                  th:class="'status-badge status-' + (${appointment.status} == 'DIKONFIRMASI' ? 'completed' : ${appointment.status} == 'MENUNGGU' ? 'ongoing' : ${appointment.status} == 'DIBATALKAN' ? 'cancelled' : 'rescheduled')">
+                  th:class="'status-badge status-' + (appointment.status == 'DIKONFIRMASI' ? 'completed' : appointment.status == 'MENUNGGU' ? 'ongoing' : appointment.status == 'DIBATALKAN' ? 'cancelled' : 'rescheduled')">
                   <span class="status-dot"></span>
                   <span th:text="${appointment.status}"></span>
                 </span>

@@ -1,131 +1,43 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    color: #333;
-    min-height: 100vh;
-}
-
+/* ── Main Layout & Header ── */
 .main-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 30px;
+    padding: 32px 30px;
 }
 
 .content-header {
-    margin-bottom: 30px;
-}
-
-.page-title {
-    font-size: 32px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 8px;
-}
-
-.page-subtitle {
-    font-size: 16px;
-    color: #7f8c8d;
-    font-weight: 400;
-}
-
-.stats-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 32px;
-}
-
-.stat-card {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
     display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
 }
 
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.stat-icon-blue {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.stat-icon-orange {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-}
-
-.stat-icon-green {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-}
-
-.stat-info {
+.content-header-text {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.stat-label {
-    font-size: 14px;
-    color: #7f8c8d;
-    font-weight: 500;
-}
-
-.stat-value {
+.page-title {
     font-size: 28px;
     font-weight: 700;
-    color: #2c3e50;
+    color: #1a1a1a;
+    margin-bottom: 0;
 }
 
-.table-section {
-    background: white;
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.page-subtitle {
+    font-size: 14px;
+    color: #888;
+    font-weight: 400;
 }
 
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.table-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
+/* ── Tombol Utama (Aksi Tambah) ── */
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
-    border-radius: 10px;
+    padding: 11px 22px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     border: none;
@@ -135,13 +47,142 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a6b4a;
     color: white;
 }
 
 .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: #155a3d;
+    box-shadow: 0 4px 12px rgba(26, 107, 74, 0.35);
+}
+
+/* ── Stats Section: Container Horizontal ── */
+.stats-cards {
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    border-left: 4px solid transparent;
+    transition: background-color 0.2s ease;
+}
+
+.stat-card:hover {
+    background-color: #fafafa;
+}
+
+/* Garis pemisah vertikal antar panel stats */
+.stat-card + .stat-card {
+    border-left: none;
+}
+
+.stat-card + .stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 16px;
+    bottom: 16px;
+    width: 1px;
+    background: #e8e8e8;
+}
+
+/* Accent border kiri per card */
+.stat-card:first-child {
+    border-left: 4px solid #1a6b4a;
+}
+
+.stat-card:nth-child(2) {
+    border-left: 4px solid #e74c3c;
+}
+
+.stat-card:nth-child(2)::before {
+    display: none;
+}
+
+.stat-card:last-child {
+    border-left: 4px solid #94a3b8;
+}
+
+/* Ikon Stats */
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon-blue {
+    background: #e8f5ef;
+    color: #1a6b4a;
+}
+
+.stat-icon-orange {
+    background: #fdecea;
+    color: #e74c3c;
+}
+
+.stat-icon-green {
+    background: #f0f2f5;
+    color: #64748b;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.1;
+}
+
+.stat-card:nth-child(2) .stat-value {
+    color: #e74c3c;
+}
+
+/* ── Table Section ── */
+.table-section {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.table-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
 }
 
 .table-container {
@@ -154,27 +195,27 @@ body {
 }
 
 .data-table thead {
-    background: #f8f9fa;
+    background: #f7f8f7;
 }
 
 .data-table th {
-    padding: 16px 20px;
+    padding: 14px 20px;
     text-align: left;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    color: #7f8c8d;
+    color: #999;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #e9ecef;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid #eeeeee;
 }
 
 .data-table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background-color 0.15s ease;
 }
 
 .data-table tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #fafcfa;
 }
 
 .data-table tbody tr:last-child {
@@ -182,12 +223,13 @@ body {
 }
 
 .data-table td {
-    padding: 20px;
+    padding: 16px 20px;
     vertical-align: middle;
     font-size: 14px;
-    color: #333;
+    color: #444;
 }
 
+/* ── Entitas Dokter di dalam Jadwal ── */
 .doctor-info {
     display: flex;
     align-items: center;
@@ -195,143 +237,145 @@ body {
 }
 
 .doctor-avatar {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #e8f5ef;
+    color: #1a6b4a;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 15px;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .doctor-name {
     font-weight: 600;
-    color: #2c3e50;
-    font-size: 15px;
+    color: #1a1a1a;
+    font-size: 14px;
+    display: block;
 }
 
-.status-badge {
+.doctor-id {
+    font-size: 12px;
+    color: #aaa;
+    display: block;
+    margin-top: 1px;
+}
+
+/* ── Badge / Label Informasi Tambahan ── */
+.badge-spesialisasi {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    background: #e0f2ea;
+    color: #1a6b4a;
 }
 
-.status-active {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-full {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-inactive {
-    background: #f8d7da;
-    color: #721c24;
-}
-
+/* ── Tombol Aksi (Edit & Hapus) ── */
 .action-buttons {
     display: flex;
     gap: 8px;
 }
 
 .btn-action {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
     border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
 }
 
 .btn-edit {
-    background: #3498db;
+    background: transparent;
+    color: #555;
+    border: 1px solid #e0e0e0;
 }
 
 .btn-edit:hover {
-    background: #2980b9;
-    transform: translateY(-1px);
+    background: #f0f0f0;
+    color: #1a6b4a;
+    border-color: #1a6b4a;
 }
 
 .btn-delete {
-    background: #e74c3c;
+    background: transparent;
+    color: #e74c3c;
+    border: 1px solid #fad4d1;
 }
 
 .btn-delete:hover {
-    background: #c0392b;
-    transform: translateY(-1px);
+    background: #fdecea;
+    border-color: #e74c3c;
 }
 
+/* State Jika Data Kosong */
 .no-data {
     text-align: center;
-    padding: 40px;
-    color: #7f8c8d;
-    font-size: 15px;
+    padding: 48px;
+    color: #aaa;
+    font-size: 14px;
 }
 
-/* Responsive Design */
+/* ── Desain Responsif (Sama Persis) ── */
 @media (max-width: 1024px) {
     .main-content {
-        padding: 30px 20px;
-    }
-
-    .stats-cards {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
+        padding: 24px 20px;
     }
 
     .stat-card {
-        padding: 20px;
-    }
-
-    .stat-icon {
-        width: 48px;
-        height: 48px;
+        padding: 16px 20px;
     }
 
     .stat-value {
-        font-size: 24px;
-    }
-
-    .table-section {
-        padding: 20px;
+        font-size: 22px;
     }
 }
 
 @media (max-width: 768px) {
     .main-content {
-        padding: 20px 16px;
+        padding: 16px;
+    }
+
+    .content-header {
+        flex-direction: column;
+        gap: 16px;
     }
 
     .page-title {
-        font-size: 24px;
-    }
-
-    .page-subtitle {
-        font-size: 14px;
+        font-size: 22px;
     }
 
     .stats-cards {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
-    .table-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+    .stat-card + .stat-card::before {
+        display: none;
+    }
+
+    .stat-card:nth-child(2) {
+        border-left: 4px solid #e74c3c;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .stat-card:last-child {
+        border-top: 1px solid #f0f0f0;
     }
 
     .btn {
@@ -339,27 +383,25 @@ body {
         justify-content: center;
     }
 
-    .data-table {
-        font-size: 13px;
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
     }
 
     .data-table th,
     .data-table td {
-        padding: 12px 10px;
+        padding: 12px 12px;
     }
 
     .doctor-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
     }
 
     .doctor-name {
-        font-size: 14px;
-    }
-
-    .status-badge {
-        padding: 4px 10px;
-        font-size: 11px;
+        font-size: 13px;
     }
 }

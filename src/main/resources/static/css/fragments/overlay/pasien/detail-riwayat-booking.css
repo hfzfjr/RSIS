@@ -1,0 +1,305 @@
+/* =========================
+   Detail Riwayat Booking Overlay
+   ========================= */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.overlay.active .overlay-content {
+    transform: translateY(0);
+}
+
+/* =========================
+   Overlay Header
+   ========================= */
+
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.overlay-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.overlay-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: #6b7280;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+/* =========================
+   Overlay Body
+   ========================= */
+
+.overlay-body {
+    padding: 24px;
+}
+
+.info-section {
+    margin-bottom: 24px;
+}
+
+.info-section:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================
+   Doctor Card
+   ========================= */
+
+.doctor-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.doctor-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.doctor-details {
+    flex: 1;
+}
+
+.doctor-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.doctor-specialty {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* =========================
+   Detail Rows
+   ========================= */
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #111827;
+    font-weight: 600;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-ongoing {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.status-cancelled {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.status-rescheduled {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* =========================
+   Overlay Actions
+   ========================= */
+
+.overlay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #00796b;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #00695c;
+}
+
+.btn-secondary {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.btn-secondary:hover {
+    background: #bae6fd;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #fecaca;
+}
+
+.btn-close-overlay {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-close-overlay:hover {
+    background: #e5e7eb;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 768px) {
+    .overlay-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .overlay-header {
+        padding: 20px;
+    }
+
+    .overlay-body {
+        padding: 20px;
+    }
+
+    .overlay-title {
+        font-size: 18px;
+    }
+
+    .doctor-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .doctor-details {
+        text-align: center;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .overlay-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

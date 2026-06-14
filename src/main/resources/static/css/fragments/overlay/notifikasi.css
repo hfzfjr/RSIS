@@ -13,10 +13,15 @@
     z-index: 9999;
     display: none;
     animation: slideDown 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .notifikasi-overlay.active {
     display: block !important;
+    opacity: 1;
+    visibility: visible;
 }
 
 @keyframes slideDown {

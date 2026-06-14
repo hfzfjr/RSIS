@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/pasien/jadwal-riwayat.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/pasien/detail-riwayat-booking.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -41,7 +42,7 @@
           </svg>
           <input type="text" class="search-input" placeholder="Cari nama dokter atau spesialisasi..." />
         </div>
-        <button class="btn btn-date-filter">
+        <button class="btn-date-filter">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -69,11 +70,11 @@
         <table class="appointment-table">
           <thead>
             <tr>
-              <th class="col-doctor">DOCTOR</th>
-              <th class="col-date">DATE & TIME</th>
-              <th class="col-type">CONSULTATION TYPE</th>
+              <th class="col-doctor">DOKTER</th>
+              <th class="col-date">TANGGAL & WAKTU</th>
+              <th class="col-type">JENIS KONSULTASI</th>
               <th class="col-status">STATUS</th>
-              <th class="col-action">ACTION</th>
+              <th class="col-action">AKSI</th>
             </tr>
           </thead>
           <tbody>
@@ -81,8 +82,9 @@
               <td class="col-doctor">
                 <div class="doctor-info">
                   <div class="doctor-avatar">
-                    <img th:src="${appointment.jadwal.dokter.dokterImage != null ? appointment.jadwal.dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
-                      class="doctor-avatar-image" />
+                    <img
+                      th:src="${appointment.jadwal.dokter.dokterImage != null ? appointment.jadwal.dokter.dokterImage : '/images/dokter.png'}"
+                      alt="Dokter" class="doctor-avatar-image" />
                   </div>
                   <div class="doctor-details">
                     <span class="doctor-name"
@@ -109,16 +111,8 @@
               </td>
               <td class="col-action">
                 <div class="action-buttons">
-                  <a th:href="@{/appointment/detail/{id}(id=${appointment.idAppointment})}" class="btn-text">Details</a>
-                  <form th:if="${appointment.status == 'MENUNGGU'}"
-                    th:action="@{/appointment/cancel/{id}(id=${appointment.idAppointment})}" method="post"
-                    style="display: inline">
-                    <button type="submit" class="btn btn-sm btn-danger"
-                      onclick="return confirm('Batalkan appointment ini?');">
-                      Cancel
-                    </button>
-                  </form>
-                  <a href="/pasien/cari-dokter" class="btn btn-sm btn-primary">Book Again</a>
+                  <button th:data-id="${appointment.idAppointment}" onclick="openOverlay(this.dataset.id)"
+                    class="btn-text">Selengkapnya</button>
                 </div>
               </td>
             </tr>
@@ -127,6 +121,10 @@
       </div>
     </section>
   </main>
+
+  <!-- Detail Booking Overlay -->
+  <div th:replace="~{fragments/overlay/pasien/detail-riwayat-booking.html}"></div>
+
 </body>
 
 </html>

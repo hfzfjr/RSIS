@@ -135,6 +135,7 @@
 .appointment-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .appointment-table thead {
@@ -157,6 +158,10 @@
 
 .appointment-table tbody tr:not(:last-child) {
   border-bottom: 1px solid #f1f5f9;
+}
+
+.col-date, .col-type, .col-status, .col-action{
+  text-align: center;
 }
 
 /* =========================
@@ -307,11 +312,13 @@
 .action-buttons {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
 }
 
 .btn-text {
+  border: none;
+  background: transparent;
   color: #00796b;
   font-size: 17px;
   font-weight: 500;

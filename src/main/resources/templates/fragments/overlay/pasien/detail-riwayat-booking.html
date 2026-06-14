@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Detail Riwayat Booking</title>
+    <link rel="stylesheet" href="/css/fragments/overlay/pasien/detail-riwayat-booking.css" />
+</head>
+
+<body>
+    <div id="detail-overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">Detail Booking</h2>
+                <button class="overlay-close" onclick="closeOverlay()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="overlay-body">
+                <!-- Doctor Info -->
+                <div class="info-section">
+                    <div class="doctor-card">
+                        <div class="doctor-avatar">
+                            <img id="overlay-doctor-image" src="/images/dokter.png" alt="Dokter" />
+                        </div>
+                        <div class="doctor-details">
+                            <h3 id="overlay-doctor-name" class="doctor-name">Nama Dokter</h3>
+                            <p id="overlay-doctor-specialty" class="doctor-specialty">Spesialis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Details -->
+                <div class="info-section">
+                    <div class="detail-row">
+                        <span class="detail-label">Tanggal Booking</span>
+                        <span id="overlay-tanggal" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Waktu</span>
+                        <span id="overlay-waktu" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Jenis Konsultasi</span>
+                        <span id="overlay-jenis" class="detail-value">Konsultasi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span id="overlay-status" class="detail-value status-badge">-</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="overlay-actions">
+                    <button class="btn btn-close-overlay" onclick="closeOverlay()">
+                        Tutup
+                    </button>
+                    <button id="btn-batal" class="btn btn-danger btn-batal" style="display: none;">
+                        Batalkan Booking
+                    </button>
+                    <button id="btn-reschedule" class="btn btn-secondary btn-reschedule" style="display: none;">
+                        Reschedule
+                    </button>
+                    <button id="btn-booking-lagi" class="btn btn-primary btn-booking-lagi" style="display: none;">
+                        Booking Lagi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        function openOverlay(appointmentId) {
+            fetch(`/pasien/appointment/detail/${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const appointment = data.appointment;
+
+                        // Update doctor info
+                        document.getElementById('overlay-doctor-name').textContent =
+                            appointment.jadwal?.dokter?.nama || 'N/A';
+                        document.getElementById('overlay-doctor-specialty').textContent =
+                            appointment.jadwal?.dokter?.spesialisasi?.nama
+                                ? 'Spesialis ' + appointment.jadwal.dokter.spesialisasi.nama
+                                : 'Spesialis';
+                        document.getElementById('overlay-doctor-image').src =
+                            appointment.jadwal?.dokter?.dokterImage || '/images/dokter.png';
+
+                        // Update appointment details
+                        document.getElementById('overlay-tanggal').textContent = appointment.tanggalBooking || '-';
+                        document.getElementById('overlay-waktu').textContent =
+                            appointment.jadwal?.jamMulai || '-';
+                        document.getElementById('overlay-jenis').textContent = 'Konsultasi';
+
+                        const statusElement = document.getElementById('overlay-status');
+                        statusElement.textContent = appointment.status || '-';
+                        statusElement.className = 'detail-value status-badge ' + getStatusClass(appointment.status);
+
+                        // Show/hide buttons based on status
+                        const btnBookingLagi = document.getElementById('btn-booking-lagi');
+                        const btnReschedule = document.getElementById('btn-reschedule');
+                        const btnBatal = document.getElementById('btn-batal');
+
+                        btnBookingLagi.style.display = 'none';
+                        btnReschedule.style.display = 'none';
+                        btnBatal.style.display = 'none';
+
+                        if (appointment.status === 'SELESAI' || appointment.status === 'DIBATALKAN') {
+                            btnBookingLagi.style.display = 'inline-flex';
+                            btnBookingLagi.onclick = () => window.location.href = '/pasien/cari-dokter';
+                        } else if (appointment.status === 'MENUNGGU' || appointment.status === 'DIKONFIRMASI') {
+                            btnReschedule.style.display = 'inline-flex';
+                            btnReschedule.onclick = () => window.location.href = `/pasien/booking/reschedule/${appointment.idAppointment}`;
+                            btnBatal.style.display = 'inline-flex';
+                            btnBatal.onclick = () => cancelAppointment(appointment.idAppointment);
+                        }
+
+                        // Show overlay
+                        document.getElementById('detail-overlay').classList.add('active');
+                    } else {
+                        alert('Gagal memuat detail booking: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat memuat detail booking');
+                });
+        }
+
+        function closeOverlay() {
+            document.getElementById('detail-overlay').classList.remove('active');
+        }
+
+        function cancelAppointment(appointmentId) {
+            if (confirm('Apakah Anda yakin ingin membatalkan booking ini?')) {
+                fetch(`/appointment/cancel/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Booking berhasil dibatalkan');
+                            closeOverlay();
+                            location.reload();
+                        } else {
+                            alert('Gagal membatalkan booking: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat membatalkan booking');
+                    });
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'DIKONFIRMASI':
+                    return 'status-completed';
+                case 'MENUNGGU':
+                    return 'status-ongoing';
+                case 'DIBATALKAN':
+                    return 'status-cancelled';
+                case 'DIREJADWAL':
+                    return 'status-rescheduled';
+                case 'SELESAI':
+                    return 'status-completed';
+                default:
+                    return '';
+            }
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('detail-overlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeOverlay();
+            }
+        });
+
+        /*]]>*/
+    </script>
+</body>
+
+</html>

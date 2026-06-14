@@ -408,4 +408,43 @@ public class PasienController {
             return "redirect:/pasien/booking";
         }
     }
+
+    @GetMapping("/appointment/detail/{id}")
+    @ResponseBody
+    public java.util.Map<String, Object> getAppointmentDetail(@PathVariable String id,
+            @AuthenticationPrincipal UserDetails principal) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+                    .orElseThrow(() -> new RuntimeException("Pasien not found"));
+
+            Appointment appointment = appointmentService.getAppointmentById(id)
+                    .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+            // Verify the appointment belongs to the logged-in pasien
+            if (!appointment.getUser().getIdUser().equals(pasien.getIdUser())) {
+                throw new RuntimeException("Unauthorized access to appointment");
+            }
+
+            // Populate transient fields for dokter
+            if (appointment.getJadwal() != null && appointment.getJadwal().getDokter() != null) {
+                Dokter dokter = appointment.getJadwal().getDokter();
+                userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
+                    dokter.setNama(fetchedUser.getNama());
+                    dokter.setEmail(fetchedUser.getEmail());
+                    dokter.setPassword(fetchedUser.getPassword());
+                    dokter.setRole(fetchedUser.getRole());
+                });
+            }
+
+            response.put("success", true);
+            response.put("appointment", appointment);
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
 }

@@ -215,7 +215,9 @@ public class AppointmentService {
     }
 
     private String generateAppointmentId() {
-        return "apt-" + System.currentTimeMillis();
+        long count = appointmentRepository.count();
+        int nextNumber = (int) (count + 1);
+        return String.format("apt-%03d", nextNumber);
     }
 
     private String generateNomorAntrian(JadwalPraktik jadwal) {

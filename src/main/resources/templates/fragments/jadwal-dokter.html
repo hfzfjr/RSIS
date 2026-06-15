@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Jadwal Dokter</title>
+    <link rel="stylesheet" href="/css/fragments/jadwal-dokter.css" />
+</head>
+
+<body>
+    <div class="jadwal-dokter-container" th:fragment="jadwal-dokter(dokterId, role)">
+
+        <!-- Month Toggle -->
+        <div class="month-toggle-header">
+            <h2 class="month-toggle-title" id="monthToggleTitle">Bulan Ini</h2>
+            <div class="month-toggle-buttons">
+                <button class="toggle-btn active" id="btnBulanIni" onclick="switchMonth('ini')">Bulan Ini</button>
+                <button class="toggle-btn" id="btnBulanDepan" onclick="switchMonth('depan')">Bulan Depan</button>
+            </div>
+        </div>
+
+        <!-- Weekly Schedule Grid -->
+        <div class="weekly-schedule-wrapper">
+            <div class="weekly-grid" id="weeklyGrid">
+                <!-- Columns will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Hidden inputs for form integration -->
+        <input type="hidden" id="selectedJadwalId" name="selectedJadwalId" value="" />
+        <input type="hidden" id="dokterId" th:value="${dokterId}" />
+        <input type="hidden" id="userRole" th:value="${role}" />
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            let currentMonthOffset = 0; // 0 = this month, 1 = next month
+            let selectedJadwal = null;
+            let jadwalData = [];
+            const dokterId = document.getElementById('dokterId').value;
+            const userRole = document.getElementById('userRole').value;
+
+            // Expose jadwalData globally for booking page
+            window.jadwalData = jadwalData;
+
+            const monthNames = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+
+            const dayNamesShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            const dayNamesFull = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+            const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+            document.addEventListener('DOMContentLoaded', function () {
+                fetchJadwalData();
+            });
+
+            async function fetchJadwalData() {
+                try {
+                    const response = await fetch(`/pasien/api/jadwal/dokter/${dokterId}`);
+                    const data = await response.json();
+                    if (data.success) {
+                        jadwalData = data.jadwals;
+                        // Update global window.jadwalData
+                        window.jadwalData = jadwalData;
+                        console.log('Jadwal data fetched:', jadwalData);
+                    } else {
+                        console.error('API returned error:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching jadwal data:', error);
+                }
+                renderWeeklyGrid();
+            }
+
+            function switchMonth(mode) {
+                currentMonthOffset = (mode === 'ini') ? 0 : 1;
+
+                document.getElementById('btnBulanIni').classList.toggle('active', mode === 'ini');
+                document.getElementById('btnBulanDepan').classList.toggle('active', mode === 'depan');
+                document.getElementById('monthToggleTitle').textContent = (mode === 'ini') ? 'Bulan Ini' : 'Bulan Depan';
+
+                renderWeeklyGrid();
+            }
+
+            function getMonthDays(monthOffset) {
+                const today = new Date();
+                const targetMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+                const year = targetMonth.getFullYear();
+                const month = targetMonth.getMonth();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // For current month: start from today, end at end of month
+                // For next month: start from 1st, end at end of that month
+                let startDate;
+                let numberOfDays;
+                if (monthOffset === 0) {
+                    startDate = new Date(today);
+                    // Calculate days from today to end of current month
+                    const lastDayOfMonth = new Date(year, month + 1, 0);
+                    numberOfDays = Math.ceil((lastDayOfMonth - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                } else {
+                    startDate = new Date(year, month, 1);
+                    numberOfDays = daysInMonth;
+                }
+
+                // Build days
+                const days = [];
+                for (let i = 0; i < numberOfDays; i++) {
+                    const d = new Date(startDate);
+                    d.setDate(startDate.getDate() + i);
+                    days.push(d);
+                }
+                return days;
+            }
+
+            function renderWeeklyGrid() {
+                const grid = document.getElementById('weeklyGrid');
+                grid.innerHTML = '';
+
+                const days = getMonthDays(currentMonthOffset);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                days.forEach(date => {
+                    const col = document.createElement('div');
+                    col.className = 'day-column';
+
+                    const isToday = date.toDateString() === today.toDateString();
+                    const isSunday = date.getDay() === 0;
+
+                    // Day header
+                    const header = document.createElement('div');
+                    header.className = 'day-header' + (isToday ? ' today' : '');
+
+                    const dayNameEl = document.createElement('span');
+                    dayNameEl.className = 'day-name' + (isSunday ? ' sunday' : '');
+                    dayNameEl.textContent = dayNamesShort[date.getDay()];
+
+                    const dayDateEl = document.createElement('span');
+                    dayDateEl.className = 'day-date' + (isSunday ? ' sunday' : '');
+                    dayDateEl.textContent = `${date.getDate()} ${monthShort[date.getMonth()]}`;
+
+                    header.appendChild(dayNameEl);
+                    header.appendChild(dayDateEl);
+                    col.appendChild(header);
+
+                    // Schedule cards for this day
+                    const dayJadwals = jadwalData.filter(j => {
+                        if (!j.tanggal) return false;
+                        const jd = new Date(j.tanggal);
+                        return jd.toDateString() === date.toDateString();
+                    });
+
+                    const cardsWrapper = document.createElement('div');
+                    cardsWrapper.className = 'day-cards';
+
+                    if (dayJadwals.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'no-schedule-text';
+                        empty.textContent = 'Tidak ada jadwal';
+                        cardsWrapper.appendChild(empty);
+                    } else {
+                        dayJadwals.forEach(jadwal => {
+                            const isPast = date < today;
+                            const isFull = jadwal.sisaKuota === 0 || jadwal.statusKetersediaan === 'PENUH' || jadwal.statusKetersediaan !== 'TERSEDIA';
+                            const isLibur = jadwal.statusKetersediaan === 'LIBUR' || jadwal.keterangan === 'Libur' || jadwal.keterangan === 'Cuti Tahunan';
+
+                            const card = document.createElement('div');
+                            card.className = 'schedule-card';
+                            if (isPast || isLibur) card.classList.add('card-past');
+                            else if (isFull) card.classList.add('card-full');
+                            else card.classList.add('card-available');
+
+                            if (!isPast && !isLibur && !isFull) {
+                                card.style.cursor = 'pointer';
+                                card.onclick = () => selectJadwal(jadwal, date);
+                            }
+
+                            const timeEl = document.createElement('div');
+                            timeEl.className = 'card-time';
+                            // Format time to HH:mm (remove seconds)
+                            const formatTime = (time) => {
+                                if (!time) return '-';
+                                const parts = time.split(':');
+                                return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : time;
+                            };
+                            timeEl.textContent = `${formatTime(jadwal.jamMulai)} - ${formatTime(jadwal.jamSelesai)}`;
+
+                            const poliEl = document.createElement('div');
+                            poliEl.className = 'card-poli';
+                            // Use poli data from database via dokter.poli.namaPoli
+                            poliEl.textContent = jadwal.dokter?.poli?.namaPoli || jadwal.keterangan || 'Poli Umum';
+
+                            const footerEl = document.createElement('div');
+                            footerEl.className = 'card-footer';
+
+                            const statusBadge = document.createElement('span');
+                            statusBadge.className = 'card-badge';
+
+                            if (isLibur) {
+                                statusBadge.classList.add('badge-libur');
+                                statusBadge.textContent = 'Libur';
+                            } else if (isFull) {
+                                statusBadge.classList.add('badge-full');
+                                statusBadge.textContent = 'Penuh';
+                            } else {
+                                statusBadge.classList.add('badge-aktif');
+                                statusBadge.textContent = 'Aktif';
+                            }
+
+                            const quotaEl = document.createElement('span');
+                            quotaEl.className = 'card-quota' + (isFull && !isLibur ? ' quota-full' : '');
+                            quotaEl.textContent = isLibur ? '' : `${jadwal.sisaKuota}/${jadwal.kuota}`;
+
+                            footerEl.appendChild(statusBadge);
+                            if (!isLibur) footerEl.appendChild(quotaEl);
+
+                            card.appendChild(timeEl);
+                            card.appendChild(poliEl);
+                            card.appendChild(footerEl);
+                            cardsWrapper.appendChild(card);
+                        });
+                    }
+
+                    col.appendChild(cardsWrapper);
+                    grid.appendChild(col);
+                });
+            }
+
+            function selectJadwal(jadwal, date) {
+                selectedJadwal = jadwal;
+
+                // Update hidden input
+                document.getElementById('selectedJadwalId').value = jadwal.idJadwal;
+
+                // Highlight selected card
+                document.querySelectorAll('.schedule-card.selected').forEach(c => c.classList.remove('selected'));
+                event.currentTarget.classList.add('selected');
+
+                // Update booking form if on booking page
+                if (userRole === 'pasien') {
+                    const jadwalIdInput = document.getElementById('jadwalId');
+                    if (jadwalIdInput) {
+                        jadwalIdInput.value = jadwal.idJadwal;
+                    }
+                }
+            }
+
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            /*]]>*/
+        </script>
+    </div>
+</body>
+
+</html>

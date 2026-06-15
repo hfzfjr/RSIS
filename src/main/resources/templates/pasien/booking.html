@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/pasien/booking.css" />
+  <link rel="stylesheet" href="/css/fragments/jadwal-dokter.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/pasien/konfirmasi-booking.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -19,7 +21,7 @@
     <div class="booking-layout">
 
       <!-- Left Sidebar - Doctor Info -->
-      <aside class="doctor-sidebar">
+      <aside class="doctor-sidebar" th:if="${dokter != null}">
         <div class="doctor-profile-card">
           <div class="doctor-image-wrapper">
             <img th:src="${dokter.dokterImage != null ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
@@ -29,7 +31,8 @@
             <h1 class="doctor-name" th:text="${dokter != null ? 'dr. ' + dokter.nama : 'Dokter'}">
               dr. Nama Dokter
             </h1>
-            <p class="doctor-specialty" th:text="${spesialisasi != null ? spesialisasi.nama : 'Spesialis'}">
+            <p class="doctor-specialty"
+              th:text="${spesialisasi != null ? 'Spesialis ' + spesialisasi.nama : 'Spesialis'}">
               Spesialis
             </p>
           </div>
@@ -47,87 +50,13 @@
       <section class="booking-content">
 
         <!-- Date Selection -->
-        <div class="booking-card" th:if="${availableDates != null and availableDates.size() > 0}">
+        <div class="booking-card">
           <h2 class="card-title">Pilih Tanggal Kunjungan</h2>
-          <div class="date-carousel">
-            <th:block th:each="jadwalItem, stat : ${availableDates}">
-              <a th:href="@{/pasien/booking(jadwalId=${jadwalItem.idJadwal})}" class="date-item"
-                th:classappend="${jadwal != null and jadwal.idJadwal == jadwalItem.idJadwal ? 'active' : ''} + ${jadwalItem.sisaKuota == 0 ? ' disabled' : ''}"
-                th:disabled="${jadwalItem.sisaKuota == 0}">
-                <span class="date-month"
-                  th:text="${jadwalItem.tanggal != null ? #temporals.format(jadwalItem.tanggal, 'MMM') : ''}">Okt</span>
-                <span class="date-day"
-                  th:text="${jadwalItem.tanggal != null ? #temporals.format(jadwalItem.tanggal, 'd') : ''}">14</span>
-                <span class="date-weekday"
-                  th:text="${jadwalItem.sisaKuota == 0 ? 'Penuh' : jadwalItem.hari}">Senin</span>
-              </a>
-            </th:block>
+          <div th:if="${dokter != null}">
+            <div th:replace="~{fragments/jadwal-dokter :: jadwal-dokter(${dokter.idUser}, 'pasien')}"></div>
           </div>
-        </div>
-
-        <!-- Time Slots -->
-        <div class="time-slots-card" th:if="${jadwal != null}">
-          <div class="session-section">
-            <div class="session-header">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-              <span>JADWAL PRAKTEK</span>
-            </div>
-            <div class="time-slots">
-              <button class="time-slot active" type="button"
-                th:text="${jadwal.jamMulai != null ? #temporals.format(jadwal.jamMulai, 'HH:mm') : '-'}">
-                09:00
-              </button>
-              <span class="time-info"
-                th:text="'s.d. ' + (${jadwal.jamSelesai != null ? #temporals.format(jadwal.jamSelesai, 'HH:mm') : '-'})">
-                s.d. 10:00
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Time Slots - Available Dates Selection -->
-        <div class="time-slots-card" th:if="${availableDates != null and availableDates.size() > 0}">
-          <div class="session-section">
-            <div class="session-header">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-              <span>PILIH JADWAL</span>
-            </div>
-            <div class="time-slots">
-              <th:block th:each="jadwalItem : ${availableDates}">
-                <a th:href="@{/pasien/booking(jadwalId=${jadwalItem.idJadwal})}" class="time-slot"
-                  th:classappend="${jadwal != null and jadwal.idJadwal == jadwalItem.idJadwal ? 'active' : ''} + ${jadwalItem.sisaKuota == 0 ? ' disabled' : ''}"
-                  th:disabled="${jadwalItem.sisaKuota == 0}">
-                  <span th:text="${jadwalItem.hari}">Senin</span>
-                  <span
-                    th:text="${jadwalItem.tanggal != null ? #temporals.format(jadwalItem.tanggal, 'dd MMM') : ''}">14
-                    Okt</span>
-                  <span
-                    th:text="${jadwalItem.jamMulai != null ? #temporals.format(jadwalItem.jamMulai, 'HH:mm') : ''}">09:00</span>
-                </a>
-              </th:block>
-            </div>
+          <div th:if="${dokter == null}">
+            <p style="color: #6b7280; padding: 20px; text-align: center;">Silakan pilih dokter terlebih dahulu</p>
           </div>
         </div>
 
@@ -148,7 +77,7 @@
 
             <!-- Tombol Konfirmasi -->
             <div class="btn-confirm-wrapper">
-              <button type="submit" class="btn-confirm">
+              <button type="button" class="btn-konfirmasi" onclick="showKonfirmasiBooking()">
                 Konfirmasi Jadwal
               </button>
             </div>
@@ -159,6 +88,66 @@
       </section>
     </div>
   </main>
+
+  <!-- Konfirmasi Booking Overlay -->
+  <div th:replace="~{fragments/overlay/pasien/konfirmasi-booking}"></div>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // Global variable to store selected jadwal data
+    let selectedJadwalForBooking = null;
+    let selectedDokterForBooking = /*[[${dokter}]]*/ null;
+    let selectedSpesialisasiForBooking = /*[[${spesialisasi}]]*/ null;
+    let selectedPoliForBooking = /*[[${poli}]]*/ null;
+
+    function showKonfirmasiBooking() {
+      const jadwalIdInput = document.getElementById('jadwalId');
+      const catatanInput = document.getElementById('catatan');
+
+      // Get selected jadwal ID from jadwal-dokter component
+      const selectedJadwalId = document.getElementById('selectedJadwalId')?.value;
+
+      if (!selectedJadwalId) {
+        alert('Silakan pilih jadwal terlebih dahulu');
+        return;
+      }
+
+      // Update the hidden jadwalId input
+      if (jadwalIdInput) {
+        jadwalIdInput.value = selectedJadwalId;
+      }
+
+      // Get jadwal data from window.jadwalData
+      const jadwalData = window.jadwalData || [];
+
+      // Debug: log jadwalData and selectedJadwalId
+      console.log('Selected Jadwal ID:', selectedJadwalId);
+      console.log('Jadwal Data:', jadwalData);
+
+      // Find the selected jadwal from the data
+      const selectedJadwal = jadwalData.find(j => j.idJadwal === selectedJadwalId);
+
+      if (!selectedJadwal) {
+        console.error('Jadwal not found. Available IDs:', jadwalData.map(j => j.idJadwal));
+        alert('Jadwal tidak ditemukan. Silakan pilih jadwal kembali.');
+        return;
+      }
+
+      // Call the overlay function
+      if (typeof openKonfirmasiBooking === 'function') {
+        openKonfirmasiBooking(
+          selectedJadwal,
+          selectedDokterForBooking,
+          selectedSpesialisasiForBooking,
+          selectedPoliForBooking,
+          catatanInput ? catatanInput.value : ''
+        );
+      }
+    }
+
+    /*]]>*/
+  </script>
 </body>
 
 </html>

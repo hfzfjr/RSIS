@@ -1,0 +1,101 @@
+<div th:fragment="modal-detail(appt)" class="modal" th:id="'detailModal-' + ${appt.idAppointment}">
+  <div class="modal-dialog" style="width: 100%; max-width: 600px; margin: 30px auto; display: flex; align-items: center; min-height: calc(100% - 60px);">
+    <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none; background: white; width: 100%;">
+      <div class="detail-modal-container">
+        
+        <div class="detail-modal-header">
+          <h2 class="detail-modal-title">Detail Appointment</h2>
+          <button type="button" class="btn-close" th:data-target="'detailModal-' + ${appt.idAppointment}" onclick="closeModal(this.getAttribute('data-target'))"></button>
+        </div>
+        
+        <div class="detail-top-row">
+          <div class="detail-patient-card">
+            <div class="detail-avatar"><i class="bi bi-person"></i></div>
+            <div class="detail-patient-info">
+              <h6 th:text="${appt.user.nama}">Budi Santoso</h6>
+              <div class="detail-badges">
+                <span class="detail-badge"><i class="bi bi-calendar3"></i> 45 Tahun</span>
+                <span class="detail-badge"><i class="bi bi-gender-male"></i> Laki-laki</span>
+              </div>
+            </div>
+          </div>
+          
+            <div class="detail-status-card">
+            <span class="detail-status-label">Status Saat Ini</span>
+            
+            <span class="detail-status-badge" th:if="${appt.status == 'MENUNGGU'}">
+              <i class="bi bi-three-dots"></i> Menunggu Konfirmasi
+            </span>
+            
+            <span class="detail-status-badge dikonfirmasi" th:if="${appt.status == 'DIKONFIRMASI'}">
+              <i class="bi bi-check-circle"></i> Diterima
+            </span>
+            
+            <span class="detail-status-badge" th:if="${appt.status == 'DITOLAK'}" style="background: #fee2e2; color: #dc2626;">
+              <i class="bi bi-x-circle"></i> Ditolak
+            </span>
+          </div>
+        </div>
+        
+        <h3 class="detail-section-title"><i class="bi bi-calendar2-week"></i> Informasi Jadwal</h3>
+        <div class="detail-schedule-box">
+          <div class="detail-schedule-col">
+            <span class="detail-sub-label">Tanggal & Waktu</span>
+            <div class="detail-main-text" th:text="${#strings.capitalize(#strings.toLowerCase(appt.jadwal.hari))} + ', ' + ${appt.tanggalBooking != null ? #temporals.format(appt.tanggalBooking, 'dd MMM yyyy') : '24 Okt 2024'}">Kamis</div>
+            <div class="detail-desc-text" th:text="${#strings.substring(appt.jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(appt.jadwal.jamSelesai, 0, 5) + ' WIB'}">09:00 - 09:30 WIB</div>
+          </div>
+          <div class="detail-schedule-col">
+            <span class="detail-sub-label">Poliklinik</span>
+            <div class="detail-main-text" th:text="${appt.jadwal.dokter != null && appt.jadwal.dokter.poli != null ? appt.jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli Penyakit Dalam</div>
+            <div class="detail-desc-text">Lantai 2, Ruang 204</div>
+          </div>
+        </div>
+        
+        <h3 class="detail-section-title"><i class="bi bi-file-text"></i> Keluhan Utama</h3>
+        <div class="detail-complaint-box" th:text="${appt.catatan != null ? appt.catatan : 'Tidak ada keluhan yang dicatat.'}">
+          Sering merasa nyeri di dada...
+        </div>
+        
+        <h3 class="detail-section-title"><i class="bi bi-clock-history"></i> Riwayat Status</h3>
+        <div class="detail-timeline">
+          <div class="detail-step completed">
+            <div class="detail-step-icon"><i class="bi bi-check"></i></div>
+            <span class="detail-step-title">Dibuat</span>
+            <span class="detail-step-date" th:text="${appt.tanggalBooking != null ? #temporals.format(appt.tanggalBooking, 'dd MMM, HH:mm') : '-'}">22 Okt</span>
+          </div>
+          
+          <div class="detail-step" th:classappend="${appt.status == 'MENUNGGU' ? 'current' : 'completed'}">
+            <div class="detail-step-icon">
+              <i class="bi bi-three-dots" th:if="${appt.status == 'MENUNGGU'}"></i>
+              <i class="bi bi-check" th:if="${appt.status != 'MENUNGGU'}"></i>
+            </div>
+            <span class="detail-step-title">Menunggu</span>
+            <span class="detail-step-date">Saat Ini</span>
+          </div>
+          
+          <div class="detail-step" th:classappend="${(appt.status == 'DIKONFIRMASI' or appt.status == 'DITOLAK') ? 'completed' : ''}">
+            <div class="detail-step-icon" th:style="${appt.status == 'DITOLAK' ? 'background: #dc2626; color: white;' : ''}">
+              <i class="bi bi-check" th:if="${appt.status == 'DIKONFIRMASI'}"></i>
+              <i class="bi bi-x" th:if="${appt.status == 'DITOLAK'}"></i>
+              <span th:if="${appt.status == 'MENUNGGU'}">3</span>
+            </div>
+            <span class="detail-step-title" th:text="${appt.status == 'DITOLAK' ? 'Ditolak' : 'Diterima'}">Diterima</span>
+            <span class="detail-step-date">-</span>
+          </div>
+        </div>
+        
+        <div class="detail-footer" th:if="${appt.status == 'MENUNGGU'}">
+          <button type="button" class="btn-red-pill" th:data-detail="'detailModal-' + ${appt.idAppointment}" th:data-tolak="'tolakModal-' + ${appt.idAppointment}" onclick="closeModal(this.getAttribute('data-detail')); openModal(this.getAttribute('data-tolak'));">
+            <i class="bi bi-x-lg"></i> Tolak
+          </button>
+          <form th:action="@{/dokter/appointment/konfirmasi/{id}(id=${appt.idAppointment})}" method="post" style="margin:0;">
+            <button type="submit" class="btn-green-pill">
+              <i class="bi bi-check2-circle"></i> Konfirmasi
+            </button>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

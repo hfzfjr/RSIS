@@ -102,6 +102,7 @@
 .quick-categories {
   display: flex;
   gap: 12px;
+  margin-left: -120px;
   flex-wrap: wrap;
   align-items: center;
 }

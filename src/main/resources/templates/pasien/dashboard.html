@@ -26,25 +26,26 @@
       </div>
 
       <!-- Search Bar -->
-      <div class="search-bar">
+      <form action="/pasien/cari-dokter" method="get" class="search-bar">
         <div class="search-input-wrapper">
           <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.35-4.35"></path>
           </svg>
-          <input type="text" class="search-input" placeholder="Cari dokter, spesialisasi, atau poli..." />
+          <input type="text" name="keyword" class="search-input"
+            placeholder="Cari dokter, spesialisasi, atau poli..." />
         </div>
-        <button class="btn btn-primary search-btn">Cari Sekarang</button>
-      </div>
+        <button type="submit" class="btn btn-primary search-btn">Cari Sekarang</button>
+      </form>
 
       <!-- Quick Categories -->
       <div class="quick-categories">
         <a href="/pasien/cari-dokter?keyword=umum" class="category-pill">Umum</a>
         <a href="/pasien/cari-dokter?keyword=jantung" class="category-pill">Jantung</a>
         <a href="/pasien/cari-dokter?keyword=anak" class="category-pill">Anak</a>
-        <a href="/pasien/cari-dokter?keyword=kulit" class="category-pill">Kulit</a>
-        <a href="/pasien/cari-dokter?keyword=gigi" class="category-pill">Gigi</a>
+        <a href="/pasien/cari-dokter?keyword=mata" class="category-pill">Mata</a>
+        <a href="/pasien/cari-dokter?keyword=saraf" class="category-pill">Saraf</a>
       </div>
     </section>
 
@@ -199,7 +200,7 @@
                 Nama Dokter
               </h3>
               <span class="appointment-status"
-                th:class="'appointment-status ' + (appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled')"
+                th:classappend="${appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : (appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled')}"
                 th:text="${appointment.status == 'DIKONFIRMASI' ? 'Dikonfirmasi' : appointment.status == 'MENUNGGU' ? 'Menunggu Konfirmasi' : appointment.status}">
                 Status
               </span>

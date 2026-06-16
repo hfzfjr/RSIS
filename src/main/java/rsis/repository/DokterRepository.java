@@ -19,6 +19,6 @@ public interface DokterRepository extends JpaRepository<Dokter, String> {
     @Query("SELECT d FROM Dokter d WHERE d.idUser = :idUser")
     Optional<Dokter> findByIdUser(@Param("idUser") String idUser);
 
-    @Query("SELECT d FROM Dokter d WHERE d.nama LIKE %:keyword% OR d.email LIKE %:keyword%")
+    @Query("SELECT d FROM Dokter d WHERE LOWER(d.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.spesialisasi.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.poli.namaPoli) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Dokter> searchBySpesialisasiOrNama(@Param("keyword") String keyword);
 }

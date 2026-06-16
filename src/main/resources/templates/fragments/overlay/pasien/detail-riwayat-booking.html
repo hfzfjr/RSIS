@@ -165,18 +165,18 @@
 
         function getStatusClass(status) {
             switch (status) {
-                case 'DIKONFIRMASI':
-                    return 'status-completed';
                 case 'MENUNGGU':
-                    return 'status-ongoing';
-                case 'DIBATALKAN':
-                    return 'status-cancelled';
-                case 'DIREJADWAL':
-                    return 'status-rescheduled';
+                    return 'status-menunggu';
+                case 'DIKONFIRMASI':
+                    return 'status-dikonfirmasi';
                 case 'SELESAI':
-                    return 'status-completed';
+                    return 'status-selesai';
+                case 'DITOLAK':
+                    return 'status-ditolak';
+                case 'DIBATALKAN':
+                    return 'status-dibatalkan';
                 default:
-                    return '';
+                    return 'status-menunggu';
             }
         }
 

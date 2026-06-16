@@ -72,61 +72,64 @@
     <!-- Notifikasi Overlay -->
     <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
     <script>
-        // Wait for the page to fully load
-        window.addEventListener('load', function () {
-            console.log("Page fully loaded");
+        // Initialize notification overlay immediately when script loads
+        (function () {
+            console.log("Initializing navbar script");
 
-            // Use a small timeout to ensure Thymeleaf has rendered the fragment
-            setTimeout(function () {
-                console.log("Initializing notification overlay");
-                const notifikasiBtn = document.getElementById("notifikasiBtn");
-                const notifikasiOverlay = document.getElementById("notifikasiOverlay");
-                const closeNotifikasi = document.getElementById("closeNotifikasi");
+            // Generate avatar initials based on role
+            const roleElement = document.querySelector(".nav-userrole");
+            const avatarInitialsElement = document.getElementById("avatarInitials");
+            if (roleElement && avatarInitialsElement) {
+                const role = roleElement.textContent.trim().toUpperCase();
+                let initial = "P"; // Default to Pasien
+                if (role === "DOKTER") {
+                    initial = "D";
+                } else if (role === "ADMIN" || role === "ADMIN_RS") {
+                    initial = "A";
+                } else if (role === "PASIEN") {
+                    initial = "P";
+                }
+                avatarInitialsElement.textContent = initial;
+            }
 
-                console.log("notifikasiBtn:", notifikasiBtn);
-                console.log("notifikasiOverlay:", notifikasiOverlay);
-                console.log("closeNotifikasi:", closeNotifikasi);
+            // Initialize notification overlay
+            const notifikasiBtn = document.getElementById("notifikasiBtn");
+            const notifikasiOverlay = document.getElementById("notifikasiOverlay");
+            const closeNotifikasi = document.getElementById("closeNotifikasi");
 
-                if (notifikasiBtn && notifikasiOverlay) {
-                    notifikasiBtn.addEventListener("click", function (e) {
+            console.log("notifikasiBtn:", notifikasiBtn);
+            console.log("notifikasiOverlay:", notifikasiOverlay);
+            console.log("closeNotifikasi:", closeNotifikasi);
+
+            if (notifikasiBtn && notifikasiOverlay) {
+                notifikasiBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    console.log("Notification button clicked");
+                    notifikasiOverlay.classList.toggle("active");
+                    console.log("Overlay classes:", notifikasiOverlay.className);
+                });
+
+                if (closeNotifikasi) {
+                    closeNotifikasi.addEventListener("click", function (e) {
                         e.stopPropagation();
-                        console.log("Notification button clicked");
-                        notifikasiOverlay.classList.toggle("active");
-                        console.log("Overlay classes:", notifikasiOverlay.className);
-                        console.log("Overlay display:", window.getComputedStyle(notifikasiOverlay).display);
+                        notifikasiOverlay.classList.remove("active");
                     });
+                }
 
-                    if (closeNotifikasi) {
-                        closeNotifikasi.addEventListener("click", function (e) {
-                            e.stopPropagation();
-                            notifikasiOverlay.classList.remove("active");
-                        });
+                document.addEventListener("click", function (e) {
+                    if (
+                        !notifikasiOverlay.contains(e.target) &&
+                        e.target !== notifikasiBtn
+                    ) {
+                        notifikasiOverlay.classList.remove("active");
                     }
-
-                    document.addEventListener("click", function (e) {
-                        if (
-                            !notifikasiOverlay.contains(e.target) &&
-                            e.target !== notifikasiBtn
-                        ) {
-                            notifikasiOverlay.classList.remove("active");
-                        }
-                    });
-                } else {
-                    console.error("Notification elements not found");
-                    console.error("notifikasiBtn:", notifikasiBtn);
-                    console.error("notifikasiOverlay:", notifikasiOverlay);
-                }
-
-                // Generate first letter from username
-                const usernameElement = document.querySelector(".nav-username");
-                const avatarInitialsElement = document.getElementById("avatarInitials");
-                if (usernameElement && avatarInitialsElement) {
-                    const username = usernameElement.textContent.trim();
-                    const firstLetter = username.charAt(0).toUpperCase();
-                    avatarInitialsElement.textContent = firstLetter;
-                }
-            }, 100);
-        });
+                });
+            } else {
+                console.error("Notification elements not found");
+                console.error("notifikasiBtn:", notifikasiBtn);
+                console.error("notifikasiOverlay:", notifikasiOverlay);
+            }
+        })();
     </script>
 </body>
 

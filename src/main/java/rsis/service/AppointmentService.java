@@ -172,7 +172,7 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointmentsByPasienId(String pasienId) {
-        return appointmentRepository.findByUser_IdUser(pasienId);
+        return appointmentRepository.findByUser_IdUserOrderByTanggalBookingDesc(pasienId);
     }
 
     public List<Appointment> getAppointmentsByDokterId(String dokterId) {

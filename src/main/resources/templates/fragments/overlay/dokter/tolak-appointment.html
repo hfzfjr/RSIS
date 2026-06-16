@@ -1,0 +1,43 @@
+<div th:fragment="modal-tolak(appt)" class="modal" th:id="'tolakModal-' + ${appt.idAppointment}">
+  <div class="modal-dialog" style="width: 100%; max-width: 500px; margin: 30px auto; display: flex; align-items: center; min-height: calc(100% - 60px);">
+    <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none; background: white; width: 100%;">
+      <div class="tolak-modal-container">
+        
+        <div class="tolak-header">
+          <div class="tolak-header-left">
+            <div class="tolak-icon-box">
+              <i class="bi bi-calendar-x"></i>
+            </div>
+            <div>
+              <h2 class="tolak-title">Tolak Appointment</h2>
+              <p class="tolak-subtitle">Pasien: <strong style="color: #1e293b;" th:text="${appt.user.nama}">Budi Santoso</strong></p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" th:data-target="'tolakModal-' + ${appt.idAppointment}" onclick="closeModal(this.getAttribute('data-target'))"></button>
+        </div>
+        
+        <form th:action="@{/dokter/appointment/tolak/{id}(id=${appt.idAppointment})}" method="post">
+          <div class="tolak-jadwal-box">
+            <h3 class="tolak-jadwal-title">Detail Jadwal</h3>
+            <div class="tolak-jadwal-info">
+              <span><i class="bi bi-calendar3"></i> <span th:text="${#strings.capitalize(#strings.toLowerCase(appt.jadwal.hari))} + ', ' + ${appt.tanggalBooking != null ? #temporals.format(appt.tanggalBooking, 'dd MMM yyyy') : '24 Okt 2024'}">Kamis</span></span>
+              <span><i class="bi bi-clock"></i> <span th:text="${#strings.substring(appt.jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(appt.jadwal.jamSelesai, 0, 5)}">10:00 - 10:30</span></span>
+            </div>
+          </div>
+          
+          <div class="tolak-form-group">
+            <label class="tolak-label">Alasan penolakan <span style="color: #dc2626;">*</span></label>
+            <textarea name="alasan" class="tolak-textarea" rows="4" required placeholder="Contoh: Jadwal penuh, dokter tidak tersedia karena operasi cito, dll..."></textarea>
+            <span class="tolak-hint">Alasan ini akan dikirimkan kepada pasien sebagai pemberitahuan.</span>
+          </div>
+          
+          <div class="tolak-footer">
+            <button type="button" class="btn-outline-pill" th:data-target="'tolakModal-' + ${appt.idAppointment}" onclick="closeModal(this.getAttribute('data-target'))">Batal</button>
+            <button type="submit" class="btn-red-pill">Konfirmasi Penolakan</button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>

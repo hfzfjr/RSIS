@@ -92,6 +92,80 @@
     margin-bottom: 0;
 }
 
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 16px 0;
+}
+
+/* =========================
+   Timeline Section
+   ========================= */
+
+.timeline-section {
+    margin-bottom: 24px;
+}
+
+.timeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.timeline-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    border: 3px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.timeline-step.active .timeline-dot {
+    background: #00796b;
+    border-color: #00796b;
+}
+
+.timeline-step.active .timeline-dot.current {
+    background: white;
+    border-color: #00796b;
+    box-shadow: 0 0 0 4px rgba(0, 121, 107, 0.2);
+}
+
+.timeline-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    transition: all 0.3s ease;
+}
+
+.timeline-step.active .timeline-label {
+    color: #00796b;
+}
+
+.timeline-line {
+    flex: 1;
+    height: 3px;
+    background: #e5e7eb;
+    margin: 0 -8px;
+}
+
+.timeline-step.active+.timeline-line {
+    background: #00796b;
+}
+
 /* =========================
    Doctor Card
    ========================= */

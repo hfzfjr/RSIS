@@ -21,8 +21,29 @@
             </div>
 
             <div class="overlay-body">
+                <!-- Timeline Status -->
+                <div class="timeline-section">
+                    <div class="timeline">
+                        <div class="timeline-step" data-status="MENUNGGU">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">Menunggu</div>
+                        </div>
+                        <div class="timeline-line"></div>
+                        <div class="timeline-step" data-status="DIKONFIRMASI">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">Dikonfirmasi</div>
+                        </div>
+                        <div class="timeline-line"></div>
+                        <div class="timeline-step" data-status="SELESAI">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">Selesai</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Doctor Info -->
                 <div class="info-section">
+                    <h4 class="section-title">👨‍⚕️ Informasi Dokter</h4>
                     <div class="doctor-card">
                         <div class="doctor-avatar">
                             <img id="overlay-doctor-image" src="/images/dokter.png" alt="Dokter" />
@@ -32,25 +53,55 @@
                             <p id="overlay-doctor-specialty" class="doctor-specialty">Spesialis</p>
                         </div>
                     </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nomor STR</span>
+                        <span id="overlay-str" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Poli</span>
+                        <span id="overlay-poli" class="detail-value">-</span>
+                    </div>
                 </div>
 
-                <!-- Appointment Details -->
+                <!-- Appointment Info -->
                 <div class="info-section">
+                    <h4 class="section-title">📋 Informasi Appointment</h4>
                     <div class="detail-row">
-                        <span class="detail-label">Tanggal Booking</span>
-                        <span id="overlay-tanggal" class="detail-value">-</span>
+                        <span class="detail-label">ID Appointment</span>
+                        <span id="overlay-id-appointment" class="detail-value">-</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Waktu</span>
-                        <span id="overlay-waktu" class="detail-value">-</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Jenis Konsultasi</span>
-                        <span id="overlay-jenis" class="detail-value">Konsultasi</span>
+                        <span class="detail-label">Nomor Antrian</span>
+                        <span id="overlay-nomor-antrian" class="detail-value">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Status</span>
                         <span id="overlay-status" class="detail-value status-badge">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tanggal Booking</span>
+                        <span id="overlay-tanggal-booking" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Keluhan</span>
+                        <span id="overlay-keluhan" class="detail-value">-</span>
+                    </div>
+                </div>
+
+                <!-- Schedule Info -->
+                <div class="info-section">
+                    <h4 class="section-title">🕐 Informasi Jadwal</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Hari</span>
+                        <span id="overlay-hari" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tanggal Praktik</span>
+                        <span id="overlay-tanggal-praktik" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Jam</span>
+                        <span id="overlay-jam" class="detail-value">-</span>
                     </div>
                 </div>
 
@@ -83,6 +134,9 @@
                     if (data.success) {
                         const appointment = data.appointment;
 
+                        // Update timeline status
+                        updateTimeline(appointment.status);
+
                         // Update doctor info
                         document.getElementById('overlay-doctor-name').textContent =
                             appointment.jadwal?.dokter?.nama || 'N/A';
@@ -92,18 +146,35 @@
                                 : 'Spesialis';
                         document.getElementById('overlay-doctor-image').src =
                             appointment.jadwal?.dokter?.dokterImage || '/images/dokter.png';
+                        document.getElementById('overlay-str').textContent =
+                            appointment.jadwal?.dokter?.nomorStr || '-';
+                        document.getElementById('overlay-poli').textContent =
+                            appointment.jadwal?.dokter?.poli?.namaPoli || '-';
 
-                        // Update appointment details
-                        document.getElementById('overlay-tanggal').textContent = appointment.tanggalBooking || '-';
-                        document.getElementById('overlay-waktu').textContent =
-                            appointment.jadwal?.jamMulai || '-';
-                        document.getElementById('overlay-jenis').textContent = 'Konsultasi';
-
+                        // Update appointment info
+                        document.getElementById('overlay-id-appointment').textContent =
+                            appointment.idAppointment || '-';
+                        document.getElementById('overlay-nomor-antrian').textContent =
+                            appointment.nomorAntrian || '-';
                         const statusElement = document.getElementById('overlay-status');
                         statusElement.textContent = appointment.status || '-';
                         statusElement.className = 'detail-value status-badge ' + getStatusClass(appointment.status);
+                        document.getElementById('overlay-tanggal-booking').textContent =
+                            appointment.tanggalBooking || '-';
+                        document.getElementById('overlay-keluhan').textContent =
+                            appointment.catatan || '-';
 
-                        // Show/hide buttons based on status
+                        // Update schedule info
+                        document.getElementById('overlay-hari').textContent =
+                            appointment.jadwal?.hari || '-';
+                        document.getElementById('overlay-tanggal-praktik').textContent =
+                            appointment.jadwal?.tanggal || '-';
+                        const jamMulai = appointment.jadwal?.jamMulai || '-';
+                        const jamSelesai = appointment.jadwal?.jamSelesai || '-';
+                        document.getElementById('overlay-jam').textContent =
+                            jamMulai !== '-' && jamSelesai !== '-' ? `${jamMulai} - ${jamSelesai}` : jamMulai;
+
+                        // Show/hide buttons based on status and date
                         const btnBookingLagi = document.getElementById('btn-booking-lagi');
                         const btnReschedule = document.getElementById('btn-reschedule');
                         const btnBatal = document.getElementById('btn-batal');
@@ -118,8 +189,18 @@
                         } else if (appointment.status === 'MENUNGGU' || appointment.status === 'DIKONFIRMASI') {
                             btnReschedule.style.display = 'inline-flex';
                             btnReschedule.onclick = () => window.location.href = `/pasien/booking/reschedule/${appointment.idAppointment}`;
-                            btnBatal.style.display = 'inline-flex';
-                            btnBatal.onclick = () => cancelAppointment(appointment.idAppointment);
+
+                            // Check if can cancel (H-1 or more)
+                            const jadwalDate = new Date(appointment.jadwal?.tanggal);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const diffTime = jadwalDate - today;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                            if (diffDays >= 1) {
+                                btnBatal.style.display = 'inline-flex';
+                                btnBatal.onclick = () => cancelAppointment(appointment.idAppointment);
+                            }
                         }
 
                         // Show overlay
@@ -132,6 +213,27 @@
                     console.error('Error:', error);
                     alert('Terjadi kesalahan saat memuat detail booking');
                 });
+        }
+
+        function updateTimeline(status) {
+            const steps = document.querySelectorAll('.timeline-step');
+            const statusOrder = ['MENUNGGU', 'DIKONFIRMASI', 'SELESAI'];
+            const currentIndex = statusOrder.indexOf(status);
+
+            steps.forEach((step, index) => {
+                const stepStatus = step.getAttribute('data-status');
+                const dot = step.querySelector('.timeline-dot');
+
+                if (index <= currentIndex) {
+                    step.classList.add('active');
+                    if (index === currentIndex) {
+                        dot.classList.add('current');
+                    }
+                } else {
+                    step.classList.remove('active');
+                    dot.classList.remove('current');
+                }
+            });
         }
 
         function closeOverlay() {

@@ -1,0 +1,106 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="tambahDokterOverlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2>Tambah Dokter Baru</h2>
+                <button class="close-btn" onclick="closeTambahDokterOverlay()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{/admin/dokter/create}" method="post" enctype="multipart/form-data" class="dokter-form" id="tambahDokterForm">
+                <!-- Kolom Kiri: Informasi Pribadi -->
+                <div class="form-section">
+                    <h3 class="section-title">Informasi Pribadi</h3>
+
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" name="nama" required placeholder="Masukkan nama lengkap dengan gelar">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="contoh@rsis.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomorHp">Nomor HP</label>
+                        <input type="tel" id="nomorHp" name="nomorHp" placeholder="08xxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Buat password sementara" minlength="8">
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Informasi Profesional -->
+                <div class="form-section">
+                    <h3 class="section-title">Informasi Profesional</h3>
+
+                    <div class="form-group">
+                        <label for="spesialisasi">Spesialisasi</label>
+                        <select id="spesialisasi" name="spesialisasi" required>
+                            <option value="">Pilih Spesialisasi</option>
+                            <option th:each="spesialisasi : ${spesialisasis}"
+                                    th:value="${spesialisasi.idSpesialisasi}"
+                                    th:text="${spesialisasi.nama}">Spesialisasi</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="poli">Poli</label>
+                        <select id="poli" name="poli" required>
+                            <option value="">Pilih Poli</option>
+                            <option th:each="poli : ${polis}"
+                                    th:value="${poli.idPoli}"
+                                    th:text="${poli.namaPoli}">Poli</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dokterImage">Upload Foto Profil</label>
+                        <input type="file" id="dokterImage" name="dokterImage" accept="image/jpeg,image/png,image/jpg">
+                        <small class="form-hint">Opsional: Upload foto profil dokter (JPG, PNG, maks 2MB)</small>
+                    </div>
+                </div>
+
+                <!-- Form Actions — full width via CSS grid -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeTambahDokterOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openTambahDokterOverlay() {
+            document.getElementById('tambahDokterOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTambahDokterOverlay() {
+            document.getElementById('tambahDokterOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.getElementById('tambahDokterForm').reset();
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('tambahDokterOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTambahDokterOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTambahDokterOverlay();
+            }
+        });
+    </script>
+</div>

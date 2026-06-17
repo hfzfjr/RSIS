@@ -21,4 +21,6 @@ public interface DokterRepository extends JpaRepository<Dokter, String> {
 
     @Query("SELECT d FROM Dokter d WHERE d.nama LIKE %:keyword% OR d.email LIKE %:keyword%")
     List<Dokter> searchBySpesialisasiOrNama(@Param("keyword") String keyword);
+
+    Optional<Dokter> findFirstByNomorStrStartingWithOrderByNomorStrDesc(String prefix);
 }

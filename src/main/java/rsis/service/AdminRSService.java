@@ -1,8 +1,11 @@
 package rsis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
@@ -14,12 +17,18 @@ import rsis.repository.PoliRepository;
 import rsis.repository.SpesialisasiRepository;
 import rsis.repository.UserRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AdminRSService {
@@ -42,11 +51,118 @@ public class AdminRSService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Value("${upload.path:uploads}")
+    private String uploadPath;
+
     // Dokter Management
     @Transactional
     public Dokter createDokter(Dokter dokter) {
         dokter.setRole("DOKTER");
         return dokterRepository.save(dokter);
+    }
+
+    @Transactional
+    public Dokter createDokter(String nama, String email, String password, String nomorHp, 
+                               String spesialisasiId, String poliId, MultipartFile dokterImage) {
+        // Generate user ID
+        String userId = generateDokterId();
+        
+        // Generate nomor STR automatically
+        String nomorStr = generateNomorStr();
+        
+        // Encode password before saving
+        String encodedPassword = passwordEncoder.encode(password);
+        
+        // Handle file upload
+        String imageUrl = null;
+        if (dokterImage != null && !dokterImage.isEmpty()) {
+            imageUrl = saveUploadedFile(dokterImage, userId);
+        }
+        
+        // Create new Dokter
+        Dokter dokter = new Dokter();
+        dokter.setIdUser(userId);
+        dokter.setNama(nama);
+        dokter.setEmail(email);
+        dokter.setPassword(encodedPassword);
+        dokter.setNomorHp(nomorHp);
+        dokter.setNomorStr(nomorStr);
+        dokter.setRole("DOKTER");
+        dokter.setDokterImage(imageUrl);
+        
+        // Set Spesialisasi
+        if (spesialisasiId != null && !spesialisasiId.isEmpty()) {
+            spesialisasiRepository.findById(spesialisasiId).ifPresent(dokter::setSpesialisasi);
+        }
+        
+        // Set Poli
+        if (poliId != null && !poliId.isEmpty()) {
+            poliRepository.findById(poliId).ifPresent(dokter::setPoli);
+        }
+        
+        // Save Dokter (this will also save the User parent due to JOINED inheritance)
+        return dokterRepository.save(dokter);
+    }
+
+    private String saveUploadedFile(MultipartFile file, String userId) throws RuntimeException {
+        try {
+            // Create upload directory if it doesn't exist
+            Path uploadDir = Paths.get(uploadPath, "dokter");
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = originalFilename != null ? 
+                originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+            String uniqueFilename = userId + "_" + UUID.randomUUID().toString() + fileExtension;
+            
+            // Save file
+            Path filePath = uploadDir.resolve(uniqueFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
+            // Return relative URL path
+            return "/uploads/dokter/" + uniqueFilename;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
+        }
+    }
+
+    private String generateNomorStr() {
+        // Generate STR number in format: STR-YYYYMMDD-XXXX
+        // where XXXX is a sequential number for that day
+        String dateStr = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        
+        // Get the latest STR for today to determine the sequence number
+        String prefix = "STR-" + dateStr + "-";
+        Optional<Dokter> latestDokter = dokterRepository.findFirstByNomorStrStartingWithOrderByNomorStrDesc(prefix);
+        
+        int sequence = 1;
+        if (latestDokter.isPresent()) {
+            String latestStr = latestDokter.get().getNomorStr();
+            String sequenceStr = latestStr.substring(prefix.length());
+            try {
+                sequence = Integer.parseInt(sequenceStr) + 1;
+            } catch (NumberFormatException e) {
+                sequence = 1;
+            }
+        }
+        
+        return String.format("%s%04d", prefix, sequence);
+    }
+
+    private String generateDokterId() {
+        Optional<String> latestId = userRepository.findLatestUserId();
+        if (latestId.isPresent()) {
+            String id = latestId.get();
+            int num = Integer.parseInt(id.substring(4));
+            return String.format("usr-%04d", num + 1);
+        }
+        return "usr-0001";
     }
 
     @Transactional
@@ -59,18 +175,32 @@ public class AdminRSService {
         dokterRepository.deleteById(dokterId);
     }
 
+    @Transactional
+    public void softDeleteDokter(String dokterId) {
+        Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
+        if (dokterOpt.isPresent()) {
+            Dokter dokter = dokterOpt.get();
+            dokter.setIsActive(false);
+            dokterRepository.save(dokter);
+        } else {
+            throw new RuntimeException("Dokter tidak ditemukan");
+        }
+    }
+
     public List<Dokter> getAllDokter() {
         List<Dokter> dokters = dokterRepository.findAll();
-        // Populate transient fields from users table
-        return dokters.stream().map(dokter -> {
-            userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-                dokter.setNama(user.getNama());
-                dokter.setEmail(user.getEmail());
-                dokter.setPassword(user.getPassword());
-                dokter.setRole(user.getRole());
-            });
-            return dokter;
-        }).toList();
+        // Populate transient fields from users table and filter only active doctors
+        return dokters.stream()
+                .filter(dokter -> dokter.getIsActive() != null && dokter.getIsActive())
+                .map(dokter -> {
+                    userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                        dokter.setNama(user.getNama());
+                        dokter.setEmail(user.getEmail());
+                        dokter.setPassword(user.getPassword());
+                        dokter.setRole(user.getRole());
+                    });
+                    return dokter;
+                }).toList();
     }
 
     public Optional<Dokter> getDokterById(String dokterId) {

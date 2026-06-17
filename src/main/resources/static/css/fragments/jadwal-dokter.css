@@ -1,0 +1,312 @@
+/* =========================
+   Jadwal Dokter - Weekly Schedule Grid
+   ========================= */
+
+.jadwal-dokter-container {
+    width: 100%;
+    max-width: 800px;
+    background: transparent;
+}
+
+/* =========================
+   Month Toggle Header
+   ========================= */
+
+.month-toggle-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.month-toggle-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.month-toggle-buttons {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.toggle-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    color: #6b7280;
+    transition: all 0.2s;
+}
+
+.toggle-btn.active {
+    background: white;
+    color: #111827;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn:hover:not(.active) {
+    color: #374151;
+}
+
+/* =========================
+   Weekly Schedule Grid
+   ========================= */
+
+.weekly-schedule-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+}
+
+.weekly-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 120px;
+    gap: 0;
+    min-width: fit-content;
+}
+
+/* =========================
+   Day Column
+   ========================= */
+
+.day-column {
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+.day-column:last-child {
+    border-right: none;
+}
+
+/* =========================
+   Day Header
+   ========================= */
+
+.day-header {
+    padding: 14px 8px 12px;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: white;
+}
+
+.day-header.today {
+    background: #f0fdf9;
+    border-bottom-color: #00796b;
+}
+
+.day-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: none;
+}
+
+.day-date {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.day-name.sunday,
+.day-date.sunday {
+    color: #ef4444;
+}
+
+/* =========================
+   Day Cards Area
+   ========================= */
+
+.day-cards {
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.no-schedule-text {
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: center;
+    padding: 8px 0;
+    font-style: normal;
+}
+
+/* =========================
+   Schedule Card
+   ========================= */
+
+.schedule-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 6px 8px;
+    background: #f9fafb;
+    transition: all 0.2s;
+}
+
+.schedule-card.card-available {
+    background: #f0fdf4;
+    border-color: #d1fae5;
+}
+
+.schedule-card.card-available:hover {
+    background: #dcfce7;
+    border-color: #22c55e;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+}
+
+.schedule-card.card-available.selected {
+    background: #dcfce7;
+    border-color: #00796b;
+    box-shadow: 0 0 0 2px rgba(0, 121, 107, 0.25);
+}
+
+.schedule-card.card-full {
+    background: #fef2f2;
+    border-color: #fecaca;
+    opacity: 0.85;
+}
+
+.schedule-card.card-past {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    opacity: 0.7;
+}
+
+.card-time {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 3px;
+    white-space: nowrap;
+}
+
+.schedule-card.card-past .card-time {
+    color: #6b7280;
+}
+
+.card-poli {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+/* =========================
+   Badges
+   ========================= */
+
+.card-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-aktif {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.badge-full {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.badge-libur {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border: 1px solid #e5e7eb;
+}
+
+.card-quota {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.card-quota.quota-full {
+    color: #ef4444;
+}
+
+/* =========================
+   Responsive Design
+   ========================= */
+
+@media (max-width: 900px) {
+    .weekly-grid {
+        grid-auto-columns: 100px;
+    }
+
+    .card-time {
+        font-size: 12px;
+    }
+
+    .card-poli {
+        font-size: 11px;
+    }
+
+    .toggle-btn {
+        padding: 7px 14px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 640px) {
+    .month-toggle-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .month-toggle-title {
+        font-size: 17px;
+    }
+
+    .day-header {
+        padding: 10px 4px;
+    }
+
+    .day-name {
+        font-size: 11px;
+    }
+
+    .day-date {
+        font-size: 11px;
+    }
+
+    .day-cards {
+        padding: 6px 4px;
+    }
+
+    .schedule-card {
+        padding: 8px 8px;
+    }
+}

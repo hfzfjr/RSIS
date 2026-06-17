@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Konfirmasi Booking</title>
+    <link rel="stylesheet" href="/css/fragments/overlay/pasien/konfirmasi-booking.css" />
+</head>
+
+<body>
+    <div id="konfirmasiBookingOverlay" class="konfirmasi-booking-overlay">
+        <div class="konfirmasi-booking-content">
+            <div class="konfirmasi-booking-header">
+                <h2 class="konfirmasi-booking-title">Konfirmasi Booking</h2>
+                <button class="close-btn" onclick="closeKonfirmasiBooking()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="konfirmasi-booking-body">
+                <div class="booking-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Nama Dokter:</span>
+                        <span class="summary-value" id="summaryDokterNama">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Spesialis:</span>
+                        <span class="summary-value" id="summarySpesialis">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Poli:</span>
+                        <span class="summary-value" id="summaryPoli">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tanggal:</span>
+                        <span class="summary-value" id="summaryTanggal">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Jam:</span>
+                        <span class="summary-value" id="summaryJam">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Keluhan:</span>
+                        <span class="summary-value" id="summaryKeluhan">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="konfirmasi-booking-footer">
+                <button class="btn-cancel" onclick="closeKonfirmasiBooking()">Batal</button>
+                <button class="btn-confirm" onclick="confirmBooking()">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        let selectedJadwalData = null;
+
+        function openKonfirmasiBooking(jadwal, dokter, spesialisasi, poli, keluhan) {
+            selectedJadwalData = {
+                jadwal: jadwal,
+                dokter: dokter,
+                spesialisasi: spesialisasi,
+                poli: poli,
+                keluhan: keluhan
+            };
+
+            // Populate summary data
+            document.getElementById('summaryDokterNama').textContent = dokter ? 'dr. ' + dokter.nama : '-';
+            document.getElementById('summarySpesialis').textContent = spesialisasi ? 'Spesialis ' + spesialisasi.nama : '-';
+            document.getElementById('summaryPoli').textContent = poli ? poli.namaPoli : '-';
+
+            // Format date
+            if (jadwal && jadwal.tanggal) {
+                const date = new Date(jadwal.tanggal);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                document.getElementById('summaryTanggal').textContent = date.toLocaleDateString('id-ID', options);
+            } else {
+                document.getElementById('summaryTanggal').textContent = '-';
+            }
+
+            // Format time
+            if (jadwal && jadwal.jamMulai && jadwal.jamSelesai) {
+                const formatTime = (time) => {
+                    if (!time) return '-';
+                    const parts = time.split(':');
+                    return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : time;
+                };
+                document.getElementById('summaryJam').textContent = formatTime(jadwal.jamMulai) + ' - ' + formatTime(jadwal.jamSelesai);
+            } else {
+                document.getElementById('summaryJam').textContent = '-';
+            }
+
+            document.getElementById('summaryKeluhan').textContent = keluhan || '-';
+
+            // Show overlay
+            document.getElementById('konfirmasiBookingOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeKonfirmasiBooking() {
+            document.getElementById('konfirmasiBookingOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            selectedJadwalData = null;
+        }
+
+        function confirmBooking() {
+            if (selectedJadwalData && selectedJadwalData.jadwal) {
+                // Update the hidden jadwalId input in the form
+                const jadwalIdInput = document.getElementById('jadwalId');
+                if (jadwalIdInput) {
+                    jadwalIdInput.value = selectedJadwalData.jadwal.idJadwal;
+                }
+
+                // Submit the form
+                const bookingForm = document.querySelector('form[action="/pasien/booking"]');
+                if (bookingForm) {
+                    bookingForm.submit();
+                }
+            }
+            closeKonfirmasiBooking();
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('konfirmasiBookingOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeKonfirmasiBooking();
+            }
+        });
+
+        /*]]>*/
+    </script>
+</body>
+
+</html>

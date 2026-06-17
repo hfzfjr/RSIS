@@ -146,7 +146,8 @@ public class DokterController {
             addNotifikasiToModel(dokter.getIdUser(), model);
 
             String dokterId = dokter.getIdUser();
-            List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);
+            // Ubah pemanggilan fungsinya agar mengambil SEMUA data, bukan cuma yang pending
+            List<Appointment> appointments = dokterService.getDaftarPasien(dokterId); 
             model.addAttribute("appointments", appointments);
         }
 

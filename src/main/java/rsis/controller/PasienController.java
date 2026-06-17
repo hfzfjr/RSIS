@@ -399,12 +399,16 @@ public class PasienController {
             // Send notification to pasien
             notifikasiService.kirimNotifikasi(pasien.getIdUser(),
                     "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment(),
-                    "BOOKING");
+                    "INFO");
 
             redirectAttributes.addFlashAttribute("success", "Appointment berhasil dibuat!");
             return "redirect:/pasien/jadwal-riwayat";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+            // Include jadwalId in redirect to preserve context
+            if (bookingRequest.getJadwalId() != null && !bookingRequest.getJadwalId().isEmpty()) {
+                return "redirect:/pasien/booking?jadwalId=" + bookingRequest.getJadwalId();
+            }
             return "redirect:/pasien/booking";
         }
     }
@@ -444,6 +448,43 @@ public class PasienController {
         } catch (RuntimeException e) {
             response.put("success", false);
             response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+    @GetMapping("/api/jadwal/dokter/{dokterId}")
+    @ResponseBody
+    public java.util.Map<String, Object> getJadwalByDokter(@PathVariable String dokterId) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            List<JadwalPraktik> jadwals = appointmentService.getJadwalByDokterId(dokterId);
+
+            // Populate transient fields for dokter in each jadwal
+            for (JadwalPraktik jadwal : jadwals) {
+                if (jadwal.getDokter() != null) {
+                    Dokter dokter = jadwal.getDokter();
+                    userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
+                        dokter.setNama(fetchedUser.getNama());
+                        dokter.setEmail(fetchedUser.getEmail());
+                        dokter.setPassword(fetchedUser.getPassword());
+                        dokter.setRole(fetchedUser.getRole());
+                    });
+                }
+            }
+
+            response.put("success", true);
+            response.put("jadwals", jadwals);
+            System.out.println("Jadwal data returned for dokterId " + dokterId + ": " + jadwals.size() + " records");
+            String poliData = "N/A";
+            if (!jadwals.isEmpty() && jadwals.get(0).getDokter() != null
+                    && jadwals.get(0).getDokter().getPoli() != null) {
+                poliData = jadwals.get(0).getDokter().getPoli().getNamaPoli();
+            }
+            System.out.println("First jadwal poli data: " + poliData);
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            System.err.println("Error fetching jadwal data: " + e.getMessage());
         }
         return response;
     }

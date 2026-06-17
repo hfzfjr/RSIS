@@ -56,6 +56,8 @@ public class NotifikasiService {
     }
 
     private String generateNotifikasiId() {
-        return "ntf-" + System.currentTimeMillis();
+        long count = notifikasiRepository.count();
+        int nextNumber = (int) (count + 1);
+        return String.format("ntf-%03d", nextNumber);
     }
 }

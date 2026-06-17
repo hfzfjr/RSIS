@@ -39,8 +39,8 @@
         <a href="/pasien/cari-dokter?keyword=umum" class="category-pill">Umum</a>
         <a href="/pasien/cari-dokter?keyword=jantung" class="category-pill">Jantung</a>
         <a href="/pasien/cari-dokter?keyword=anak" class="category-pill">Anak</a>
-        <a href="/pasien/cari-dokter?keyword=kulit" class="category-pill">Kulit</a>
-        <a href="/pasien/cari-dokter?keyword=gigi" class="category-pill">Gigi</a>
+        <a href="/pasien/cari-dokter?keyword=mata" class="category-pill">Mata</a>
+        <a href="/pasien/cari-dokter?keyword=saraf" class="category-pill">Saraf</a>
       </div>
     </section>
 
@@ -50,8 +50,9 @@
         <!-- Dynamic Doctor Cards from Database -->
         <div th:each="dokter : ${dokters}" class="doctor-card">
           <div class="doctor-image-wrapper">
-            <img th:src="${dokter.dokterImage != null ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
-              class="doctor-avatar-image" />
+            <img
+              th:src="${dokter.dokterImage != null && !dokter.dokterImage.isEmpty() ? dokter.dokterImage : '/images/dokter.png'}"
+              alt="Dokter" class="doctor-avatar-image" />
           </div>
           <div class="doctor-content">
             <div class="doctor-header">

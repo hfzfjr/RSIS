@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
     <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
     <link rel="stylesheet" href="/css/fragments/overlay/admin/tambah-dokter.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/admin/hapus-dokter.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/admin/edit-dokter.css" />
     <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 <body>
     <div th:replace="~{layout/navbar :: navbar('kelola-dokter')}"></div>
@@ -118,6 +122,11 @@
                             <td>
                                 <div class="action-buttons">
                                     <button class="btn-action btn-edit" th:data-id="${dokter.idUser}"
+                                        th:data-nama="${dokter.nama}"
+                                        th:data-nomor-str="${dokter.nomorStr != null ? dokter.nomorStr : ''}"
+                                        th:data-nomor-hp="${dokter.nomorHp != null ? dokter.nomorHp : ''}"
+                                        th:data-spesialisasi="${dokter.spesialisasi != null ? dokter.spesialisasi.idSpesialisasi : ''}"
+                                        th:data-poli="${dokter.poli != null ? dokter.poli.idPoli : ''}"
                                         onclick="editDokter(this)" title="Edit">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -145,24 +154,22 @@
 
     <script>
         function editDokter(btn) {
-            const id = btn.getAttribute('data-id');
-            window.location.href = '/admin/dokter/edit/' + id;
+            openEditDokterOverlay(btn);
         }
 
         function deleteDokter(btn) {
             const id = btn.getAttribute('data-id');
-            const nama = btn.getAttribute('data-nama');
-            if (confirm('Apakah Anda yakin ingin menghapus data dokter ' + nama + '?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/admin/dokter/delete/' + id;
-                document.body.appendChild(form);
-                form.submit();
-            }
+            openHapusDokterOverlay(id);
         }
     </script>
 
     <!-- Include Tambah Dokter Overlay -->
     <div th:replace="~{fragments/overlay/admin/tambah-dokter :: overlay}"></div>
+
+    <!-- Include Hapus Dokter Overlay -->
+    <div th:replace="~{fragments/overlay/admin/hapus-dokter :: overlay}"></div>
+
+    <!-- Include Edit Dokter Overlay -->
+    <div th:replace="~{fragments/overlay/admin/edit-dokter :: overlay}"></div>
 </body>
 </html>

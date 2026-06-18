@@ -54,4 +54,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
         @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
         List<Object[]> findPatientsPerDayByMonth(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking <= :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
+        List<Object[]> countByTanggalBookingBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        Long countByStatus(String status);
+
+        @Query("SELECT COUNT(a) FROM Appointment a WHERE a.tanggalBooking = :tanggal")
+        Long countTotalAppointmentsByDate(@Param("tanggal") LocalDate tanggal);
 }

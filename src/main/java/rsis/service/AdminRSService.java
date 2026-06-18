@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import rsis.dto.VisitStatistics;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
@@ -160,14 +161,43 @@ public class AdminRSService {
         if (latestId.isPresent()) {
             String id = latestId.get();
             int num = Integer.parseInt(id.substring(4));
-            return String.format("usr-%04d", num + 1);
+            return String.format("usr-%03d", num + 1);
         }
-        return "usr-0001";
+        return "usr-001";
     }
 
     @Transactional
     public Dokter updateDokter(Dokter dokter) {
         return dokterRepository.save(dokter);
+    }
+
+    @Transactional
+    public Dokter updateDokter(String idUser, String nama, String nomorHp, String nomorStr, 
+                               String spesialisasiId, String poliId) {
+        Dokter existingDokter = dokterRepository.findById(idUser)
+                .orElseThrow(() -> new RuntimeException("Dokter tidak ditemukan"));
+        
+        existingDokter.setNama(nama);
+        existingDokter.setNomorHp(nomorHp);
+        existingDokter.setNomorStr(nomorStr);
+        
+        if (spesialisasiId != null && !spesialisasiId.isEmpty()) {
+            Spesialisasi spesialisasi = spesialisasiRepository.findById(spesialisasiId)
+                    .orElseThrow(() -> new RuntimeException("Spesialisasi tidak ditemukan"));
+            existingDokter.setSpesialisasi(spesialisasi);
+        } else {
+            existingDokter.setSpesialisasi(null);
+        }
+        
+        if (poliId != null && !poliId.isEmpty()) {
+            Poli poli = poliRepository.findById(poliId)
+                    .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
+            existingDokter.setPoli(poli);
+        } else {
+            existingDokter.setPoli(null);
+        }
+        
+        return dokterRepository.save(existingDokter);
     }
 
     @Transactional
@@ -330,6 +360,101 @@ public class AdminRSService {
 
     public Long getTotalPoli() {
         return poliRepository.count();
+    }
+
+    private String translateDayToIndonesian(String englishDay) {
+        switch (englishDay.toUpperCase()) {
+            case "MONDAY": return "Senin";
+            case "TUESDAY": return "Selasa";
+            case "WEDNESDAY": return "Rabu";
+            case "THURSDAY": return "Kamis";
+            case "FRIDAY": return "Jumat";
+            case "SATURDAY": return "Sabtu";
+            case "SUNDAY": return "Minggu";
+            default: return englishDay;
+        }
+    }
+
+    public List<VisitStatistics> getWeeklyStats() {
+        // Get appointments for the last 7 days
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(6);
+
+        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
+        List<VisitStatistics> stats = new java.util.ArrayList<>();
+
+        // Find maximum count for percentage calculation
+        long maxCount = 0;
+        for (Object[] result : results) {
+            Long count = ((Number) result[1]).longValue();
+            if (count > maxCount) {
+                maxCount = count;
+            }
+        }
+
+        // Create statistics for each day
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startDate.plusDays(i);
+            String dayName = date.getDayOfWeek().toString();
+            String label = translateDayToIndonesian(dayName);
+
+            long count = 0;
+            for (Object[] result : results) {
+                LocalDate resultDate = (LocalDate) result[0];
+                if (resultDate.equals(date)) {
+                    count = ((Number) result[1]).longValue();
+                    break;
+                }
+            }
+
+            int percentage = maxCount > 0 ? (int) ((count * 100) / maxCount) : 0;
+            stats.add(new VisitStatistics(label, count, percentage));
+        }
+
+        return stats;
+    }
+
+    public Long getTotalAppointmentHariIni() {
+        LocalDate today = LocalDate.now();
+        return appointmentRepository.countTotalAppointmentsByDate(today);
+    }
+
+    public Long getAppointmentPending() {
+        return appointmentRepository.countByStatus("MENUNGGU");
+    }
+
+    public List<VisitStatistics> getMonthlyStats() {
+        // Get appointments for the last 4 weeks
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusWeeks(3).with(java.time.DayOfWeek.MONDAY);
+
+        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
+        List<VisitStatistics> stats = new java.util.ArrayList<>();
+
+        // Group by week
+        Map<Integer, Long> weeklyCounts = new java.util.HashMap<>();
+        for (Object[] result : results) {
+            LocalDate date = (LocalDate) result[0];
+            Long count = ((Number) result[1]).longValue();
+            int weekNumber = date.get(java.time.temporal.WeekFields.ISO.weekOfYear());
+            weeklyCounts.put(weekNumber, weeklyCounts.getOrDefault(weekNumber, 0L) + count);
+        }
+
+        // Find maximum count for percentage calculation
+        long maxCount = weeklyCounts.values().stream().max(Long::compareTo).orElse(0L);
+
+        // Create statistics for each week
+        for (int i = 0; i < 4; i++) {
+            LocalDate weekStart = startDate.plusWeeks(i);
+            int weekNumber = weekStart.get(java.time.temporal.WeekFields.ISO.weekOfYear());
+            String label = "Minggu " + (i + 1);
+
+            long count = weeklyCounts.getOrDefault(weekNumber, 0L);
+            int percentage = maxCount > 0 ? (int) ((count * 100) / maxCount) : 0;
+            stats.add(new VisitStatistics(label, count, percentage));
+        }
+
+        return stats;
     }
 
     private String generatePoliId() {

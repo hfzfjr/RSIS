@@ -87,6 +87,20 @@ public class AdminController {
                 safeDashboardValue("total dokter", adminRSService::getTotalDokter, 0L));
         model.addAttribute("totalPoli",
                 safeDashboardValue("total poli", adminRSService::getTotalPoli, 0L));
+        model.addAttribute("totalAppointmentHariIni",
+                safeDashboardValue("total appointment hari ini", adminRSService::getTotalAppointmentHariIni, 0L));
+        model.addAttribute("appointmentPending",
+                safeDashboardValue("appointment pending", adminRSService::getAppointmentPending, 0L));
+        try {
+            model.addAttribute("weeklyStats", adminRSService.getWeeklyStats());
+        } catch (RuntimeException e) {
+            model.addAttribute("weeklyStats", Collections.emptyList());
+        }
+        try {
+            model.addAttribute("monthlyStats", adminRSService.getMonthlyStats());
+        } catch (RuntimeException e) {
+            model.addAttribute("monthlyStats", Collections.emptyList());
+        }
         model.addAttribute("activeMenu", "dashboard");
         return "admin/dashboard";
     }
@@ -150,10 +164,16 @@ public class AdminController {
     }
 
     @PostMapping("/dokter/update")
-    public String updateDokter(@ModelAttribute Dokter dokter,
+    public String updateDokter(
+            @RequestParam String idUser,
+            @RequestParam String nama,
+            @RequestParam(required = false) String nomorHp,
+            @RequestParam String nomorStr,
+            @RequestParam String spesialisasi,
+            @RequestParam String poli,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.updateDokter(dokter);
+            adminRSService.updateDokter(idUser, nama, nomorHp, nomorStr, spesialisasi, poli);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

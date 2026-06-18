@@ -1,0 +1,108 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="editDokterOverlay">
+        <div class="overlay-content edit-modal">
+            <div class="overlay-header">
+                <h2>Edit Data Dokter</h2>
+                <button class="close-btn" onclick="closeEditDokterOverlay()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{/admin/dokter/update}" method="post" class="dokter-form" id="editDokterForm">
+                <!-- ID Dokter (Hidden) -->
+                <input type="hidden" id="edit_idUser" name="idUser">
+
+                <!-- Row 1: Nama Dokter (Full width) -->
+                <div class="form-group full-width">
+                    <label for="edit_nama">Nama Dokter</label>
+                    <input type="text" id="edit_nama" name="nama" required placeholder="Masukkan Nama">
+                </div>
+
+                <!-- Row 2: Nomor STR & Spesialisasi (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit_nomorStr">Nomor STR</label>
+                        <input type="text" id="edit_nomorStr" name="nomorStr" required placeholder="STR-xxxx-xxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_spesialisasi">Spesialisasi</label>
+                        <select id="edit_spesialisasi" name="spesialisasi" required>
+                            <option value="">Pilih Spesialisasi</option>
+                            <option th:each="spesialisasi : ${spesialisasis}"
+                                    th:value="${spesialisasi.idSpesialisasi}"
+                                    th:text="${spesialisasi.nama}">Spesialisasi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Nomor HP & Poli (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit_nomorHp">Nomor HP</label>
+                        <input type="text" id="edit_nomorHp" name="nomorHp" placeholder="08xxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_poli">Poli</label>
+                        <select id="edit_poli" name="poli" required>
+                            <option value="">Pilih Poli</option>
+                            <option th:each="poli : ${polis}"
+                                    th:value="${poli.idPoli}"
+                                    th:text="${poli.namaPoli}">Poli</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Footer / Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditDokterOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openEditDokterOverlay(btn) {
+            const id = btn.getAttribute('data-id');
+            const nama = btn.getAttribute('data-nama');
+            const nomorStr = btn.getAttribute('data-nomor-str');
+            const nomorHp = btn.getAttribute('data-nomor-hp');
+            const spesialisasi = btn.getAttribute('data-spesialisasi');
+            const poli = btn.getAttribute('data-poli');
+
+            document.getElementById('edit_idUser').value = id;
+            document.getElementById('edit_nama').value = nama;
+            document.getElementById('edit_nomorStr').value = nomorStr;
+            document.getElementById('edit_nomorHp').value = nomorHp;
+            document.getElementById('edit_spesialisasi').value = spesialisasi;
+            document.getElementById('edit_poli').value = poli;
+
+            document.getElementById('editDokterOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditDokterOverlay() {
+            document.getElementById('editDokterOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('editDokterOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditDokterOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditDokterOverlay();
+            }
+        });
+    </script>
+</div>

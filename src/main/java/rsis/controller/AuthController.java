@@ -28,6 +28,51 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private rsis.service.AdminRSService adminRSService;
+
+    @GetMapping("/temp-debug")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String tempDebug() {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== BEFORE UPDATE ===\n");
+            var before = adminRSService.getAllDokter().stream()
+                    .filter(d -> d.getIdUser().equals("usr-0059")).findFirst().orElse(null);
+            if (before != null) {
+                sb.append("Nama: ").append(before.getNama()).append(", STR: ").append(before.getNomorStr())
+                  .append(", HP: ").append(before.getNomorHp()).append("\n");
+            } else {
+                sb.append("usr-0059 not found\n");
+            }
+
+            var specs = adminRSService.getAllSpesialisasi();
+            var polis = adminRSService.getAllPoli();
+            String specId = specs.isEmpty() ? null : specs.get(0).getIdSpesialisasi();
+            String poliId = polis.isEmpty() ? null : polis.get(0).getIdPoli();
+
+            sb.append("=== RUNNING UPDATE ===\n");
+            sb.append("SpecId: ").append(specId).append(", PoliId: ").append(poliId).append("\n");
+            
+            adminRSService.updateDokter("usr-0059", "muhammad edited", "89098765423", "STR-20260615-9999", specId, poliId);
+
+            sb.append("=== AFTER UPDATE ===\n");
+            // Clear entity manager cache to force reload from DB if needed
+            var after = adminRSService.getAllDokter().stream()
+                    .filter(d -> d.getIdUser().equals("usr-0059")).findFirst().orElse(null);
+            if (after != null) {
+                sb.append("Nama: ").append(after.getNama()).append(", STR: ").append(after.getNomorStr())
+                  .append(", HP: ").append(after.getNomorHp()).append("\n");
+            }
+
+            return sb.toString();
+        } catch (Exception e) {
+            java.io.StringWriter sw = new java.io.StringWriter();
+            e.printStackTrace(new java.io.PrintWriter(sw));
+            return "Error: " + sw.toString();
+        }
+    }
+
     public AuthController(AuthService authService, AuthenticationManager authenticationManager) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;

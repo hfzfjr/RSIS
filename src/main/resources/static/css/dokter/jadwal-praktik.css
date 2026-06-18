@@ -579,3 +579,201 @@ body {
         border-right: none;
     }
 }
+
+/* ==========================================================
+   DOCTOR PAGE WEEKLY GRID CUSTOM OVERRIDES & LAYOUT SPEC
+   ========================================================== */
+.rs-main-container .weekly-schedule-wrapper {
+    overflow-x: hidden !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    margin-bottom: 40px;
+}
+
+.rs-main-container .weekly-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    grid-auto-flow: row !important;
+    width: 100% !important;
+    min-width: unset !important;
+}
+
+.rs-main-container .day-column {
+    border-right: 1px solid #e2e8f0 !important;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 12px;
+    gap: 16px;
+    background-color: #ffffff;
+}
+
+.rs-main-container .day-column:last-child {
+    border-right: none !important;
+}
+
+/* Day Column Active Highlighting */
+.rs-main-container .day-column.active {
+    background-color: rgba(4, 67, 50, 0.01) !important;
+    border-left: 2px solid #044332 !important;
+    border-right: 2px solid #044332 !important;
+    position: relative;
+    z-index: 10;
+}
+
+.rs-main-container .day-column.active .day-header {
+    border-top: 3px solid #016d55 !important;
+    background-color: rgba(4, 67, 50, 0.02) !important;
+    margin-top: -20px; /* offset the padding of day-column */
+    padding-top: 15px;
+    padding-bottom: 12px;
+}
+
+.rs-main-container .day-column.active .day-name,
+.rs-main-container .day-column.active .day-date {
+    color: #016d55 !important;
+}
+
+.rs-main-container .day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: center;
+    width: calc(100% + 24px);
+    margin-left: -12px;
+}
+
+.rs-main-container .day-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.rs-main-container .day-date {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* Sunday Red Highlighting */
+.rs-main-container .day-name.sunday,
+.rs-main-container .day-date.sunday {
+    color: #ef4444 !important;
+}
+
+.rs-main-container .day-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+    padding-top: 8px;
+}
+
+/* Schedule Card Redesign */
+.rs-main-container .schedule-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default !important;
+}
+
+.rs-main-container .schedule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.rs-main-container .schedule-card.card-available {
+    background-color: #f0fdf4 !important;
+    border-color: #d1fae5 !important;
+}
+.rs-main-container .schedule-card.card-available .card-time {
+    color: #15803d !important;
+}
+
+.rs-main-container .schedule-card.card-full {
+    background-color: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+.rs-main-container .schedule-card.card-full .card-time {
+    color: #dc2626 !important;
+}
+
+.rs-main-container .schedule-card.card-past {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+.rs-main-container .schedule-card.card-past .card-time {
+    color: #94a3b8 !important;
+}
+
+.rs-main-container .card-time {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rs-main-container .card-poli {
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.rs-main-container .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.rs-main-container .card-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    text-transform: capitalize;
+}
+
+.rs-main-container .badge-aktif {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.rs-main-container .badge-full {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.rs-main-container .badge-libur {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.rs-main-container .card-quota {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.rs-main-container .card-quota.quota-full {
+    color: #dc2626 !important;
+}
+
+.rs-main-container .no-schedule-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+    text-align: center;
+}

@@ -30,6 +30,9 @@ public class Dokter extends User implements ISchedulable {
     @Column(name = "dokter_image")
     private String dokterImage;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     public Dokter() {
         super();
     }
@@ -104,6 +107,14 @@ public class Dokter extends User implements ISchedulable {
 
     public void setDokterImage(String dokterImage) {
         this.dokterImage = dokterImage;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     @Override

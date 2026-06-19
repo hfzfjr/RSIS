@@ -1,0 +1,59 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="hapusDokterOverlay">
+        <div class="overlay-content delete-modal">
+            <!-- Icon Warning Red Circle -->
+            <div class="icon-container">
+                <div class="warning-circle">
+                    <div class="warning-inner-circle">
+                        <span>!</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="modal-title">Hapus Data Dokter?</h2>
+            
+            <div class="modal-body">
+                <p>Data dokter ini akan dihapus permanen.</p>
+                <p>Seluruh jadwal terkait juga akan terpengaruh.</p>
+            </div>
+
+            <!-- Form to handle deletion submission -->
+            <form id="hapusDokterForm" method="POST" action="">
+                <!-- CSRF Token -->
+                <input type="hidden" name="_csrf" th:value="${_csrf != null ? _csrf.token : ''}" th:if="${_csrf != null}"/>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeHapusDokterOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openHapusDokterOverlay(id) {
+            document.getElementById('hapusDokterForm').action = '/admin/dokter/delete/' + id;
+            document.getElementById('hapusDokterOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHapusDokterOverlay() {
+            document.getElementById('hapusDokterOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('hapusDokterOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeHapusDokterOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeHapusDokterOverlay();
+            }
+        });
+    </script>
+</div>

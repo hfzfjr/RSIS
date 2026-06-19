@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rsis.model.AdminRS;
 import rsis.model.User;
@@ -86,6 +87,20 @@ public class AdminController {
                 safeDashboardValue("total dokter", adminRSService::getTotalDokter, 0L));
         model.addAttribute("totalPoli",
                 safeDashboardValue("total poli", adminRSService::getTotalPoli, 0L));
+        model.addAttribute("totalAppointmentHariIni",
+                safeDashboardValue("total appointment hari ini", adminRSService::getTotalAppointmentHariIni, 0L));
+        model.addAttribute("appointmentPending",
+                safeDashboardValue("appointment pending", adminRSService::getAppointmentPending, 0L));
+        try {
+            model.addAttribute("weeklyStats", adminRSService.getWeeklyStats());
+        } catch (RuntimeException e) {
+            model.addAttribute("weeklyStats", Collections.emptyList());
+        }
+        try {
+            model.addAttribute("monthlyStats", adminRSService.getMonthlyStats());
+        } catch (RuntimeException e) {
+            model.addAttribute("monthlyStats", Collections.emptyList());
+        }
         model.addAttribute("activeMenu", "dashboard");
         return "admin/dashboard";
     }
@@ -120,16 +135,27 @@ public class AdminController {
             model.addAttribute("notifikasi", List.of());
         }
         List<Dokter> dokters = adminRSService.getAllDokter();
+        List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
+        List<Poli> polis = adminRSService.getAllPoli();
         model.addAttribute("dokters", dokters);
+        model.addAttribute("spesialisasis", spesialisasis);
+        model.addAttribute("polis", polis);
         model.addAttribute("activeMenu", "kelola-dokter");
         return "admin/kelola-dokter";
     }
 
     @PostMapping("/dokter/create")
-    public String createDokter(@ModelAttribute Dokter dokter,
+    public String createDokter(
+            @RequestParam String nama,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam(required = false) String nomorHp,
+            @RequestParam String spesialisasi,
+            @RequestParam String poli,
+            @RequestParam(required = false) MultipartFile dokterImage,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.createDokter(dokter);
+            adminRSService.createDokter(nama, email, password, nomorHp, spesialisasi, poli, dokterImage);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil ditambahkan!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -138,10 +164,16 @@ public class AdminController {
     }
 
     @PostMapping("/dokter/update")
-    public String updateDokter(@ModelAttribute Dokter dokter,
+    public String updateDokter(
+            @RequestParam String idUser,
+            @RequestParam String nama,
+            @RequestParam(required = false) String nomorHp,
+            @RequestParam String nomorStr,
+            @RequestParam String spesialisasi,
+            @RequestParam String poli,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.updateDokter(dokter);
+            adminRSService.updateDokter(idUser, nama, nomorHp, nomorStr, spesialisasi, poli);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -153,7 +185,7 @@ public class AdminController {
     public String deleteDokter(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.deleteDokter(id);
+            adminRSService.softDeleteDokter(id);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

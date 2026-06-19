@@ -24,7 +24,7 @@
           <span class="stat-label">Total Pasien Hari Ini</span>
           <div class="stat-icon">👥</div>
         </div>
-        <div class="stat-value">128</div>
+        <div class="stat-value" th:text="${totalPasienHariIni}">128</div>
       </div>
 
       <div class="stat-card">
@@ -32,7 +32,7 @@
           <span class="stat-label">Total Dokter Aktif</span>
           <div class="stat-icon">👨‍⚕️</div>
         </div>
-        <div class="stat-value">24</div>
+        <div class="stat-value" th:text="${totalDokter}">24</div>
       </div>
 
       <div class="stat-card">
@@ -40,7 +40,7 @@
           <span class="stat-label">Total Appointment Hari Ini</span>
           <div class="stat-icon">📅</div>
         </div>
-        <div class="stat-value">86</div>
+        <div class="stat-value" th:text="${totalAppointmentHariIni}">86</div>
       </div>
 
       <div class="stat-card">
@@ -48,7 +48,7 @@
           <span class="stat-label">Appointment Pending</span>
           <div class="stat-icon">📋</div>
         </div>
-        <div class="stat-value">7</div>
+        <div class="stat-value" th:text="${appointmentPending}">7</div>
       </div>
     </div>
 
@@ -57,33 +57,36 @@
       <div class="section-header">
         <h2 class="section-title">Statistik Kunjungan Pasien</h2>
         <div class="tab-group">
-          <button class="tab">Harian</button>
-          <button class="tab active">Mingguan</button>
-          <button class="tab">Bulanan</button>
+          <button class="tab active" onclick="switchTab(this, 'weekly')">Mingguan</button>
+          <button class="tab" onclick="switchTab(this, 'monthly')">Bulanan</button>
         </div>
       </div>
 
-      <div class="chart-area">
-        <div class="bar-wrap">
-          <div class="bar" style="height:38%"></div>
+      <div class="chart-area" id="chartArea">
+        <!-- Weekly Chart (default) -->
+        <div id="weeklyChart" class="chart-content">
+          <th:block th:if="${weeklyStats != null and !weeklyStats.isEmpty()}">
+            <div th:each="stat : ${weeklyStats}" class="bar-wrap">
+              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:title="${stat.label + ': ' + stat.count + ' pasien'}"></div>
+              <div class="bar-label" th:text="${stat.label}"></div>
+            </div>
+          </th:block>
+          <div th:if="${weeklyStats == null or weeklyStats.isEmpty()}" class="chart-empty">
+            Tidak ada data statistik mingguan
+          </div>
         </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:62%"></div>
-        </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:32%"></div>
-        </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:78%"></div>
-        </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:50%"></div>
-        </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:72%"></div>
-        </div>
-        <div class="bar-wrap">
-          <div class="bar" style="height:88%"></div>
+
+        <!-- Monthly Chart (hidden by default) -->
+        <div id="monthlyChart" class="chart-content" style="display:none;">
+          <th:block th:if="${monthlyStats != null and !monthlyStats.isEmpty()}">
+            <div th:each="stat : ${monthlyStats}" class="bar-wrap">
+              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:title="${stat.label + ': ' + stat.count + ' pasien'}"></div>
+              <div class="bar-label" th:text="${stat.label}"></div>
+            </div>
+          </th:block>
+          <div th:if="${monthlyStats == null or monthlyStats.isEmpty()}" class="chart-empty">
+            Tidak ada data statistik bulanan
+          </div>
         </div>
       </div>
     </div>
@@ -148,12 +151,20 @@
   </main>
 
   <script>
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-      });
-    });
+    function switchTab(button, tab) {
+      // Update tab active state
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      button.classList.add('active');
+
+      // Show/hide chart content
+      if (tab === 'weekly') {
+        document.getElementById('weeklyChart').style.display = 'flex';
+        document.getElementById('monthlyChart').style.display = 'none';
+      } else if (tab === 'monthly') {
+        document.getElementById('weeklyChart').style.display = 'none';
+        document.getElementById('monthlyChart').style.display = 'flex';
+      }
+    }
   </script>
 
 </body>

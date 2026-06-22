@@ -1,0 +1,138 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <!-- Overlay Backdrop -->
+    <div class="overlay" id="tambahPoliOverlay">
+        <div class="overlay-content tambah-modal tambah-poli-modal">
+            <!-- Header -->
+            <div class="overlay-header">
+                <h2>Tambah Poli Baru</h2>
+                <button class="close-btn" onclick="closeTambahPoliOverlay()" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Main Tambah Poli View -->
+            <div id="viewTambahPoli" class="modal-view active">
+                <form th:action="@{/admin/poli/create}" method="post" class="poli-form" id="tambahPoliForm">
+                    <!-- Nama Poli Section -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="tambahPoliNama">Nama Poli</label>
+                        <input type="text" id="tambahPoliNama" name="namaPoli" required placeholder="Masukkan nama poli">
+                    </div>
+
+                    <!-- Scrollable Doctors Selection List -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="section-label">Dokter yang ditugaskan:</label>
+                        <div class="doctors-list-container" id="tambahPoliAllDoctorsList" style="max-height: 180px; overflow-y: auto; border: 1.5px solid #d1d5db; border-radius: 8px; background-color: #ffffff; display: flex; flex-direction: column;">
+                            <div class="no-doctors-placeholder">Memuat data dokter...</div>
+                        </div>
+                    </div>
+
+                    <!-- Location Section (Text Input) -->
+                    <div class="form-group location-group" style="margin-bottom: 20px;">
+                        <label for="tambahPoliLokasi">Lokasi</label>
+                        <input type="text" id="tambahPoliLokasi" name="lokasiRuangan" required placeholder="Masukkan lokasi ruangan (misal: Gedung A, Lantai 1)">
+                    </div>
+
+                    <!-- Footer Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeTambahPoliOverlay()">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Open the Tambah Poli Modal
+        function openTambahPoliOverlay() {
+            document.getElementById('tambahPoliNama').value = '';
+            document.getElementById('tambahPoliLokasi').value = '';
+
+            const listContainer = document.getElementById('tambahPoliAllDoctorsList');
+            listContainer.innerHTML = '<div class="no-doctors-placeholder">Memuat data dokter...</div>';
+
+            // Fetch all active doctors from database via AJAX
+            fetch('/admin/poli/all-doctors')
+                .then(response => response.json())
+                .then(data => {
+                    listContainer.innerHTML = '';
+                    if (data.length === 0) {
+                        listContainer.innerHTML = '<div class="no-doctors-placeholder">Tidak ada dokter tersedia</div>';
+                        return;
+                    }
+
+                    data.forEach(doc => {
+                        const row = document.createElement('div');
+                        row.className = 'doctor-item-row selectable';
+                        row.style.cursor = 'pointer';
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'doctor-name';
+                        nameSpan.textContent = doc.nama;
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'dokterIds';
+                        checkbox.value = doc.idUser;
+                        checkbox.style.display = 'none';
+
+                        const checkmarkWrapper = document.createElement('div');
+                        checkmarkWrapper.className = 'checkmark-wrapper';
+                        checkmarkWrapper.innerHTML = `
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="check-icon">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        `;
+
+                        row.appendChild(nameSpan);
+                        row.appendChild(checkbox);
+                        row.appendChild(checkmarkWrapper);
+
+                        row.addEventListener('click', function() {
+                            checkbox.checked = !checkbox.checked;
+                            if (checkbox.checked) {
+                                row.classList.add('selected');
+                            } else {
+                                row.classList.remove('selected');
+                            }
+                        });
+
+                        listContainer.appendChild(row);
+                    });
+
+                    // Open modal
+                    document.getElementById('tambahPoliOverlay').classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                })
+                .catch(err => {
+                    console.error('Error fetching doctors:', err);
+                    alert('Terjadi kesalahan saat mengambil daftar dokter.');
+                });
+        }
+
+        // Close the Modal
+        function closeTambahPoliOverlay() {
+            document.getElementById('tambahPoliOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('tambahPoliOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTambahPoliOverlay();
+            }
+        });
+
+        // Close overlay on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTambahPoliOverlay();
+            }
+        });
+    </script>
+</div>

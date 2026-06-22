@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface JadwalPraktikRepository extends JpaRepository<JadwalPraktik, String> {
 
+    @Query(value = "SELECT id_jadwal FROM jadwal_praktik WHERE id_jadwal LIKE 'jdw-%' ORDER BY CAST(SUBSTRING(id_jadwal FROM 5) AS INTEGER) DESC LIMIT 1", nativeQuery = true)
+    java.util.Optional<String> findLatestJadwalId();
+
     List<JadwalPraktik> findByDokter_IdUser(String idUser);
 
     List<JadwalPraktik> findByDokter_Poli_IdPoli(String idPoli);

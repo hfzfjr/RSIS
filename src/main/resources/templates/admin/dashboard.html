@@ -56,36 +56,33 @@
     <div class="section-card">
       <div class="section-header">
         <h2 class="section-title">Statistik Kunjungan Pasien</h2>
-        <div class="tab-group">
-          <button class="tab active" onclick="switchTab(this, 'weekly')">Mingguan</button>
-          <button class="tab" onclick="switchTab(this, 'monthly')">Bulanan</button>
-        </div>
+        <select id="monthSelector" class="month-selector" onchange="fetchMonthlyStats()">
+          <option value="1" th:selected="${currentMonth == 1}">Januari</option>
+          <option value="2" th:selected="${currentMonth == 2}">Februari</option>
+          <option value="3" th:selected="${currentMonth == 3}">Maret</option>
+          <option value="4" th:selected="${currentMonth == 4}">April</option>
+          <option value="5" th:selected="${currentMonth == 5}">Mei</option>
+          <option value="6" th:selected="${currentMonth == 6}">Juni</option>
+          <option value="7" th:selected="${currentMonth == 7}">Juli</option>
+          <option value="8" th:selected="${currentMonth == 8}">Agustus</option>
+          <option value="9" th:selected="${currentMonth == 9}">September</option>
+          <option value="10" th:selected="${currentMonth == 10}">Oktober</option>
+          <option value="11" th:selected="${currentMonth == 11}">November</option>
+          <option value="12" th:selected="${currentMonth == 12}">Desember</option>
+        </select>
       </div>
 
       <div class="chart-area" id="chartArea">
-        <!-- Weekly Chart (default) -->
-        <div id="weeklyChart" class="chart-content">
-          <th:block th:if="${weeklyStats != null and !weeklyStats.isEmpty()}">
-            <div th:each="stat : ${weeklyStats}" class="bar-wrap">
-              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:title="${stat.label + ': ' + stat.count + ' pasien'}"></div>
+        <!-- Monthly Chart -->
+        <div id="patientChart" class="chart-content">
+          <th:block th:if="${visitStats != null and !visitStats.isEmpty()}">
+            <div th:each="stat : ${visitStats}" class="bar-wrap">
+              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:data-tooltip="${stat.count} + ' pasien'"></div>
               <div class="bar-label" th:text="${stat.label}"></div>
             </div>
           </th:block>
-          <div th:if="${weeklyStats == null or weeklyStats.isEmpty()}" class="chart-empty">
-            Tidak ada data statistik mingguan
-          </div>
-        </div>
-
-        <!-- Monthly Chart (hidden by default) -->
-        <div id="monthlyChart" class="chart-content" style="display:none;">
-          <th:block th:if="${monthlyStats != null and !monthlyStats.isEmpty()}">
-            <div th:each="stat : ${monthlyStats}" class="bar-wrap">
-              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:title="${stat.label + ': ' + stat.count + ' pasien'}"></div>
-              <div class="bar-label" th:text="${stat.label}"></div>
-            </div>
-          </th:block>
-          <div th:if="${monthlyStats == null or monthlyStats.isEmpty()}" class="chart-empty">
-            Tidak ada data statistik bulanan
+          <div th:if="${visitStats == null or visitStats.isEmpty()}" class="chart-empty">
+            Tidak ada data statistik kunjungan
           </div>
         </div>
       </div>
@@ -99,71 +96,103 @@
       </div>
 
       <div class="doctor-list">
-
-        <div class="doctor-item">
-          <span class="doctor-rank">01</span>
-          <div class="doctor-avatar">👨‍⚕️</div>
-          <div class="doctor-info">
-            <div class="doctor-name">Dr. Issaq Ismail</div>
-            <div class="doctor-spec">Spesialis Kardiologi</div>
-          </div>
-          <div class="doctor-stat">
-            <div class="doctor-count">47 Pasien</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:94%"></div>
+        <th:block th:if="${busiestDoctors != null and !busiestDoctors.isEmpty()}">
+          <div th:each="stat, iter : ${busiestDoctors}" class="doctor-item">
+            <span class="doctor-rank" th:text="${iter.index < 9 ? '0' + (iter.index + 1) : (iter.index + 1)}">01</span>
+            <div class="doctor-avatar">👨‍⚕️</div>
+            <div class="doctor-info">
+              <div class="doctor-name" th:text="${stat.dokter.nama}">Nama Dokter</div>
+              <div class="doctor-spec" th:text="${stat.dokter.spesialisasi != null ? stat.dokter.spesialisasi.nama : '-'}">Spesialisasi</div>
+            </div>
+            <div class="doctor-stat">
+              <div class="doctor-count" th:text="${stat.count} + ' Pasien'">0 Pasien</div>
+              <div class="progress-bar">
+                <div class="progress-fill" th:style="'width:' + ${stat.percentage} + '%'"></div>
+              </div>
             </div>
           </div>
+        </th:block>
+        <div th:if="${busiestDoctors == null or busiestDoctors.isEmpty()}" class="chart-empty" style="text-align: center; color: #888; padding: 20px;">
+          Tidak ada data dokter tersibuk bulan ini
         </div>
-
-        <div class="doctor-item">
-          <span class="doctor-rank">02</span>
-          <div class="doctor-avatar">👩‍⚕️</div>
-          <div class="doctor-info">
-            <div class="doctor-name">dr. Sarah Wijaya, Sp.A</div>
-            <div class="doctor-spec">Spesialis Anak</div>
-          </div>
-          <div class="doctor-stat">
-            <div class="doctor-count">38 Pasien</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:76%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="doctor-item">
-          <span class="doctor-rank">03</span>
-          <div class="doctor-avatar">👨‍⚕️</div>
-          <div class="doctor-info">
-            <div class="doctor-name">Dr. Fajar Hafiz</div>
-            <div class="doctor-spec">Spesialis Penyakit Dalam</div>
-          </div>
-          <div class="doctor-stat">
-            <div class="doctor-count">32 Pasien</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:64%"></div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
 
   </main>
 
   <script>
-    function switchTab(button, tab) {
-      // Update tab active state
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      button.classList.add('active');
+    function fetchMonthlyStats() {
+      const month = document.getElementById('monthSelector').value;
+      const chartContainer = document.getElementById('patientChart');
+      const doctorListContainer = document.querySelector('.doctor-list');
+      
+      chartContainer.innerHTML = '<div class="chart-empty">Memuat data...</div>';
+      doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Memuat data...</div>';
 
-      // Show/hide chart content
-      if (tab === 'weekly') {
-        document.getElementById('weeklyChart').style.display = 'flex';
-        document.getElementById('monthlyChart').style.display = 'none';
-      } else if (tab === 'monthly') {
-        document.getElementById('weeklyChart').style.display = 'none';
-        document.getElementById('monthlyChart').style.display = 'flex';
-      }
+      fetch(`/admin/dashboard/visit-stats?month=${month}`)
+        .then(response => response.json())
+        .then(data => {
+          // 1. Render Chart
+          chartContainer.innerHTML = '';
+          const visitStats = data.visitStats || [];
+          if (visitStats.length === 0) {
+            chartContainer.innerHTML = '<div class="chart-empty">Tidak ada data statistik kunjungan</div>';
+          } else {
+            visitStats.forEach(stat => {
+              const barWrap = document.createElement('div');
+              barWrap.className = 'bar-wrap';
+
+              const bar = document.createElement('div');
+              bar.className = 'bar';
+              bar.style.height = `${stat.percentage}%`;
+              bar.setAttribute('data-tooltip', `${stat.count} pasien`);
+
+              const barLabel = document.createElement('div');
+              barLabel.className = 'bar-label';
+              barLabel.textContent = stat.label;
+
+              barWrap.appendChild(bar);
+              barWrap.appendChild(barLabel);
+              chartContainer.appendChild(barWrap);
+            });
+          }
+
+          // 2. Render Doctor List
+          doctorListContainer.innerHTML = '';
+          const busiestDoctors = data.busiestDoctors || [];
+          if (busiestDoctors.length === 0) {
+            doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Tidak ada data dokter tersibuk bulan ini</div>';
+          } else {
+            busiestDoctors.forEach((stat, index) => {
+              const doctorItem = document.createElement('div');
+              doctorItem.className = 'doctor-item';
+
+              const rankIndex = index < 9 ? `0${index + 1}` : `${index + 1}`;
+              const specName = stat.dokter.spesialisasi ? stat.dokter.spesialisasi.nama : '-';
+
+              doctorItem.innerHTML = `
+                <span class="doctor-rank">${rankIndex}</span>
+                <div class="doctor-avatar">👨‍⚕️</div>
+                <div class="doctor-info">
+                  <div class="doctor-name">${stat.dokter.nama}</div>
+                  <div class="doctor-spec">${specName}</div>
+                </div>
+                <div class="doctor-stat">
+                  <div class="doctor-count">${stat.count} Pasien</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${stat.percentage}%"></div>
+                  </div>
+                </div>
+              `;
+              doctorListContainer.appendChild(doctorItem);
+            });
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching stats:', err);
+          chartContainer.innerHTML = '<div class="chart-empty">Gagal memuat data statistik</div>';
+          doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Gagal memuat data dokter tersibuk</div>';
+        });
     }
   </script>
 

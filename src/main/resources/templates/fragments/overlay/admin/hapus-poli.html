@@ -1,0 +1,59 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="hapusPoliOverlay">
+        <div class="overlay-content delete-modal">
+            <!-- Icon Warning Red Circle -->
+            <div class="icon-container">
+                <div class="warning-circle">
+                    <div class="warning-inner-circle">
+                        <span>!</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="modal-title">Hapus Data Poli?</h2>
+            
+            <div class="modal-body">
+                <p>Data poli ini akan dihapus permanen.</p>
+                <p>Seluruh jadwal dan dokter terkait juga akan terpengaruh.</p>
+            </div>
+
+            <!-- Form to handle deletion submission -->
+            <form id="hapusPoliForm" method="POST" action="">
+                <!-- CSRF Token -->
+                <input type="hidden" name="_csrf" th:value="${_csrf != null ? _csrf.token : ''}" th:if="${_csrf != null}"/>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeHapusPoliOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openHapusPoliOverlay(id) {
+            document.getElementById('hapusPoliForm').action = '/admin/poli/delete/' + id;
+            document.getElementById('hapusPoliOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHapusPoliOverlay() {
+            document.getElementById('hapusPoliOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('hapusPoliOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeHapusPoliOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeHapusPoliOverlay();
+            }
+        });
+    </script>
+</div>

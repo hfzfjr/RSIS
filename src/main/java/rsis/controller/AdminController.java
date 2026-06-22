@@ -21,9 +21,14 @@ import rsis.repository.AdminRSRepository;
 import rsis.repository.UserRepository;
 import rsis.service.AdminRSService;
 import rsis.service.NotifikasiService;
+import rsis.dto.VisitStatistics;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
 @Controller
@@ -53,6 +58,32 @@ public class AdminController {
             model.addAttribute("notifikasi", notifikasis);
         } catch (Exception e) {
             model.addAttribute("notifikasi", List.of());
+        }
+    }
+
+    private void addJadwalStatsToModel(Model model) {
+        try {
+            List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
+            long countTersedia = 0;
+            long countPenuh = 0;
+            long countLibur = 0;
+            for (JadwalPraktik j : jadwals) {
+                String status = j.getStatusKetersediaan();
+                if ("TERSEDIA".equalsIgnoreCase(status)) {
+                    countTersedia++;
+                } else if ("PENUH".equalsIgnoreCase(status)) {
+                    countPenuh++;
+                } else if ("LIBUR".equalsIgnoreCase(status)) {
+                    countLibur++;
+                }
+            }
+            model.addAttribute("jadwalAktif", countTersedia);
+            model.addAttribute("jadwalPenuh", countPenuh);
+            model.addAttribute("jadwalLibur", countLibur);
+        } catch (Exception e) {
+            model.addAttribute("jadwalAktif", 0);
+            model.addAttribute("jadwalPenuh", 0);
+            model.addAttribute("jadwalLibur", 0);
         }
     }
 
@@ -91,18 +122,40 @@ public class AdminController {
                 safeDashboardValue("total appointment hari ini", adminRSService::getTotalAppointmentHariIni, 0L));
         model.addAttribute("appointmentPending",
                 safeDashboardValue("appointment pending", adminRSService::getAppointmentPending, 0L));
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentYear = today.getYear();
         try {
-            model.addAttribute("weeklyStats", adminRSService.getWeeklyStats());
+            model.addAttribute("visitStats", adminRSService.getStatsByMonthAndYear(currentMonth, currentYear));
         } catch (RuntimeException e) {
-            model.addAttribute("weeklyStats", Collections.emptyList());
+            model.addAttribute("visitStats", Collections.emptyList());
         }
         try {
-            model.addAttribute("monthlyStats", adminRSService.getMonthlyStats());
+            model.addAttribute("busiestDoctors", adminRSService.getBusiestDoctorsOfMonth(currentMonth, currentYear));
         } catch (RuntimeException e) {
-            model.addAttribute("monthlyStats", Collections.emptyList());
+            model.addAttribute("busiestDoctors", Collections.emptyList());
         }
+        model.addAttribute("currentMonth", currentMonth);
         model.addAttribute("activeMenu", "dashboard");
         return "admin/dashboard";
+    }
+
+    @GetMapping("/dashboard/visit-stats")
+    @ResponseBody
+    public Map<String, Object> getVisitStats(
+            @RequestParam int month,
+            @RequestParam(required = false) Integer year) {
+        int targetYear = (year != null) ? year : LocalDate.now().getYear();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            response.put("visitStats", adminRSService.getStatsByMonthAndYear(month, targetYear));
+            response.put("busiestDoctors", adminRSService.getBusiestDoctorsOfMonth(month, targetYear));
+        } catch (Exception e) {
+            log.error("Failed to fetch visit statistics", e);
+            response.put("visitStats", Collections.emptyList());
+            response.put("busiestDoctors", Collections.emptyList());
+        }
+        return response;
     }
 
     private <T> T safeDashboardValue(String label, Supplier<T> supplier, T fallback) {
@@ -140,6 +193,15 @@ public class AdminController {
         model.addAttribute("dokters", dokters);
         model.addAttribute("spesialisasis", spesialisasis);
         model.addAttribute("polis", polis);
+        
+        long totalDokter = dokters.size();
+        long scheduledDokter = adminRSService.getScheduledDoctorsCountByDate(LocalDate.now());
+        long liburDokter = Math.max(0, totalDokter - scheduledDokter);
+
+        model.addAttribute("dokterTerdaftar", totalDokter);
+        model.addAttribute("dokterTerjadwal", scheduledDokter);
+        model.addAttribute("dokterLibur", liburDokter);
+        
         model.addAttribute("activeMenu", "kelola-dokter");
         return "admin/kelola-dokter";
     }
@@ -221,9 +283,10 @@ public class AdminController {
 
     @PostMapping("/poli/create")
     public String createPoli(@ModelAttribute Poli poli,
+            @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.createPoli(poli);
+            adminRSService.createPoli(poli, dokterIds);
             redirectAttributes.addFlashAttribute("success", "Poli berhasil ditambahkan!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -231,16 +294,60 @@ public class AdminController {
         return "redirect:/admin/kelola-poli";
     }
 
+    @GetMapping("/poli/unassigned-doctors")
+    @ResponseBody
+    public List<Dokter> getUnassignedDoctors() {
+        try {
+            return adminRSService.getDokterTanpaPoli();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    @GetMapping("/poli/all-doctors")
+    @ResponseBody
+    public List<Dokter> getAllDoctors() {
+        try {
+            return adminRSService.getAllDokter();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
     @PostMapping("/poli/update")
     public String updatePoli(@ModelAttribute Poli poli,
+            @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.updatePoli(poli);
+            adminRSService.updatePoli(poli, dokterIds);
             redirectAttributes.addFlashAttribute("success", "Poli berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/kelola-poli";
+    }
+
+    @GetMapping("/poli/detail/{id}")
+    @ResponseBody
+    public java.util.Map<String, Object> getPoliDetail(@PathVariable String id) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            Poli poli = adminRSService.getAllPoli().stream()
+                    .filter(p -> p.getIdPoli().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
+            List<Dokter> assignedDoctors = adminRSService.getDokterByPoli(id);
+            List<Dokter> unassignedDoctors = adminRSService.getDokterTanpaPoli();
+
+            response.put("success", true);
+            response.put("poli", poli);
+            response.put("assignedDoctors", assignedDoctors);
+            response.put("unassignedDoctors", unassignedDoctors);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
     }
 
     @PostMapping("/poli/delete/{id}")
@@ -327,10 +434,74 @@ public class AdminController {
         }
         List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
         List<Dokter> dokters = adminRSService.getAllDokter();
+        List<Poli> polis = adminRSService.getAllPoli();
         model.addAttribute("jadwals", jadwals);
         model.addAttribute("dokters", dokters);
+        model.addAttribute("polis", polis);
+        addJadwalStatsToModel(model);
         model.addAttribute("activeMenu", "kelola-jadwal");
         return "admin/kelola-jadwal";
+    }
+
+    @PostMapping("/jadwal/update")
+    public String updateJadwal(
+            @RequestParam String idJadwal,
+            @RequestParam String idUser,
+            @RequestParam String hari,
+            @RequestParam(required = false) String tanggal,
+            @RequestParam String jamMulai,
+            @RequestParam String jamSelesai,
+            @RequestParam String statusKetersediaan,
+            @RequestParam int kuota,
+            @RequestParam String idPoli,
+            RedirectAttributes redirectAttributes) {
+        try {
+            LocalDate localTanggal = (tanggal != null && !tanggal.isEmpty()) ? LocalDate.parse(tanggal) : null;
+            LocalTime localJamMulai = LocalTime.parse(jamMulai);
+            LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
+
+            adminRSService.updateJadwal(idJadwal, idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan, kuota, idPoli);
+            redirectAttributes.addFlashAttribute("success", "Jadwal berhasil diperbarui!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-jadwal";
+    }
+
+    @PostMapping("/jadwal/create")
+    public String createJadwal(
+            @RequestParam String idUser,
+            @RequestParam String hari,
+            @RequestParam(required = false) String tanggal,
+            @RequestParam String jamMulai,
+            @RequestParam String jamSelesai,
+            @RequestParam String statusKetersediaan,
+            @RequestParam int kuota,
+            @RequestParam String idPoli,
+            RedirectAttributes redirectAttributes) {
+        try {
+            LocalDate localTanggal = (tanggal != null && !tanggal.isEmpty()) ? LocalDate.parse(tanggal) : null;
+            LocalTime localJamMulai = LocalTime.parse(jamMulai);
+            LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
+
+            adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan, kuota, idPoli);
+            redirectAttributes.addFlashAttribute("success", "Jadwal berhasil ditambahkan!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-jadwal";
+    }
+
+    @PostMapping("/jadwal/delete/{id}")
+    public String deleteJadwal(@PathVariable String id,
+            RedirectAttributes redirectAttributes) {
+        try {
+            adminRSService.softDeleteJadwal(id);
+            redirectAttributes.addFlashAttribute("success", "Jadwal berhasil dihapus!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-jadwal";
     }
 
     // Laporan

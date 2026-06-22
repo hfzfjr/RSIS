@@ -2,7 +2,7 @@
 main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 32px 30px;
 }
 
 /* STAT CARDS */
@@ -125,7 +125,7 @@ main {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 18px;
+  gap: 4px;
 }
 
 .chart-empty {
@@ -147,20 +147,85 @@ main {
 
 .bar {
   width: 100%;
-  max-width: 44px;
+  max-width: 24px;
   background: #5f8f7e;
-  border-radius: 5px 5px 0 0;
+  border-radius: 4px 4px 0 0;
   transition: background 0.2s;
+  position: relative;
 }
 
 .bar:hover { background: #1a4d3a; }
 
+/* Tooltip text */
+.bar::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  background-color: #1a4d3a;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, transform 0.15s;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Tooltip arrow */
+.bar::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1a4d3a transparent transparent transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, transform 0.15s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bar:hover::after,
+.bar:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
 .bar-label {
   margin-top: 8px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: #888;
   text-align: center;
+}
+
+.month-selector {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  color: #1a4d3a;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.month-selector:focus {
+  border-color: #1a4d3a;
+  box-shadow: 0 0 0 3px rgba(26, 77, 58, 0.15);
 }
 
 /* DOCTOR LIST */

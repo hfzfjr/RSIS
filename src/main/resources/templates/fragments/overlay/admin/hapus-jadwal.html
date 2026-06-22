@@ -1,0 +1,59 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="hapusJadwalOverlay">
+        <div class="overlay-content delete-modal">
+            <!-- Icon Warning Red Circle -->
+            <div class="icon-container">
+                <div class="warning-circle">
+                    <div class="warning-inner-circle">
+                        <span>!</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="modal-title">Hapus Jadwal?</h2>
+            
+            <div class="modal-body">
+                <p>Data Jadwal ini akan dihapus permanen.</p>
+                <p>Seluruh Dokter terkait juga akan terpengaruh.</p>
+            </div>
+
+            <!-- Form to handle deletion submission -->
+            <form id="hapusJadwalForm" method="POST" action="">
+                <!-- CSRF Token -->
+                <input type="hidden" name="_csrf" th:value="${_csrf != null ? _csrf.token : ''}" th:if="${_csrf != null}"/>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeHapusJadwalOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openHapusJadwalOverlay(id) {
+            document.getElementById('hapusJadwalForm').action = '/admin/jadwal/delete/' + id;
+            document.getElementById('hapusJadwalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHapusJadwalOverlay() {
+            document.getElementById('hapusJadwalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('hapusJadwalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeHapusJadwalOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeHapusJadwalOverlay();
+            }
+        });
+    </script>
+</div>

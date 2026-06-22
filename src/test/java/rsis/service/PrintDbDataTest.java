@@ -3,7 +3,9 @@ package rsis.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import rsis.model.JadwalPraktik;
 import rsis.model.Appointment;
+import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.AppointmentRepository;
 
 import java.util.List;
@@ -20,22 +22,63 @@ import java.util.List;
 class PrintDbDataTest {
 
     @Autowired
+    private JadwalPraktikRepository jadwalPraktikRepository;
+
+    @Autowired
     private AppointmentRepository appointmentRepository;
 
     @Test
-    void printAppointments() {
-        System.out.println("=== APPOINTMENTS IN DB ===");
+    void testOutofSyncFullSchedules() {
+        System.out.println("=== VERIFYING ALL SCHEDULE QUOTAS ===");
         try {
-            List<Appointment> list = appointmentRepository.findAll();
-            System.out.println("Total appointments count: " + list.size());
-            for (Appointment app : list) {
-                System.out.println("ID: " + app.getIdAppointment() 
-                    + ", Date: " + app.getTanggalBooking() 
-                    + ", Status: " + app.getStatus());
+            List<JadwalPraktik> list = jadwalPraktikRepository.findAll();
+            int totalChecked = 0;
+            int outOfSync = 0;
+            int fullyBooked = 0;
+            for (JadwalPraktik jp : list) {
+                if (Boolean.FALSE.equals(jp.getIsActive())) {
+                    continue;
+                }
+                List<Appointment> apps = appointmentRepository.findByJadwal_IdJadwal(jp.getIdJadwal());
+                long activeApps = apps.stream()
+                    .filter(a -> "MENUNGGU".equals(a.getStatus()) || "DIKONFIRMASI".equals(a.getStatus()) || "SELESAI".equals(a.getStatus()))
+                    .count();
+                
+                int expectedSisa = jp.getKuota() - (int) activeApps;
+                if (expectedSisa < 0) expectedSisa = 0;
+                
+                if (jp.getSisaKuota() != expectedSisa) {
+                    System.out.println("OUT OF SYNC! Jadwal ID: " + jp.getIdJadwal()
+                        + " | Doc: " + (jp.getDokter() != null ? jp.getDokter().getNama() : "No Doc")
+                        + " | Hari: " + jp.getHari()
+                        + " | Kuota: " + jp.getKuota()
+                        + " | Actual Sisa in DB: " + jp.getSisaKuota()
+                        + " | Expected Sisa (Kuota - Active Apps): " + expectedSisa
+                        + " | Active Apps: " + activeApps
+                    );
+                    outOfSync++;
+                }
+                
+                if (activeApps >= jp.getKuota()) {
+                    System.out.println("FULLY BOOKED SCHEDULE: ID: " + jp.getIdJadwal()
+                        + " | Doc: " + (jp.getDokter() != null ? jp.getDokter().getNama() : "No Doc")
+                        + " | Hari: " + jp.getHari()
+                        + " | Kuota: " + jp.getKuota()
+                        + " | Sisa: " + jp.getSisaKuota()
+                        + " | Status: " + jp.getStatusKetersediaan()
+                        + " | Active Apps: " + activeApps
+                    );
+                    fullyBooked++;
+                }
+                totalChecked++;
             }
+            System.out.println("Total checked: " + totalChecked);
+            System.out.println("Total out of sync: " + outOfSync);
+            System.out.println("Total fully booked: " + fullyBooked);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("==========================");
+        System.out.println("======================================");
     }
 }
+

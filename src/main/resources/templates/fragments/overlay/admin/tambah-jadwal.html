@@ -1,0 +1,140 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <div class="overlay" id="tambahJadwalOverlay">
+        <div class="overlay-content tambah-modal">
+            <div class="overlay-header">
+                <h2>Tambah Jadwal Praktik Dokter</h2>
+                <button class="close-btn" onclick="closeTambahJadwalOverlay()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{/admin/jadwal/create}" method="post" class="jadwal-form" id="tambahJadwalForm">
+                <!-- Row 1: Dokter & Poli (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tambah_idUser">Dokter</label>
+                        <select id="tambah_idUser" name="idUser" required>
+                            <option value="">Pilih Dokter</option>
+                            <option th:each="dokter : ${dokters}"
+                                    th:value="${dokter.idUser}"
+                                    th:data-poli-id="${dokter.poli != null ? dokter.poli.idPoli : ''}"
+                                    th:text="${dokter.nama}">Nama Dokter</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tambah_idPoli">Poli</label>
+                        <select id="tambah_idPoli" name="idPoli" required>
+                            <option value="">Pilih Poli</option>
+                            <option th:each="poli : ${polis}"
+                                    th:value="${poli.idPoli}"
+                                    th:text="${poli.namaPoli}">Nama Poli</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Hari & Tanggal (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tambah_hari">Hari</label>
+                        <select id="tambah_hari" name="hari" required>
+                            <option value="">Pilih Hari</option>
+                            <option value="SENIN">Senin</option>
+                            <option value="SELASA">Selasa</option>
+                            <option value="RABU">Rabu</option>
+                            <option value="KAMIS">Kamis</option>
+                            <option value="JUMAT">Jumat</option>
+                            <option value="SABTU">Sabtu</option>
+                            <option value="MINGGU">Minggu</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tambah_tanggal">Tanggal (Opsional)</label>
+                        <input type="date" id="tambah_tanggal" name="tanggal">
+                    </div>
+                </div>
+
+                <!-- Row 3: Jam Mulai & Jam Selesai (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tambah_jamMulai">Jam Mulai</label>
+                        <input type="time" id="tambah_jamMulai" name="jamMulai" required step="60">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tambah_jamSelesai">Jam Selesai</label>
+                        <input type="time" id="tambah_jamSelesai" name="jamSelesai" required step="60">
+                    </div>
+                </div>
+
+                <!-- Row 4: Status & Kuota (2 Columns) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tambah_statusKetersediaan">Status Ketersediaan</label>
+                        <select id="tambah_statusKetersediaan" name="statusKetersediaan" required>
+                            <option value="TERSEDIA">Tersedia</option>
+                            <option value="LIBUR">Libur</option>
+                            <option value="PENUH">Penuh</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tambah_kuota">Kuota Kapasitas</label>
+                        <input type="number" id="tambah_kuota" name="kuota" required min="1" placeholder="Masukkan Kuota">
+                    </div>
+                </div>
+
+                <!-- Footer / Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeTambahJadwalOverlay()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Automatic Poli dropdown update when Dokter is changed
+        document.getElementById('tambah_idUser').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const poliId = selectedOption.getAttribute('data-poli-id');
+            if (poliId) {
+                document.getElementById('tambah_idPoli').value = poliId;
+            }
+        });
+
+        function openTambahJadwalOverlay() {
+            // Reset the form values
+            document.getElementById('tambahJadwalForm').reset();
+            
+            // Set default status to TERSEDIA
+            document.getElementById('tambah_statusKetersediaan').value = 'TERSEDIA';
+
+            document.getElementById('tambahJadwalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTambahJadwalOverlay() {
+            document.getElementById('tambahJadwalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close overlay when clicking outside modal
+        document.getElementById('tambahJadwalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTambahJadwalOverlay();
+            }
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTambahJadwalOverlay();
+            }
+        });
+    </script>
+</div>

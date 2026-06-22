@@ -1,11 +1,11 @@
-/* Overlay Container */
-.overlay {
+/* Overlay Container Scoped to Tambah Dokter */
+#tambahDokterOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     display: none;
     justify-content: center;
     align-items: center;
@@ -14,35 +14,36 @@
     transition: opacity 0.3s ease;
 }
 
-.overlay.active {
+#tambahDokterOverlay.active {
     display: flex;
     opacity: 1;
 }
 
-/* Overlay Content */
-.overlay-content {
+/* Overlay Content Box */
+#tambahDokterOverlay .overlay-content {
     background: white;
     border-radius: 16px;
     width: 90%;
     max-width: 680px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     transform: translateY(-20px);
     transition: transform 0.3s ease;
+    box-sizing: border-box;
 }
 
-.overlay.active .overlay-content {
+#tambahDokterOverlay.active .overlay-content {
     transform: translateY(0);
 }
 
-/* Overlay Header */
-.overlay-header {
+/* Header */
+#tambahDokterOverlay .overlay-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 24px 28px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1.5px solid #eaeaea;
     background: white;
     border-radius: 16px 16px 0 0;
     position: sticky;
@@ -50,14 +51,14 @@
     z-index: 10;
 }
 
-.overlay-header h2 {
+#tambahDokterOverlay .overlay-header h2 {
     font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
     margin: 0;
 }
 
-.close-btn {
+#tambahDokterOverlay .close-btn {
     width: 36px;
     height: 36px;
     border: none;
@@ -71,89 +72,55 @@
     transition: all 0.2s ease;
 }
 
-.close-btn:hover {
+#tambahDokterOverlay .close-btn:hover {
     background: #f0f0f0;
     color: #333;
 }
 
-/* Form Styling */
-.dokter-form {
-    padding: 28px;
-}
-
-/* Two-column layout: form-section kiri dan kanan */
-.form-section {
-    margin-bottom: 0;
-}
-
-.form-section:last-of-type {
-    margin-bottom: 0;
-}
-
-/* Grid layout: kiri (informasi pribadi) dan kanan (informasi profesional) */
-.dokter-form > .form-section {
-    /* Default single column, diatur oleh grid wrapper di bawah */
-}
-
-/* Wrapper grid dua kolom untuk kedua section */
-.dokter-form {
+/* Form Grid Scoped */
+#tambahDokterForm {
     padding: 28px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
     column-gap: 28px;
     row-gap: 0;
     align-items: start;
+    box-sizing: border-box;
 }
 
-/* Section pertama (Informasi Pribadi) di kolom kiri */
-.form-section:first-of-type {
+/* Section columns */
+#tambahDokterForm .form-section:first-of-type {
     grid-column: 1;
-    grid-row: 1;
 }
 
-/* Section kedua (Informasi Profesional) di kolom kanan */
-.form-section:nth-of-type(2) {
+#tambahDokterForm .form-section:nth-of-type(2) {
     grid-column: 2;
-    grid-row: 1;
 }
 
-/* Form actions span full width */
-.form-actions {
-    grid-column: 1 / -1;
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    padding-top: 24px;
-    border-top: 1px solid #e8e8e8;
-    margin-top: 28px;
-}
-
-.section-title {
-    display: none; /* Tidak ada section title di desain gambar */
-}
-
-.form-group {
+#tambahDokterForm .form-group {
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
 }
 
-.form-group:last-child {
+#tambahDokterForm .form-group:last-child {
     margin-bottom: 0;
 }
 
-.form-group label {
+#tambahDokterForm .form-group label {
     display: block;
     font-size: 14px;
     font-weight: 500;
     color: #1a1a1a;
-    margin-bottom: 8px;
 }
 
-.form-group input,
-.form-group select {
+#tambahDokterForm .form-group input,
+#tambahDokterForm .form-group select {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #d1d5db;
     border-radius: 8px;
     font-size: 14px;
     color: #333;
@@ -162,18 +129,18 @@
     box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+#tambahDokterForm .form-group input:focus,
+#tambahDokterForm .form-group select:focus {
     outline: none;
-    border-color: #1a6b4a;
-    box-shadow: 0 0 0 3px rgba(26, 107, 74, 0.1);
+    border-color: #016d55;
+    box-shadow: 0 0 0 3px rgba(1, 109, 85, 0.15);
 }
 
-.form-group input::placeholder {
-    color: #aaa;
+#tambahDokterForm .form-group input::placeholder {
+    color: #9ca3af;
 }
 
-.form-group select {
+#tambahDokterForm .form-group select {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -184,74 +151,68 @@
 }
 
 /* Upload Foto - Drag & Drop Zone */
-.upload-zone {
-    border: 2px dashed #c8d9d3;
+#tambahDokterForm .upload-zone {
+    border: 1.5px dashed #a3b8b0;
     border-radius: 10px;
-    background: #f7fbf9;
+    background: #f8faf9;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 28px 16px;
+    padding: 24px 16px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
-    min-height: 130px;
+    min-height: 144px;
+    box-sizing: border-box;
 }
 
-.upload-zone:hover {
-    border-color: #1a6b4a;
-    background: #f0f7f4;
+#tambahDokterForm .upload-zone:hover {
+    border-color: #016d55;
+    background: #f0f6f4;
 }
 
-.upload-zone.dragover {
-    border-color: #1a6b4a;
-    background: #e8f5ef;
+#tambahDokterForm .upload-zone.dragover {
+    border-color: #016d55;
+    background: #e6f0ec;
 }
 
-.upload-icon {
-    color: #1a6b4a;
-    margin-bottom: 10px;
+#tambahDokterForm .upload-icon {
+    color: #016d55;
+    margin-bottom: 12px;
 }
 
-.upload-main-text {
-    font-size: 14px;
-    color: #333;
-    margin: 0 0 4px 0;
-    line-height: 1.4;
+#tambahDokterForm .upload-main-text {
+    font-size: 13px;
+    color: #374151;
+    margin: 0;
+    line-height: 1.5;
 }
 
-.upload-link {
-    color: #1a6b4a;
+#tambahDokterForm .upload-link {
+    color: #016d55;
     font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.upload-link:hover {
     text-decoration: underline;
 }
 
-.upload-hint {
-    font-size: 12px;
-    color: #888;
-    margin: 6px 0 0 0;
-}
-
-/* Hidden file input behind upload zone */
-.form-group input[type="url"].hidden-url-input {
-    display: none;
-}
-
-.form-hint {
-    display: block;
-    font-size: 12px;
-    color: #888;
-    margin-top: 6px;
+#tambahDokterForm .upload-hint {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 8px 0 0 0;
 }
 
 /* Form Actions */
-.btn {
+#tambahDokterForm .form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 24px;
+    border-top: 1.5px solid #eaeaea;
+    margin-top: 28px;
+}
+
+#tambahDokterForm .btn {
     padding: 11px 28px;
     border-radius: 24px;
     font-size: 14px;
@@ -261,86 +222,83 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-}
-
-.btn-primary {
-    background: #1a3d2e;
-    color: white;
     border: none;
+    outline: none;
+    box-sizing: border-box;
 }
 
-.btn-primary:hover {
-    background: #122b20;
-    box-shadow: 0 4px 12px rgba(26, 61, 46, 0.35);
+#tambahDokterForm .btn-primary {
+    background: #014d3d; /* dark green */
+    color: white;
 }
 
-.btn-secondary {
-    background: transparent;
-    color: #1a1a1a;
-    border: 1.5px solid #d0d0d0;
+#tambahDokterForm .btn-primary:hover {
+    background: #01372c;
+    box-shadow: 0 4px 12px rgba(1, 77, 61, 0.3);
 }
 
-.btn-secondary:hover {
-    background: #f5f5f5;
-    border-color: #bbb;
+#tambahDokterForm .btn-secondary {
+    background: white;
+    color: #374151;
+    border: 1.5px solid #d1d5db;
+}
+
+#tambahDokterForm .btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
-    .dokter-form {
+    #tambahDokterForm {
         grid-template-columns: 1fr;
         padding: 20px;
     }
 
-    .form-section:first-of-type,
-    .form-section:nth-of-type(2) {
+    #tambahDokterForm .form-section:first-of-type,
+    #tambahDokterForm .form-section:nth-of-type(2) {
         grid-column: 1;
     }
 
-    .form-section:first-of-type {
-        grid-row: 1;
-    }
-
-    .form-section:nth-of-type(2) {
-        grid-row: 2;
+    #tambahDokterForm .form-section:nth-of-type(2) {
         margin-top: 20px;
     }
 
-    .overlay-content {
+    #tambahDokterOverlay .overlay-content {
         width: 95%;
         max-height: 95vh;
         border-radius: 12px;
     }
 
-    .overlay-header {
-        padding: 20px 20px;
+    #tambahDokterOverlay .overlay-header {
+        padding: 20px;
     }
 
-    .form-actions {
-        flex-direction: column;
+    #tambahDokterForm .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
     }
 
-    .btn {
+    #tambahDokterForm .btn {
         width: 100%;
         border-radius: 8px;
     }
 }
 
 /* Scrollbar Styling */
-.overlay-content::-webkit-scrollbar {
+#tambahDokterOverlay .overlay-content::-webkit-scrollbar {
     width: 6px;
 }
 
-.overlay-content::-webkit-scrollbar-track {
+#tambahDokterOverlay .overlay-content::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.overlay-content::-webkit-scrollbar-thumb {
+#tambahDokterOverlay .overlay-content::-webkit-scrollbar-thumb {
     background: #ddd;
     border-radius: 4px;
 }
 
-.overlay-content::-webkit-scrollbar-thumb:hover {
+#tambahDokterOverlay .overlay-content::-webkit-scrollbar-thumb:hover {
     background: #bbb;
 }

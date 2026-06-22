@@ -1,0 +1,299 @@
+<div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
+    <!-- Overlay Backdrop -->
+    <div class="overlay" id="editPoliOverlay">
+        <div class="overlay-content edit-modal edit-poli-modal">
+            <!-- Header -->
+            <div class="overlay-header">
+                <h2 id="editPoliTitle">Edit Poli: -</h2>
+                <button class="close-btn" onclick="closeEditPoliOverlay()" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- VIEW 1: Main Edit Poli View -->
+            <div id="viewEditPoli" class="modal-view active">
+                <form th:action="@{/admin/poli/update}" method="post" class="poli-form" id="editPoliForm">
+                    <!-- Hidden inputs for Poli and assigned Doctor IDs -->
+                    <input type="hidden" id="editPoliId" name="idPoli">
+                    <input type="hidden" id="editPoliNama" name="namaPoli">
+                    <div id="hiddenDoctorInputsContainer"></div>
+
+                    <!-- Assigned Doctors Section -->
+                    <div class="section-label-row">
+                        <label class="section-label">Dokter yang ditugaskan:</label>
+                        <button type="button" class="add-doctor-btn-trigger" onclick="openAddDoctorView()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Assigned Doctors List -->
+                    <div class="doctors-list-container" id="assignedDoctorsList">
+                        <!-- Loaded dynamically via JS -->
+                        <div class="no-doctors-placeholder">Tidak ada dokter ditugaskan</div>
+                    </div>
+
+                    <!-- Location Section -->
+                    <div class="form-group location-group">
+                        <label for="editPoliLokasi">Lokasi</label>
+                        <input type="text" id="editPoliLokasi" name="lokasiRuangan" required placeholder="Masukkan lokasi ruangan (misal: Gedung A, Lantai 1)">
+                    </div>
+
+                    <!-- Footer Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditPoliOverlay()">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- VIEW 2: Tambah Dokter (Sub-view) -->
+            <div id="viewTambahDokter" class="modal-view">
+                <div class="section-label-row">
+                    <label class="section-label">Tambah Dokter</label>
+                </div>
+
+                <!-- Unassigned Doctors List -->
+                <div class="doctors-list-container" id="unassignedDoctorsList">
+                    <!-- Loaded dynamically via JS -->
+                    <div class="no-doctors-placeholder">Tidak ada dokter tersedia</div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cancelAddDoctorView()">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmSelectedDoctors()">Kembali</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Modal State
+        let currentPoliId = '';
+        let currentPoliNama = '';
+        let currentPoliLokasi = '';
+        
+        let assignedDoctors = []; // { idUser, nama }
+        let unassignedDoctors = []; // { idUser, nama }
+        let selectedDoctorsTemp = new Set(); // Set of idUser selected in the Add Doctor view
+
+        // Open the Edit Poli Modal
+        function openEditPoliOverlay(btn) {
+            const poliId = btn.getAttribute('data-id');
+            if (!poliId) return;
+
+            // Fetch Poli details via AJAX
+            fetch(`/admin/poli/detail/${poliId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentPoliId = data.poli.idPoli;
+                        currentPoliNama = data.poli.namaPoli;
+                        currentPoliLokasi = data.poli.lokasiRuangan || '';
+
+                        assignedDoctors = data.assignedDoctors.map(d => ({ idUser: d.idUser, nama: d.nama }));
+                        unassignedDoctors = data.unassignedDoctors.map(d => ({ idUser: d.idUser, nama: d.nama }));
+
+                        // Update modal contents
+                        document.getElementById('editPoliTitle').textContent = `Edit Poli: ${currentPoliNama}`;
+                        document.getElementById('editPoliId').value = currentPoliId;
+                        document.getElementById('editPoliNama').value = currentPoliNama;
+                        document.getElementById('editPoliLokasi').value = currentPoliLokasi;
+
+                        // Reset View to Main View
+                        showView('edit_poli');
+
+                        // Render lists
+                        renderAssignedDoctors();
+
+                        // Open modal
+                        document.getElementById('editPoliOverlay').classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        alert('Gagal mengambil detail poli: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error fetching poli details:', err);
+                    alert('Terjadi kesalahan saat mengambil data poli.');
+                });
+        }
+
+        // Close the Modal
+        function closeEditPoliOverlay() {
+            document.getElementById('editPoliOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Render Assigned Doctors in Main View
+        function renderAssignedDoctors() {
+            const listContainer = document.getElementById('assignedDoctorsList');
+            listContainer.innerHTML = '';
+
+            if (assignedDoctors.length === 0) {
+                listContainer.innerHTML = '<div class="no-doctors-placeholder">Tidak ada dokter ditugaskan</div>';
+            } else {
+                assignedDoctors.forEach(doc => {
+                    const row = document.createElement('div');
+                    row.className = 'doctor-item-row';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'doctor-name';
+                    nameSpan.textContent = doc.nama;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-doctor-btn';
+                    deleteBtn.type = 'button';
+                    deleteBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    `;
+                    deleteBtn.onclick = () => removeDoctor(doc.idUser);
+
+                    row.appendChild(nameSpan);
+                    row.appendChild(deleteBtn);
+                    listContainer.appendChild(row);
+                });
+            }
+
+            // Sync hidden inputs for form submission
+            syncHiddenDoctorInputs();
+        }
+
+        // Remove a doctor from Assigned list (adds back to Unassigned)
+        function removeDoctor(idUser) {
+            const idx = assignedDoctors.findIndex(d => d.idUser === idUser);
+            if (idx > -1) {
+                const removedDoc = assignedDoctors.splice(idx, 1)[0];
+                unassignedDoctors.push(removedDoc);
+                renderAssignedDoctors();
+            }
+        }
+
+        // Synchronize hidden inputs inside the form
+        function syncHiddenDoctorInputs() {
+            const container = document.getElementById('hiddenDoctorInputsContainer');
+            container.innerHTML = '';
+            assignedDoctors.forEach(doc => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'dokterIds';
+                input.value = doc.idUser;
+                container.appendChild(input);
+            });
+        }
+
+        // Switch between Views
+        function showView(viewName) {
+            if (viewName === 'edit_poli') {
+                document.getElementById('viewEditPoli').classList.add('active');
+                document.getElementById('viewTambahDokter').classList.remove('active');
+            } else if (viewName === 'tambah_dokter') {
+                document.getElementById('viewEditPoli').classList.remove('active');
+                document.getElementById('viewTambahDokter').classList.add('active');
+            }
+        }
+
+        // Open Add Doctor View
+        function openAddDoctorView() {
+            selectedDoctorsTemp.clear();
+            renderUnassignedDoctors();
+            showView('tambah_dokter');
+        }
+
+        // Cancel Add Doctor View
+        function cancelAddDoctorView() {
+            showView('edit_poli');
+        }
+
+        // Render Unassigned Doctors in Sub-view
+        function renderUnassignedDoctors() {
+            const listContainer = document.getElementById('unassignedDoctorsList');
+            listContainer.innerHTML = '';
+
+            if (unassignedDoctors.length === 0) {
+                listContainer.innerHTML = '<div class="no-doctors-placeholder">Tidak ada dokter tersedia</div>';
+            } else {
+                unassignedDoctors.forEach(doc => {
+                    const row = document.createElement('div');
+                    row.className = 'doctor-item-row selectable';
+                    if (selectedDoctorsTemp.has(doc.idUser)) {
+                        row.classList.add('selected');
+                    }
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'doctor-name';
+                    nameSpan.textContent = doc.nama;
+                    
+                    const checkmarkWrapper = document.createElement('div');
+                    checkmarkWrapper.className = 'checkmark-wrapper';
+                    checkmarkWrapper.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="check-icon">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    `;
+
+                    row.appendChild(nameSpan);
+                    row.appendChild(checkmarkWrapper);
+
+                    // Handle toggle selection click
+                    row.onclick = () => {
+                        if (selectedDoctorsTemp.has(doc.idUser)) {
+                            selectedDoctorsTemp.delete(doc.idUser);
+                            row.classList.remove('selected');
+                        } else {
+                            selectedDoctorsTemp.add(doc.idUser);
+                            row.classList.add('selected');
+                        }
+                    };
+
+                    listContainer.appendChild(row);
+                });
+            }
+        }
+
+        // Confirm selected doctors in Add Doctor view and return
+        function confirmSelectedDoctors() {
+            // Transfer selected doctors from unassigned to assigned
+            const selectedArray = Array.from(selectedDoctorsTemp);
+            
+            selectedArray.forEach(idUser => {
+                const idx = unassignedDoctors.findIndex(d => d.idUser === idUser);
+                if (idx > -1) {
+                    const doc = unassignedDoctors.splice(idx, 1)[0];
+                    assignedDoctors.push(doc);
+                }
+            });
+
+            // Re-render assigned list and go back
+            renderAssignedDoctors();
+            showView('edit_poli');
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('editPoliOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditPoliOverlay();
+            }
+        });
+
+        // Close overlay on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditPoliOverlay();
+            }
+        });
+    </script>
+</div>

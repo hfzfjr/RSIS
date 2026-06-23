@@ -34,7 +34,7 @@ public class NotifikasiService {
         notifikasi.setPesan(pesan);
         notifikasi.setTipe(tipe);
         notifikasi.setTanggalKirim(Instant.now());
-        notifikasi.setStatus("BELUM_DIBACA");
+        notifikasi.setStatus(false);
         return notifikasiRepository.save(notifikasi);
     }
 
@@ -64,7 +64,7 @@ public class NotifikasiService {
     }
 
     public Long getUnreadCount(String penerimaId) {
-        return notifikasiRepository.countByPenerima_IdUserAndStatus(penerimaId, "BELUM_DIBACA");
+        return notifikasiRepository.countByPenerima_IdUserAndStatus(penerimaId, false);
     }
 
     private String generateNotifikasiId() {

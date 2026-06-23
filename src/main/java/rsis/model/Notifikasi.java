@@ -28,7 +28,7 @@ public class Notifikasi {
     private String tipe;
 
     @Column(name = "status")
-    private String status = "BELUM_DIBACA";
+    private Boolean status = false;
 
     @Column(name = "tanggal_kirim")
     private Instant tanggalKirim;
@@ -41,12 +41,12 @@ public class Notifikasi {
         // Logic in service
     }
 
-    public String getStatus() {
+    public Boolean getStatus() {
         return this.status;
     }
 
     public void markAsRead() {
-        this.status = "SUDAH_DIBACA";
+        this.status = true;
     }
 
     // Getters and Setters
@@ -82,7 +82,7 @@ public class Notifikasi {
         this.tipe = tipe;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 

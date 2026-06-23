@@ -413,7 +413,7 @@ public class PasienController {
             // Send notification to pasien
             notifikasiService.kirimNotifikasi(pasien.getIdUser(),
                     "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment(),
-                    "INFO");
+                    "APPOINTMENT_BARU");
 
             redirectAttributes.addFlashAttribute("success", "Appointment berhasil dibuat!");
             return "redirect:/pasien/jadwal-riwayat";

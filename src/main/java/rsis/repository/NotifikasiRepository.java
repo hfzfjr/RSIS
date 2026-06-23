@@ -18,5 +18,5 @@ public interface NotifikasiRepository extends JpaRepository<Notifikasi, String> 
     List<Notifikasi> findByPenerima_IdUser(@Param("penerimaId") String penerimaId);
 
     @Query(value = "SELECT COUNT(*) FROM notifikasi WHERE id_user = :penerimaId AND status = :status", nativeQuery = true)
-    Long countByPenerima_IdUserAndStatus(@Param("penerimaId") String penerimaId, @Param("status") String status);
+    Long countByPenerima_IdUserAndStatus(@Param("penerimaId") String penerimaId, @Param("status") Boolean status);
 }

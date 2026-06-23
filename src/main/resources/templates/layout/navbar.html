@@ -121,6 +121,38 @@
                     });
                 }
             });
+
+            // Fungsi untuk menandai notifikasi sebagai sudah dibaca
+            function markNotifikasiAsRead(element) {
+                const notifId = element.getAttribute("data-id");
+                const notifStatus = element.getAttribute("data-status");
+
+                // Hanya panggil API jika status masih false (BELUM_DIBACA)
+                if (notifStatus === "false") {
+                    fetch("/notifikasi/mark-as-read/" + notifId, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        }
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data === "success") {
+                                // Update UI: hapus class unread dan badge
+                                element.classList.remove("unread");
+                                const badge = element.querySelector(".notifikasi-badge");
+                                if (badge) {
+                                    badge.remove();
+                                }
+                                // Update data-status
+                                element.setAttribute("data-status", "true");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error marking notification as read:", error);
+                        });
+                }
+            }
         </script>
     </div>
 </body>

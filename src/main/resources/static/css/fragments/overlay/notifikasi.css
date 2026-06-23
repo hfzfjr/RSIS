@@ -2,20 +2,25 @@
 
 .notifikasi-overlay {
     position: fixed;
-    top: 72px;
+    top: 90px;
     right: 24px;
-    width: 360px;
+    width: 400px;
     max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 150px);
     background: var(--color-surface, #ffffff);
     border: 1px solid var(--border-subtle, #E5E7EB);
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     z-index: 9999;
-    display: none;
-    animation: slideDown 0.2s ease;
+    display: none !important;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    animation: slideDown 0.2s ease;
+}
+
+.notifikasi-overlay::-webkit-scrollbar {
+    width: 0;
+    display: none;
 }
 
 .notifikasi-overlay.active {
@@ -39,6 +44,7 @@
 .notifikasi-content {
     display: flex;
     flex-direction: column;
+    max-height: calc(100vh - 150px);
 }
 
 .notifikasi-header {
@@ -47,6 +53,7 @@
     justify-content: space-between;
     padding: 16px;
     border-bottom: 1px solid var(--border-subtle, #E5E7EB);
+    flex-shrink: 0;
 }
 
 .notifikasi-title {
@@ -78,6 +85,13 @@
 .notifikasi-body {
     padding: 24px 16px;
     min-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.notifikasi-body::-webkit-scrollbar {
+    width: 0;
+    display: none;
 }
 
 .notifikasi-empty {
@@ -173,6 +187,5 @@
     .notifikasi-overlay {
         right: 16px;
         left: 16px;
-        width: auto;
     }
 }

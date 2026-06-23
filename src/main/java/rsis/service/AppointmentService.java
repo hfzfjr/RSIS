@@ -224,4 +224,39 @@ public class AppointmentService {
         int nomor = jadwal.getKuota() - jadwal.getSisaKuota() + 1;
         return String.format("A%03d", nomor);
     }
+
+    @Transactional
+    public void updateExpiredAppointments() {
+        LocalDate today = LocalDate.now();
+        List<Appointment> expiredAppointments = appointmentRepository.findByStatus("MENUNGGU");
+
+        for (Appointment appointment : expiredAppointments) {
+            if (appointment.getTanggalBooking() != null && appointment.getTanggalBooking().isBefore(today)) {
+                appointment.setStatus("DIBATALKAN");
+                appointmentRepository.save(appointment);
+
+                // Restore quota
+                if (appointment.getJadwal() != null) {
+                    appointment.getJadwal().tambahKuota();
+                    jadwalPraktikRepository.save(appointment.getJadwal());
+                }
+            }
+        }
+
+        List<Appointment> confirmedAppointments = appointmentRepository.findByStatus("DIKONFIRMASI");
+        for (Appointment appointment : confirmedAppointments) {
+            if (appointment.getTanggalBooking() != null && appointment.getTanggalBooking().isBefore(today)) {
+                appointment.setStatus("SELESAI");
+                appointmentRepository.save(appointment);
+            }
+        }
+    }
+
+    public AppointmentRepository getAppointmentRepository() {
+        return appointmentRepository;
+    }
+
+    public JadwalPraktikRepository getJadwalPraktikRepository() {
+        return jadwalPraktikRepository;
+    }
 }

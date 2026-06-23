@@ -125,4 +125,28 @@ public class DokterService {
         }
         return "jdw-001";
     }
+
+    /**
+     * Centralized method to populate transient fields of Dokter from User table
+     * This method should be used by all services to avoid duplication
+     */
+    public Dokter enrichWithUserData(Dokter dokter) {
+        userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+            dokter.setNama(user.getNama());
+            dokter.setEmail(user.getEmail());
+            dokter.setNomorHp(user.getNomorHp());
+            dokter.setPassword(user.getPassword());
+            dokter.setRole(user.getRole());
+        });
+        return dokter;
+    }
+
+    /**
+     * Enrich a list of Dokter objects with user data
+     */
+    public List<Dokter> enrichAllWithUserData(List<Dokter> dokterList) {
+        return dokterList.stream()
+                .map(this::enrichWithUserData)
+                .toList();
+    }
 }

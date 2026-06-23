@@ -1,3 +1,4 @@
+<!-- tambah-jadwal.html (fragment) -->
 <div th:fragment="overlay" xmlns:th="http://www.thymeleaf.org">
     <div class="overlay" id="tambahJadwalOverlay">
         <div class="overlay-content tambah-modal">
@@ -11,8 +12,22 @@
                 </button>
             </div>
 
-            <form th:action="@{/admin/jadwal/create}" method="post" class="jadwal-form" id="tambahJadwalForm">
-                <!-- Row 1: Dokter & Poli (2 Columns) -->
+            <!-- Toggle Mode -->
+            <div class="mode-toggle">
+                <button type="button" class="mode-btn active" id="btnModeSingle" onclick="setMode('single')">
+                    Jadwal Sekali
+                </button>
+                <button type="button" class="mode-btn" id="btnModeRecurring" onclick="setMode('recurring')">
+                    Jadwal Berulang
+                </button>
+            </div>
+
+            <form th:action="@{/admin/jadwal/create-bulk}" method="post" class="jadwal-form" id="tambahJadwalForm">
+
+                <!-- Hidden: mode -->
+                <input type="hidden" id="tambah_mode" name="mode" value="single">
+
+                <!-- Row 1: Dokter & Poli -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="tambah_idUser">Dokter</label>
@@ -24,7 +39,6 @@
                                     th:text="${dokter.nama}">Nama Dokter</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="tambah_idPoli">Poli</label>
                         <select id="tambah_idPoli" name="idPoli" required>
@@ -36,42 +50,77 @@
                     </div>
                 </div>
 
-                <!-- Row 2: Hari & Tanggal (2 Columns) -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tambah_hari">Hari</label>
-                        <select id="tambah_hari" name="hari" required>
-                            <option value="">Pilih Hari</option>
-                            <option value="SENIN">Senin</option>
-                            <option value="SELASA">Selasa</option>
-                            <option value="RABU">Rabu</option>
-                            <option value="KAMIS">Kamis</option>
-                            <option value="JUMAT">Jumat</option>
-                            <option value="SABTU">Sabtu</option>
-                            <option value="MINGGU">Minggu</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tambah_tanggal">Tanggal (Opsional)</label>
-                        <input type="date" id="tambah_tanggal" name="tanggal">
+                <!-- ===== MODE SINGLE ===== -->
+                <div id="section-single">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tambah_hari">Hari</label>
+                            <select id="tambah_hari" name="hari">
+                                <option value="">Pilih Hari</option>
+                                <option value="SENIN">Senin</option>
+                                <option value="SELASA">Selasa</option>
+                                <option value="RABU">Rabu</option>
+                                <option value="KAMIS">Kamis</option>
+                                <option value="JUMAT">Jumat</option>
+                                <option value="SABTU">Sabtu</option>
+                                <option value="MINGGU">Minggu</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tambah_tanggal">Tanggal (Opsional)</label>
+                            <input type="date" id="tambah_tanggal" name="tanggal">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Row 3: Jam Mulai & Jam Selesai (2 Columns) -->
+                <!-- ===== MODE RECURRING ===== -->
+                <div id="section-recurring" style="display:none;">
+                    <div class="form-group">
+                        <label>Pilih Hari Berulang</label>
+                        <div class="hari-checkbox-group">
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="SENIN"> Senin</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="SELASA"> Selasa</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="RABU"> Rabu</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="KAMIS"> Kamis</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="JUMAT"> Jumat</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="SABTU"> Sabtu</label>
+                            <label class="hari-checkbox"><input type="checkbox" name="hariList" value="MINGGU"> Minggu</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tambah_tanggalMulai">Mulai Dari Tanggal</label>
+                            <input type="date" id="tambah_tanggalMulai" name="tanggalMulai">
+                        </div>
+                        <div class="form-group">
+                            <label for="tambah_sampaiBulan">Sampai Bulan</label>
+                            <!-- input type="month" → format: 2025-07 -->
+                            <input type="month" id="tambah_sampaiBulan" name="sampaiYearMonth">
+                        </div>
+                    </div>
+
+                    <!-- Preview tanggal yang akan digenerate -->
+                    <div id="previewTanggal" class="preview-box" style="display:none;">
+                        <p class="preview-title">Preview Tanggal yang Akan Dibuat:</p>
+                        <div id="previewList" class="preview-list"></div>
+                        <p id="previewCount" class="preview-count"></p>
+                    </div>
+                </div>
+
+                <!-- Row Jam -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="tambah_jamMulai">Jam Mulai</label>
                         <input type="time" id="tambah_jamMulai" name="jamMulai" required step="60">
                     </div>
-
                     <div class="form-group">
                         <label for="tambah_jamSelesai">Jam Selesai</label>
                         <input type="time" id="tambah_jamSelesai" name="jamSelesai" required step="60">
                     </div>
                 </div>
 
-                <!-- Row 4: Status & Kuota (2 Columns) -->
+                <!-- Row Status & Kuota -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="tambah_statusKetersediaan">Status Ketersediaan</label>
@@ -81,39 +130,111 @@
                             <option value="PENUH">Penuh</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="tambah_kuota">Kuota Kapasitas</label>
                         <input type="number" id="tambah_kuota" name="kuota" required min="1" placeholder="Masukkan Kuota">
                     </div>
                 </div>
 
-                <!-- Footer / Actions -->
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeTambahJadwalOverlay()">Batal</button>
-                    <button type="submit" class="btn btn-primary">Tambah</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitTambah">Tambah</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Automatic Poli dropdown update when Dokter is changed
+        // ─── Auto-fill Poli ───────────────────────────────────────────
         document.getElementById('tambah_idUser').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const poliId = selectedOption.getAttribute('data-poli-id');
-            if (poliId) {
-                document.getElementById('tambah_idPoli').value = poliId;
-            }
+            const poliId = this.options[this.selectedIndex].getAttribute('data-poli-id');
+            if (poliId) document.getElementById('tambah_idPoli').value = poliId;
         });
 
-        function openTambahJadwalOverlay() {
-            // Reset the form values
-            document.getElementById('tambahJadwalForm').reset();
-            
-            // Set default status to TERSEDIA
-            document.getElementById('tambah_statusKetersediaan').value = 'TERSEDIA';
+        // ─── Toggle Mode ─────────────────────────────────────────────
+        function setMode(mode) {
+            document.getElementById('tambah_mode').value = mode;
 
+            const isSingle = mode === 'single';
+            document.getElementById('section-single').style.display = isSingle ? '' : 'none';
+            document.getElementById('section-recurring').style.display = isSingle ? 'none' : '';
+            document.getElementById('btnModeSingle').classList.toggle('active', isSingle);
+            document.getElementById('btnModeRecurring').classList.toggle('active', !isSingle);
+            document.getElementById('btnSubmitTambah').textContent = isSingle ? 'Tambah' : 'Generate Jadwal';
+
+            // Update required fields
+            document.getElementById('tambah_hari').required = isSingle;
+        }
+
+        // ─── Preview Generator ────────────────────────────────────────
+        function generatePreview() {
+            const checkboxes = document.querySelectorAll('input[name="hariList"]:checked');
+            const hariDipilih = Array.from(checkboxes).map(c => c.value);
+            const tanggalMulaiStr = document.getElementById('tambah_tanggalMulai').value;
+            const sampaiYearMonth = document.getElementById('tambah_sampaiBulan').value;
+
+            if (hariDipilih.length === 0 || !tanggalMulaiStr || !sampaiYearMonth) {
+                document.getElementById('previewTanggal').style.display = 'none';
+                return;
+            }
+
+            // Map nama hari ke getDay() index (0=Minggu, 1=Senin, ...)
+            const hariMap = {
+                MINGGU: 0, SENIN: 1, SELASA: 2, RABU: 3,
+                KAMIS: 4, JUMAT: 5, SABTU: 6
+            };
+            const targetDays = hariDipilih.map(h => hariMap[h]);
+
+            // Tentukan range
+            const start = new Date(tanggalMulaiStr);
+            const [year, month] = sampaiYearMonth.split('-').map(Number);
+            // Akhir = hari terakhir bulan yang dipilih
+            const end = new Date(year, month, 0); // day=0 → hari terakhir bulan sebelumnya+1
+
+            if (start > end) {
+                document.getElementById('previewList').innerHTML = '<span style="color:red">Tanggal mulai melebihi batas bulan!</span>';
+                document.getElementById('previewTanggal').style.display = '';
+                return;
+            }
+
+            const tanggalList = [];
+            const cur = new Date(start);
+            while (cur <= end) {
+                if (targetDays.includes(cur.getDay())) {
+                    // Format YYYY-MM-DD
+                    const tgl = cur.toISOString().split('T')[0];
+                    const hariNama = hariDipilih.find(h => hariMap[h] === cur.getDay());
+                    tanggalList.push({ tgl, hariNama });
+                }
+                cur.setDate(cur.getDate() + 1);
+            }
+
+            // Render preview
+            const previewList = document.getElementById('previewList');
+            previewList.innerHTML = tanggalList.slice(0, 10).map(t =>
+                `<span class="preview-badge">${t.hariNama} — ${t.tgl}</span>`
+            ).join('');
+            if (tanggalList.length > 10) {
+                previewList.innerHTML += `<span class="preview-badge preview-more">+${tanggalList.length - 10} lainnya</span>`;
+            }
+
+            document.getElementById('previewCount').textContent =
+                `Total: ${tanggalList.length} jadwal akan dibuat`;
+            document.getElementById('previewTanggal').style.display = '';
+        }
+
+        // Trigger preview saat input berubah
+        document.querySelectorAll('input[name="hariList"]').forEach(cb =>
+            cb.addEventListener('change', generatePreview));
+        document.getElementById('tambah_tanggalMulai').addEventListener('change', generatePreview);
+        document.getElementById('tambah_sampaiBulan').addEventListener('change', generatePreview);
+
+        // ─── Overlay functions ────────────────────────────────────────
+        function openTambahJadwalOverlay() {
+            document.getElementById('tambahJadwalForm').reset();
+            document.getElementById('tambah_statusKetersediaan').value = 'TERSEDIA';
+            document.getElementById('previewTanggal').style.display = 'none';
+            setMode('single');
             document.getElementById('tambahJadwalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -123,18 +244,12 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Close overlay when clicking outside modal
         document.getElementById('tambahJadwalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeTambahJadwalOverlay();
-            }
+            if (e.target === this) closeTambahJadwalOverlay();
         });
 
-        // Close overlay with Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeTambahJadwalOverlay();
-            }
+            if (e.key === 'Escape') closeTambahJadwalOverlay();
         });
     </script>
 </div>

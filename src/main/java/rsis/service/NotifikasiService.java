@@ -55,6 +55,18 @@ public class NotifikasiService {
         notifikasiRepository.deleteById(notifikasiId);
     }
 
+    @Transactional
+    public void markAsRead(String notifikasiId) {
+        notifikasiRepository.findById(notifikasiId).ifPresent(notif -> {
+            notif.markAsRead();
+            notifikasiRepository.save(notif);
+        });
+    }
+
+    public Long getUnreadCount(String penerimaId) {
+        return notifikasiRepository.countByPenerima_IdUserAndStatus(penerimaId, "BELUM_DIBACA");
+    }
+
     private String generateNotifikasiId() {
         long count = notifikasiRepository.count();
         int nextNumber = (int) (count + 1);

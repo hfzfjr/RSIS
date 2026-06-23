@@ -115,37 +115,56 @@
             e.preventDefault();
 
             const formData = new FormData(this);
+
+            // Validasi: pastikan idPoli tidak kosong
+            if (!formData.get('idPoli')) {
+                alert('Gagal memperbarui jadwal: Poli belum dipilih.');
+                return;
+            }
+
             const params = new URLSearchParams(formData);
+
+            // Baca CSRF token dari meta tag (diperlukan Spring Security)
+            const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content || '';
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
 
             fetch('/admin/jadwal/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
                 },
-                body: params.toString()
+                body: params.toString(),
+                redirect: 'follow'
             })
             .then(response => {
+                // Controller selalu redirect (302); periksa URL akhir untuk
+                // mendeteksi apakah update berhasil atau terjadi error
+                const finalUrl = response.url || '';
                 if (response.ok) {
-                    // Close overlay
-                    closeEditJadwalOverlay();
-                    
-                    // Show success notification if available
-                    if (typeof showNotification !== 'undefined') {
-                        showNotification('Jadwal berhasil diperbarui!', 'success');
-                    }
-                    
-                    // Reload halaman untuk menampilkan data terbaru
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                    // Cek apakah ada flash error di halaman tujuan redirect
+                    return response.text().then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const errorEl = doc.querySelector('[data-flash-error]');
+                        if (errorEl) {
+                            throw new Error(errorEl.getAttribute('data-flash-error'));
+                        }
+                        // Sukses
+                        closeEditJadwalOverlay();
+                        if (typeof showNotification !== 'undefined') {
+                            showNotification('Jadwal berhasil diperbarui!', 'success');
+                        }
+                        setTimeout(() => { window.location.reload(); }, 400);
+                    });
                 } else {
-                    throw new Error('Gagal memperbarui jadwal');
+                    throw new Error('Server error: ' + response.status);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 if (typeof showNotification !== 'undefined') {
-                    showNotification('Gagal memperbarui jadwal', 'error');
+                    showNotification('Gagal memperbarui jadwal: ' + error.message, 'error');
                 } else {
                     alert('Gagal memperbarui jadwal: ' + error.message);
                 }
@@ -188,11 +207,13 @@
             // Set kuota
             document.getElementById('edit_kuota').value = kuota;
 
-            // Trigger change to update the Poli selector correctly
+            // Set Poli: cari option yang value-nya cocok dengan dokterId,
+            // lalu ambil data-poli-id — lebih andal daripada pakai selectedIndex
             const dokterSelect = document.getElementById('edit_idUser');
-            const selectedOption = dokterSelect.options[dokterSelect.selectedIndex];
-            if (selectedOption) {
-                const poliId = selectedOption.getAttribute('data-poli-id');
+            const matchedOption = Array.from(dokterSelect.options)
+                .find(opt => opt.value === dokterId);
+            if (matchedOption) {
+                const poliId = matchedOption.getAttribute('data-poli-id');
                 if (poliId) {
                     document.getElementById('edit_idPoli').value = poliId;
                 }

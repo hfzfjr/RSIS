@@ -22,6 +22,10 @@ import rsis.repository.SpesialisasiRepository;
 import rsis.repository.UserRepository;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -426,6 +430,77 @@ public class AdminRSService {
     }
 
     @Transactional
+    public List<JadwalPraktik> createBulkRecurringJadwal(
+            String idUser, String idPoli, List<String> hariList,
+            LocalDate tanggalMulai, String sampaiYearMonth,
+            LocalTime jamMulai, LocalTime jamSelesai,
+            String statusKetersediaan, int kuota) {
+
+        Dokter dokter = dokterRepository.findById(idUser)
+                .orElseThrow(() -> new RuntimeException("Dokter tidak ditemukan"));
+
+        // Update poli dokter jika idPoli diberikan
+        if (idPoli != null && !idPoli.isEmpty()) {
+            Poli poli = poliRepository.findById(idPoli)
+                    .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
+            dokter.setPoli(poli);
+            dokterRepository.save(dokter);
+        }
+
+        // Parse batas akhir → hari terakhir bulan yang dipilih
+        YearMonth ym = YearMonth.parse(sampaiYearMonth); // format: "2025-07"
+        LocalDate tanggalAkhir = ym.atEndOfMonth();
+
+        // Map nama hari Indonesia ke DayOfWeek Java
+        Map<String, DayOfWeek> hariMap = new HashMap<>();
+        hariMap.put("SENIN", DayOfWeek.MONDAY);
+        hariMap.put("SELASA", DayOfWeek.TUESDAY);
+        hariMap.put("RABU", DayOfWeek.WEDNESDAY);
+        hariMap.put("KAMIS", DayOfWeek.THURSDAY);
+        hariMap.put("JUMAT", DayOfWeek.FRIDAY);
+        hariMap.put("SABTU", DayOfWeek.SATURDAY);
+        hariMap.put("MINGGU", DayOfWeek.SUNDAY);
+
+        Set<DayOfWeek> targetDays = hariList.stream()
+                .map(h -> hariMap.get(h.toUpperCase()))
+                .filter(d -> d != null)
+                .collect(Collectors.toSet());
+
+        // Map DayOfWeek balik ke nama hari Indonesia (untuk disimpan ke field hari)
+        Map<DayOfWeek, String> dayToHariIndo = new HashMap<>();
+        dayToHariIndo.put(DayOfWeek.MONDAY, "SENIN");
+        dayToHariIndo.put(DayOfWeek.TUESDAY, "SELASA");
+        dayToHariIndo.put(DayOfWeek.WEDNESDAY, "RABU");
+        dayToHariIndo.put(DayOfWeek.THURSDAY, "KAMIS");
+        dayToHariIndo.put(DayOfWeek.FRIDAY, "JUMAT");
+        dayToHariIndo.put(DayOfWeek.SATURDAY, "SABTU");
+        dayToHariIndo.put(DayOfWeek.SUNDAY, "MINGGU");
+
+        List<JadwalPraktik> result = new ArrayList<>();
+        LocalDate cur = tanggalMulai;
+
+        while (!cur.isAfter(tanggalAkhir)) {
+            if (targetDays.contains(cur.getDayOfWeek())) {
+                JadwalPraktik jp = new JadwalPraktik();
+                jp.setIdJadwal(generateJadwalId()); // dipanggil per item agar ID sequential tidak duplikat
+                jp.setDokter(dokter);
+                jp.setHari(dayToHariIndo.get(cur.getDayOfWeek()));
+                jp.setTanggal(cur);
+                jp.setJamMulai(jamMulai);
+                jp.setJamSelesai(jamSelesai);
+                jp.setStatusKetersediaan(statusKetersediaan);
+                jp.setKuota(kuota);
+                jp.setSisaKuota(kuota);
+                jadwalPraktikRepository.save(jp); // save satu-satu agar generateJadwalId() baca ID terbaru
+                result.add(jp);
+            }
+            cur = cur.plusDays(1);
+        }
+
+        return result;
+    }
+
+    @Transactional
     public JadwalPraktik updateJadwal(String idJadwal, String idUser, String hari, LocalDate tanggal,
             LocalTime jamMulai, LocalTime jamSelesai, String statusKetersediaan, int kuota, String idPoli) {
         JadwalPraktik existingJadwal = jadwalPraktikRepository.findById(idJadwal)
@@ -522,7 +597,7 @@ public class AdminRSService {
 
         List<Object[]> results = appointmentRepository.findBusiestDoktersByStatusSelesaiAndMonth(
                 startDate, endDate, PageRequest.of(0, 5));
-        
+
         List<BusiestDoctorDTO> list = new java.util.ArrayList<>();
         if (results.isEmpty()) {
             return list;
@@ -605,7 +680,7 @@ public class AdminRSService {
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
         List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
-        
+
         Map<LocalDate, Long> dateCountMap = new HashMap<>();
         for (Object[] result : results) {
             LocalDate date = (LocalDate) result[0];
@@ -726,5 +801,22 @@ public class AdminRSService {
 
     public Long getScheduledDoctorsCountByDate(LocalDate date) {
         return appointmentRepository.countDistinctDoctorsByTanggalBooking(date);
+    }
+
+    /**
+     * Get statistics for jadwal availability
+     * 
+     * @return Map with keys: tersedia, penuh, libur
+     */
+    public Map<String, Long> getJadwalStatistics() {
+        List<JadwalPraktik> allJadwal = jadwalPraktikRepository.findAll();
+        Map<String, Long> stats = new HashMap<>();
+        stats.put("tersedia", allJadwal.stream()
+                .filter(j -> "TERSEDIA".equals(j.getStatusKetersediaan())).count());
+        stats.put("penuh", allJadwal.stream()
+                .filter(j -> "PENUH".equals(j.getStatusKetersediaan())).count());
+        stats.put("libur", allJadwal.stream()
+                .filter(j -> "LIBUR".equals(j.getStatusKetersediaan())).count());
+        return stats;
     }
 }

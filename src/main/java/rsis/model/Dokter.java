@@ -6,6 +6,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import rsis.model.interfaces.INotifiable;
 import rsis.model.interfaces.ISchedulable;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "dokter")
 @PrimaryKeyJoinColumn(name = "id_user")
-public class Dokter extends User implements ISchedulable {
+public class Dokter extends User implements INotifiable, ISchedulable {
 
     @Column(name = "nomor_str", unique = true)
     private String nomorStr;

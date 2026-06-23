@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8" />
-    <title>Detail Riwayat Booking</title>
-    <link rel="stylesheet" href="/css/fragments/overlay/pasien/detail-riwayat-booking.css" />
-</head>
-
-<body>
+<th:block th:fragment="detail-riwayat-booking">
     <div id="detail-overlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header">
@@ -44,13 +35,13 @@
                 <!-- Doctor Info -->
                 <div class="info-section">
                     <h4 class="section-title">👨‍⚕️ Informasi Dokter</h4>
-                    <div class="doctor-card">
-                        <div class="doctor-avatar">
+                    <div class="overlay-doctor-card">
+                        <div class="overlay-doctor-avatar">
                             <img id="overlay-doctor-image" src="/images/dokter.png" alt="Dokter" />
                         </div>
-                        <div class="doctor-details">
-                            <h3 id="overlay-doctor-name" class="doctor-name">Nama Dokter</h3>
-                            <p id="overlay-doctor-specialty" class="doctor-specialty">Spesialis</p>
+                        <div class="overlay-doctor-details">
+                            <h3 id="overlay-doctor-name" class="overlay-doctor-name">Nama Dokter</h3>
+                            <p id="overlay-doctor-specialty" class="overlay-doctor-specialty">Spesialis</p>
                         </div>
                     </div>
                     <div class="detail-row">
@@ -291,6 +282,5 @@
 
         /*]]>*/
     </script>
-</body>
-
-</html>
+    </div>
+</th:block>

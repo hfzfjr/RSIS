@@ -7,130 +7,122 @@
 </head>
 
 <body>
-    <!-- Unified Navbar Fragment -->
-    <nav th:fragment="navbar(activeMenu)" class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <a href="/" class="nav-logo-link">
-                    <img src="/images/logo-tulisan-rsis.png" alt="RSIS" class="nav-logo" />
-                </a>
-            </div>
-            <div class="nav-menu">
-                <!-- Admin Navigation -->
-                <th:block th:if="${role == 'ADMIN' or role == 'ADMIN_RS'}">
-                    <a href="/admin/dashboard" class="nav-link"
-                        th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
-                    <a href="/admin/kelola-dokter" class="nav-link"
-                        th:class="${activeMenu == 'kelola-dokter'} ? 'nav-link active' : 'nav-link'">Kelola Dokter</a>
-                    <a href="/admin/kelola-jadwal" class="nav-link"
-                        th:class="${activeMenu == 'kelola-jadwal'} ? 'nav-link active' : 'nav-link'">Kelola Jadwal</a>
-                    <a href="/admin/kelola-poli" class="nav-link"
-                        th:class="${activeMenu == 'kelola-poli'} ? 'nav-link active' : 'nav-link'">Kelola Poli</a>
-                </th:block>
+    <div th:fragment="navbar(activeMenu)">
 
-                <!-- Dokter Navigation -->
-                <th:block th:if="${role == 'DOKTER'}">
-                    <a href="/dokter/dashboard" class="nav-link"
-                        th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
-                    <a href="/dokter/jadwal-praktik" class="nav-link"
-                        th:class="${activeMenu == 'jadwal-praktik'} ? 'nav-link active' : 'nav-link'">Jadwal Praktik</a>
-                    <a href="/dokter/appointment" class="nav-link"
-                        th:class="${activeMenu == 'appointment'} ? 'nav-link active' : 'nav-link'">Appointment</a>
-                </th:block>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <a href="/" class="nav-logo-link">
+                        <img src="/images/logo-tulisan-rsis.png" alt="RSIS" class="nav-logo" />
+                    </a>
+                </div>
+                <div class="nav-menu">
+                    <!-- Admin Navigation -->
+                    <th:block th:if="${role == 'ADMIN' or role == 'ADMIN_RS'}">
+                        <a href="/admin/dashboard" class="nav-link"
+                            th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
+                        <a href="/admin/kelola-dokter" class="nav-link"
+                            th:class="${activeMenu == 'kelola-dokter'} ? 'nav-link active' : 'nav-link'">Kelola
+                            Dokter</a>
+                        <a href="/admin/kelola-jadwal" class="nav-link"
+                            th:class="${activeMenu == 'kelola-jadwal'} ? 'nav-link active' : 'nav-link'">Kelola
+                            Jadwal</a>
+                        <a href="/admin/kelola-poli" class="nav-link"
+                            th:class="${activeMenu == 'kelola-poli'} ? 'nav-link active' : 'nav-link'">Kelola Poli</a>
+                    </th:block>
 
-                <!-- Pasien Navigation -->
-                <th:block th:if="${role == 'PASIEN'}">
-                    <a href="/pasien/dashboard" class="nav-link"
-                        th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
-                    <a href="/pasien/cari-dokter" class="nav-link"
-                        th:class="${activeMenu == 'cari-dokter'} ? 'nav-link active' : 'nav-link'">Cari Dokter</a>
-                    <a href="/pasien/jadwal-riwayat" class="nav-link"
-                        th:class="${activeMenu == 'jadwal'} ? 'nav-link active' : 'nav-link'">Jadwal & Riwayat</a>
-                </th:block>
-            </div>
-            <div class="nav-actions">
-                <button class="nav-btn nav-btn-icon" id="notifikasiBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </button>
-                <!-- Profile Link based on role -->
-                <a th:href="${role == 'ADMIN' or role == 'ADMIN_RS' ? '/admin/profil' : role == 'DOKTER' ? '/dokter/profil' : '/pasien/profil'}"
-                    class="nav-profile-link">
-                    <div class="nav-profile">
-                        <div class="nav-user-info">
-                            <span class="nav-username" th:text="${nama != null ? nama : 'Pengguna'}">Pengguna</span>
-                            <span class="nav-userrole" th:text="${role != null ? role : 'Pasien'}">Pasien</span>
+                    <!-- Dokter Navigation -->
+                    <th:block th:if="${role == 'DOKTER'}">
+                        <a href="/dokter/dashboard" class="nav-link"
+                            th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
+                        <a href="/dokter/jadwal-praktik" class="nav-link"
+                            th:class="${activeMenu == 'jadwal-praktik'} ? 'nav-link active' : 'nav-link'">Jadwal
+                            Praktik</a>
+                        <a href="/dokter/appointment" class="nav-link"
+                            th:class="${activeMenu == 'appointment'} ? 'nav-link active' : 'nav-link'">Appointment</a>
+                    </th:block>
+
+                    <!-- Pasien Navigation -->
+                    <th:block th:if="${role == 'PASIEN'}">
+                        <a href="/pasien/dashboard" class="nav-link"
+                            th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
+                        <a href="/pasien/cari-dokter" class="nav-link"
+                            th:class="${activeMenu == 'cari-dokter'} ? 'nav-link active' : 'nav-link'">Cari Dokter</a>
+                        <a href="/pasien/jadwal-riwayat" class="nav-link"
+                            th:class="${activeMenu == 'jadwal'} ? 'nav-link active' : 'nav-link'">Jadwal & Riwayat</a>
+                    </th:block>
+                </div>
+                <div class="nav-actions">
+                    <!-- Notification button only for PASIEN and DOKTER -->
+                    <th:block th:if="${role == 'PASIEN' or role == 'DOKTER'}">
+                        <button class="nav-btn nav-btn-icon" id="notifikasiBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                        </button>
+                    </th:block>
+                    <!-- Profile Link based on role -->
+                    <a th:href="${role == 'ADMIN' or role == 'ADMIN_RS' ? '/admin/profil' : role == 'DOKTER' ? '/dokter/profil' : '/pasien/profil'}"
+                        class="nav-profile-link">
+                        <div class="nav-profile">
+                            <div class="nav-user-info">
+                                <span class="nav-username" th:text="${nama != null ? nama : 'Pengguna'}">Pengguna</span>
+                                <span class="nav-userrole" th:text="${role != null ? role : 'Pasien'}">Pasien</span>
+                            </div>
+                            <div class="nav-avatar-initials" id="avatarInitials">P</div>
                         </div>
-                        <div class="nav-avatar-initials" id="avatarInitials">P</div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
-        </div>
-    </nav>
-    <!-- Notifikasi Overlay -->
-    <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
-    <script>
-        // Initialize notification overlay immediately when script loads
-        (function () {
-            console.log("Initializing navbar script");
+        </nav>
 
-            // Generate avatar initials based on role
-            const roleElement = document.querySelector(".nav-userrole");
-            const avatarInitialsElement = document.getElementById("avatarInitials");
-            if (roleElement && avatarInitialsElement) {
-                const role = roleElement.textContent.trim().toUpperCase();
-                let initial = "P"; // Default to Pasien
-                if (role === "DOKTER") {
-                    initial = "D";
-                } else if (role === "ADMIN" || role === "ADMIN_RS") {
-                    initial = "A";
-                } else if (role === "PASIEN") {
-                    initial = "P";
+        <th:block th:if="${role == 'PASIEN' or role == 'DOKTER'}">
+            <div th:replace="~{fragments/overlay/notifikasi :: notifikasi-overlay}"></div>
+        </th:block>
+
+        <script>
+            // Pastikan DOM sudah termuat sepenuhnya sebelum script berjalan
+            document.addEventListener("DOMContentLoaded", function () {
+                console.log("Initializing navbar script");
+
+                const roleElement = document.querySelector(".nav-userrole");
+                const avatarInitialsElement = document.getElementById("avatarInitials");
+                if (roleElement && avatarInitialsElement) {
+                    const role = roleElement.textContent.trim().toUpperCase();
+                    let initial = "P";
+                    if (role === "DOKTER") initial = "D";
+                    else if (role === "ADMIN" || role === "ADMIN_RS") initial = "A";
+                    avatarInitialsElement.textContent = initial;
                 }
-                avatarInitialsElement.textContent = initial;
-            }
 
-            // Initialize notification overlay
-            const notifikasiBtn = document.getElementById("notifikasiBtn");
-            const notifikasiOverlay = document.getElementById("notifikasiOverlay");
-            const closeNotifikasi = document.getElementById("closeNotifikasi");
+                const notifikasiBtn = document.getElementById("notifikasiBtn");
+                const notifikasiOverlay = document.getElementById("notifikasiOverlay");
+                const closeNotifikasi = document.getElementById("closeNotifikasi");
 
-            console.log("notifikasiBtn:", notifikasiBtn);
-            console.log("notifikasiOverlay:", notifikasiOverlay);
-            console.log("closeNotifikasi:", closeNotifikasi);
-
-            if (notifikasiBtn && notifikasiOverlay) {
-                notifikasiBtn.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                    console.log("Notification button clicked");
-                    notifikasiOverlay.classList.toggle("active");
-                    console.log("Overlay classes:", notifikasiOverlay.className);
-                });
-
-                if (closeNotifikasi) {
-                    closeNotifikasi.addEventListener("click", function (e) {
+                if (notifikasiBtn && notifikasiOverlay) {
+                    notifikasiBtn.addEventListener("click", function (e) {
                         e.stopPropagation();
-                        notifikasiOverlay.classList.remove("active");
+                        notifikasiOverlay.classList.toggle("active");
+                    });
+
+                    if (closeNotifikasi) {
+                        closeNotifikasi.addEventListener("click", function (e) {
+                            e.stopPropagation();
+                            notifikasiOverlay.classList.remove("active");
+                        });
+                    }
+
+                    document.addEventListener("click", function (e) {
+                        if (!notifikasiOverlay.contains(e.target) && e.target !== notifikasiBtn) {
+                            notifikasiOverlay.classList.remove("active");
+                        }
                     });
                 }
-
-                document.addEventListener("click", function (e) {
-                    if (
-                        !notifikasiOverlay.contains(e.target) &&
-                        e.target !== notifikasiBtn
-                    ) {
-                        notifikasiOverlay.classList.remove("active");
-                    }
-                });
-            } else {
-                console.error("Notification elements not found");
-                console.error("notifikasiBtn:", notifikasiBtn);
-                console.error("notifikasiOverlay:", notifikasiOverlay);
-            }
-        })();
-    </script>
+            });
+        </script>
+    </div>
 </body>
 
 </html>

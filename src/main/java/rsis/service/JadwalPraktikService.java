@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rsis.dto.JadwalDTO;
+import rsis.model.Appointment;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
+import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PoliRepository;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,9 @@ public class JadwalPraktikService {
 
     @Autowired
     private PoliRepository poliRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     public List<JadwalPraktik> getAllJadwal() {
         return jadwalPraktikRepository.findAll();
@@ -106,5 +113,55 @@ public class JadwalPraktikService {
             }
         }
         return "jdw-001";
+    }
+
+    /**
+     * Get jadwal with dates mapped from appointments for a specific doctor
+     * This builds a complex data structure that was previously done in controller
+     * 
+     * @param dokterId The doctor's user ID
+     * @return List of maps containing jadwal data with appointment information
+     */
+    public java.util.List<Map<String, Object>> getJadwalWithDatesForDokter(String dokterId) {
+        List<Appointment> appointments = appointmentRepository.findByJadwal_Dokter_IdUser(dokterId);
+        java.util.List<Map<String, Object>> jadwalWithDates = new java.util.ArrayList<>();
+
+        for (Appointment apt : appointments) {
+            JadwalPraktik j = apt.getJadwal();
+            if (j == null)
+                continue;
+
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("idJadwal", j.getIdJadwal());
+            entry.put("hari", j.getHari());
+            entry.put("tanggal", apt.getTanggalBooking() != null ? apt.getTanggalBooking().toString() : null);
+            entry.put("jamMulai", j.getJamMulai() != null ? j.getJamMulai().toString() : null);
+            entry.put("jamSelesai", j.getJamSelesai() != null ? j.getJamSelesai().toString() : null);
+            entry.put("kuota", j.getKuota());
+            entry.put("sisaKuota", j.getSisaKuota());
+            entry.put("statusKetersediaan", j.getStatusKetersediaan());
+            entry.put("appointmentId", apt.getIdAppointment());
+            entry.put("appointmentStatus", apt.getStatus());
+            entry.put("nomorAntrian", apt.getNomorAntrian());
+            entry.put("catatan", apt.getCatatan());
+
+            // Include poli data
+            if (j.getDokter() != null && j.getDokter().getPoli() != null) {
+                Map<String, Object> poli = new HashMap<>();
+                poli.put("namaPoli", j.getDokter().getPoli().getNamaPoli());
+                Map<String, Object> dokterMap = new HashMap<>();
+                dokterMap.put("poli", poli);
+                entry.put("dokter", dokterMap);
+            }
+
+            // Include pasien name
+            if (apt.getUser() != null) {
+                entry.put("namaPasien", apt.getUser().getNama());
+            }
+
+            jadwalWithDates.add(entry);
+        }
+
+        return jadwalWithDates;
     }
 }

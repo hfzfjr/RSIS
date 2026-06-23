@@ -13,12 +13,18 @@
     <link rel="stylesheet" href="/css/fragments/overlay/admin/tambah-jadwal.css" />
     <link rel="stylesheet" href="/css/fragments/overlay/admin/hapus-jadwal.css" />
     <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+    <!-- CSRF token untuk AJAX POST request -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
     <div th:replace="~{layout/navbar :: navbar('kelola-jadwal')}"></div>
 
     <main class="main-content">
+
+        <!-- Penanda flash error untuk dideteksi oleh fetch di edit-jadwal overlay -->
+        <div th:if="${error}" th:attr="data-flash-error=${error}" style="display:none;"></div>
 
         <!-- Header: title kiri, tombol kanan -->
         <div class="content-header">
@@ -82,8 +88,75 @@
 
         <!-- Table -->
         <div class="table-section">
+            <!-- Banner filter dokter aktif (ditampilkan lewat JS) -->
+            <div class="filter-banner" id="filterBanner" style="display:none;">
+                <div class="filter-banner-inner">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    <span>Menampilkan jadwal: <strong id="filterDokterNama"></strong></span>
+                </div>
+                <button class="filter-banner-clear" onclick="clearDokterFilter()" title="Hapus filter">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Tampilkan semua
+                </button>
+            </div>
             <div class="table-header">
                 <h2 class="table-title">Daftar Jadwal Praktik</h2>
+                <!-- Dropdown Urutkan -->
+                <div class="sort-dropdown-wrapper" id="sortDropdownWrapper">
+                    <button class="btn-sort" id="sortDropdownBtn" onclick="toggleSortDropdown()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="15" y2="12"/>
+                            <line x1="3" y1="18" x2="9" y2="18"/>
+                        </svg>
+                        <span id="sortLabel">Urutkan</span>
+                        <svg class="sort-chevron" id="sortChevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="sort-menu" id="sortMenu">
+                        <div class="sort-menu-group">Nama Dokter</div>
+                        <button class="sort-option" onclick="sortTable('dokter-az')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                            A &rarr; Z
+                        </button>
+                        <button class="sort-option" onclick="sortTable('dokter-za')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                            Z &rarr; A
+                        </button>
+                        <div class="sort-menu-group">Hari</div>
+                        <button class="sort-option" onclick="sortTable('hari-asc')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Senin &rarr; Minggu
+                        </button>
+                        <button class="sort-option" onclick="sortTable('hari-desc')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Minggu &rarr; Senin
+                        </button>
+                        <div class="sort-menu-group">Jam Praktik</div>
+                        <button class="sort-option" onclick="sortTable('jam-asc')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Terpagi
+                        </button>
+                        <button class="sort-option" onclick="sortTable('jam-desc')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Termalam
+                        </button>
+                        <div class="sort-menu-group">Kuota</div>
+                        <button class="sort-option" onclick="sortTable('kuota-tersedia')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Terluang
+                        </button>
+                        <button class="sort-option" onclick="sortTable('kuota-penuh')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Penuh
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="table-container">
@@ -101,7 +174,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="jadwal, iter : ${jadwals}">
+                        <tr th:each="jadwal, iter : ${jadwals}"
+                            th:attr="
+                                data-dokter=${jadwal.dokter != null ? jadwal.dokter.nama : ''},
+                                data-dokter-id=${jadwal.dokter != null ? jadwal.dokter.idUser : ''},
+                                data-hari-idx=${jadwal.hari != null ?
+                                    (jadwal.hari == 'SENIN' ? 1 :
+                                    jadwal.hari == 'SELASA' ? 2 :
+                                    jadwal.hari == 'RABU' ? 3 :
+                                    jadwal.hari == 'KAMIS' ? 4 :
+                                    jadwal.hari == 'JUMAT' ? 5 :
+                                    jadwal.hari == 'SABTU' ? 6 : 7) : 9},
+                                data-jam=${jadwal.jamMulai != null ? jadwal.jamMulai : '99:99'},
+                                data-sisa=${jadwal.sisaKuota != null ? jadwal.sisaKuota : 0}
+                            ">
                             <td th:text="${iter.index + 1}">1</td>
 
                             <!-- Dokter: nama + spesialisasi -->
@@ -205,6 +291,135 @@
         function deleteJadwal(btn) {
             const id = btn.getAttribute('data-id');
             openHapusJadwalOverlay(id);
+        }
+
+        /* ── Filter by Dokter (dari query param ?dokter=) ── */
+        let activeFilterId = null;
+
+        function applyDokterFilter(dokterId) {
+            activeFilterId = dokterId;
+            const tbody = document.querySelector('.data-table tbody');
+            const rows  = Array.from(tbody.querySelectorAll('tr[data-dokter-id]'));
+            let visibleIdx = 1;
+
+            rows.forEach(row => {
+                const match = (row.dataset.dokterId === dokterId);
+                row.style.display = match ? '' : 'none';
+                if (match) {
+                    const noCell = row.querySelector('td:first-child');
+                    if (noCell) noCell.textContent = visibleIdx++;
+                }
+            });
+
+            // Tampilkan nama dokter dari baris pertama yang cocok
+            const firstMatch = rows.find(r => r.dataset.dokterId === dokterId);
+            const namaDokter = firstMatch ? firstMatch.dataset.dokter : dokterId;
+            document.getElementById('filterDokterNama').textContent = namaDokter;
+            document.getElementById('filterBanner').style.display = '';
+        }
+
+        function clearDokterFilter() {
+            activeFilterId = null;
+            const tbody = document.querySelector('.data-table tbody');
+            const rows  = Array.from(tbody.querySelectorAll('tr[data-dokter-id]'));
+            rows.forEach((row, i) => {
+                row.style.display = '';
+                const noCell = row.querySelector('td:first-child');
+                if (noCell) noCell.textContent = i + 1;
+            });
+            document.getElementById('filterBanner').style.display = 'none';
+            // Bersihkan query param dari URL tanpa reload
+            const url = new URL(window.location);
+            url.searchParams.delete('dokter');
+            window.history.replaceState({}, '', url);
+        }
+
+        // Jalankan filter saat halaman pertama dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const dokterId = params.get('dokter');
+            if (dokterId) applyDokterFilter(dokterId);
+        });
+
+        let sortDropdownOpen = false;
+        let currentSort = null;
+
+        function toggleSortDropdown() {
+            sortDropdownOpen = !sortDropdownOpen;
+            const menu = document.getElementById('sortMenu');
+            const chevron = document.getElementById('sortChevron');
+            const btn = document.getElementById('sortDropdownBtn');
+            menu.classList.toggle('sort-menu--open', sortDropdownOpen);
+            chevron.style.transform = sortDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            btn.classList.toggle('btn-sort--active', sortDropdownOpen);
+        }
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('sortDropdownWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                sortDropdownOpen = false;
+                document.getElementById('sortMenu').classList.remove('sort-menu--open');
+                document.getElementById('sortChevron').style.transform = 'rotate(0deg)';
+                document.getElementById('sortDropdownBtn').classList.remove('btn-sort--active');
+            }
+        });
+
+        const SORT_LABELS = {
+            'dokter-az'      : 'Dokter A \u2192 Z',
+            'dokter-za'      : 'Dokter Z \u2192 A',
+            'hari-asc'       : 'Senin \u2192 Minggu',
+            'hari-desc'      : 'Minggu \u2192 Senin',
+            'jam-asc'        : 'Jam Terpagi',
+            'jam-desc'       : 'Jam Termalam',
+            'kuota-tersedia' : 'Kuota Terluang',
+            'kuota-penuh'    : 'Kuota Penuh',
+        };
+
+        function sortTable(mode) {
+            currentSort = mode;
+            // Update label tombol
+            document.getElementById('sortLabel').textContent = SORT_LABELS[mode] || 'Urutkan';
+
+            // Tandai opsi aktif
+            document.querySelectorAll('.sort-option').forEach(btn => btn.classList.remove('sort-option--active'));
+            event.currentTarget.classList.add('sort-option--active');
+
+            // Tutup dropdown
+            toggleSortDropdown();
+
+            const tbody = document.querySelector('.data-table tbody');
+            const rows  = Array.from(tbody.querySelectorAll('tr[data-dokter]'));
+
+            rows.sort((a, b) => {
+                switch (mode) {
+                    case 'dokter-az':
+                        return a.dataset.dokter.localeCompare(b.dataset.dokter, 'id');
+                    case 'dokter-za':
+                        return b.dataset.dokter.localeCompare(a.dataset.dokter, 'id');
+                    case 'hari-asc':
+                        return parseInt(a.dataset.hariIdx) - parseInt(b.dataset.hariIdx);
+                    case 'hari-desc':
+                        return parseInt(b.dataset.hariIdx) - parseInt(a.dataset.hariIdx);
+                    case 'jam-asc':
+                        return a.dataset.jam.localeCompare(b.dataset.jam);
+                    case 'jam-desc':
+                        return b.dataset.jam.localeCompare(a.dataset.jam);
+                    case 'kuota-tersedia':
+                        return parseInt(b.dataset.sisa) - parseInt(a.dataset.sisa);
+                    case 'kuota-penuh':
+                        return parseInt(a.dataset.sisa) - parseInt(b.dataset.sisa);
+                    default:
+                        return 0;
+                }
+            });
+
+            // Re-render baris + update nomor urut
+            rows.forEach((row, i) => {
+                const noCell = row.querySelector('td:first-child');
+                if (noCell) noCell.textContent = i + 1;
+                tbody.appendChild(row);
+            });
         }
     </script>
 

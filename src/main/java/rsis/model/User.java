@@ -9,12 +9,10 @@ import jakarta.persistence.Table;
 
 import java.time.Instant;
 
-import rsis.model.interfaces.INotifiable;
-
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User implements INotifiable {
+public abstract class User {
 
     @Id
     @Column(name = "id_user", nullable = false, length = 32)
@@ -101,11 +99,6 @@ public abstract class User implements INotifiable {
 
     public Instant getCreatedAt() {
         return createdAt;
-    }
-
-    @Override
-    public void terimaNotifikasi(Notifikasi notif) {
-        // Default implementation - to be overridden if needed
     }
 
     public void login() {

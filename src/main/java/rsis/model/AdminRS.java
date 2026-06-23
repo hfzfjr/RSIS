@@ -72,10 +72,4 @@ public class AdminRS extends User {
     public boolean hasManagementAccess() {
         return jabatan != null && !jabatan.isEmpty();
     }
-
-    @Override
-    public void terimaNotifikasi(Notifikasi notif) {
-        // Implementasi spesifik untuk AdminRS
-        System.out.println("Admin menerima notifikasi: " + notif.getPesan());
-    }
 }

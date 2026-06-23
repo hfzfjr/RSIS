@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import rsis.model.interfaces.INotifiable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "pasien")
 @PrimaryKeyJoinColumn(name = "id_user")
-public class Pasien extends User {
+public class Pasien extends User implements INotifiable {
 
     @Column(name = "nomor_rekam_medis", unique = true)
     private String nomorRekamMedis;

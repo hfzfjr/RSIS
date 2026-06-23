@@ -113,6 +113,16 @@ public class DokterService {
     }
 
     private String generateJadwalId() {
-        return "jdw-" + System.currentTimeMillis();
+        Optional<String> latestId = jadwalPraktikRepository.findLatestJadwalId();
+        if (latestId.isPresent()) {
+            String id = latestId.get();
+            try {
+                int num = Integer.parseInt(id.substring(4));
+                return String.format("jdw-%03d", num + 1);
+            } catch (NumberFormatException e) {
+                // fallback
+            }
+        }
+        return "jdw-001";
     }
 }

@@ -14,8 +14,6 @@
             <form th:action="@{/admin/dokter/create}" method="post" enctype="multipart/form-data" class="dokter-form" id="tambahDokterForm">
                 <!-- Kolom Kiri: Informasi Pribadi -->
                 <div class="form-section">
-                    <h3 class="section-title">Informasi Pribadi</h3>
-
                     <div class="form-group">
                         <label for="nama">Nama Lengkap</label>
                         <input type="text" id="nama" name="nama" required placeholder="Masukkan nama lengkap dengan gelar">
@@ -39,8 +37,6 @@
 
                 <!-- Kolom Kanan: Informasi Profesional -->
                 <div class="form-section">
-                    <h3 class="section-title">Informasi Profesional</h3>
-
                     <div class="form-group">
                         <label for="spesialisasi">Spesialisasi</label>
                         <select id="spesialisasi" name="spesialisasi" required>
@@ -62,13 +58,23 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="dokterImage">Upload Foto Profil</label>
-                        <input type="file" id="dokterImage" name="dokterImage" accept="image/jpeg,image/png,image/jpg">
-                        <small class="form-hint">Opsional: Upload foto profil dokter (JPG, PNG, maks 2MB)</small>
+                        <label>Upload Foto</label>
+                        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('dokterImage').click()">
+                            <svg class="upload-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.5-2-2.4-3.5-4.5-3.5h-1.3C15.3 4.8 12.8 3 10 3 6.7 3 4 5.7 4 9c0 .4.1.8.2 1.2C2.1 11.2 1 13 1 15c0 2.8 2.2 5 5 5h13c2.2 0 4-1.8 4-4a3.9 3.9 0 0 0-.8-1z"></path>
+                                <polyline points="16 12 12 8 8 12"></polyline>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                            </svg>
+                            <p class="upload-main-text">
+                                Tarik & lepas foto ke sini atau <span class="upload-link">pilih file</span>
+                            </p>
+                            <p class="upload-hint">Maks. ukuran file 2MB (JPG, PNG)</p>
+                            <input type="file" id="dokterImage" name="dokterImage" accept="image/jpeg,image/png,image/jpg" style="display: none;" onchange="handleFileSelect(this)">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Form Actions — full width via CSS grid -->
+                <!-- Form Actions -->
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeTambahDokterOverlay()">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -81,12 +87,18 @@
         function openTambahDokterOverlay() {
             document.getElementById('tambahDokterOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+            initializeUploadZone();
         }
 
         function closeTambahDokterOverlay() {
             document.getElementById('tambahDokterOverlay').classList.remove('active');
             document.body.style.overflow = 'auto';
             document.getElementById('tambahDokterForm').reset();
+            // Reset upload zone text
+            const mainText = document.querySelector('#uploadZone .upload-main-text');
+            if (mainText) {
+                mainText.innerHTML = 'Tarik & lepas foto ke sini atau <span class="upload-link">pilih file</span>';
+            }
         }
 
         // Close overlay when clicking outside
@@ -102,5 +114,59 @@
                 closeTambahDokterOverlay();
             }
         });
+
+        function handleFileSelect(input) {
+            const uploadZone = document.getElementById('uploadZone');
+            const mainText = uploadZone.querySelector('.upload-main-text');
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                mainText.innerHTML = `File terpilih: <span class="upload-link" style="text-decoration: none;">${fileName}</span>`;
+            } else {
+                mainText.innerHTML = 'Tarik & lepas foto ke sini atau <span class="upload-link">pilih file</span>';
+            }
+        }
+
+        function initializeUploadZone() {
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('dokterImage');
+
+            if (!uploadZone || !fileInput || uploadZone.dataset.initialized === 'true') {
+                return;
+            }
+
+            uploadZone.dataset.initialized = 'true';
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => uploadZone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('dragover'), false);
+            });
+
+            // Handle dropped files
+            uploadZone.addEventListener('drop', handleDrop, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    fileInput.files = files;
+                    handleFileSelect(fileInput);
+                }
+            }
+        }
     </script>
 </div>

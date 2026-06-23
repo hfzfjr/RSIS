@@ -22,6 +22,12 @@ public class Poli {
     @Column(name = "lokasi_ruangan")
     private String lokasiRuangan;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    @jakarta.persistence.Transient
+    private Integer jumlahDokter = 0;
+
     public Poli() {
     }
 
@@ -64,5 +70,21 @@ public class Poli {
 
     public void setLokasiRuangan(String lokasiRuangan) {
         this.lokasiRuangan = lokasiRuangan;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Integer getJumlahDokter() {
+        return jumlahDokter;
+    }
+
+    public void setJumlahDokter(Integer jumlahDokter) {
+        this.jumlahDokter = jumlahDokter;
     }
 }

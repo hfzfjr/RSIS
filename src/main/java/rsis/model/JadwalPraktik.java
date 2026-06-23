@@ -43,6 +43,9 @@ public class JadwalPraktik {
     @Column(name = "sisa_kuota", nullable = false)
     private int sisaKuota;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     public JadwalPraktik() {
     }
 
@@ -133,10 +136,66 @@ public class JadwalPraktik {
     }
 
     public String getStatusKetersediaan() {
-        return statusKetersediaan;
+        if (sisaKuota <= 0) {
+            return "PENUH";
+        }
+        
+        LocalDate today = LocalDate.now();
+        boolean isToday = false;
+        
+        if (this.tanggal != null) {
+            isToday = this.tanggal.equals(today);
+        } else if (this.hari != null) {
+            String todayIndonesian = getIndonesianDayName(today.getDayOfWeek().toString());
+            isToday = this.hari.equalsIgnoreCase(todayIndonesian);
+        }
+        
+        if (isToday) {
+            LocalTime now = LocalTime.now();
+            if (this.jamMulai != null && this.jamSelesai != null) {
+                if (now.isAfter(this.jamSelesai)) {
+                    return "LIBUR";
+                }
+            }
+        } else {
+            if (this.tanggal != null && this.tanggal.isBefore(today)) {
+                return "LIBUR";
+            }
+        }
+        
+        if ("LIBUR".equals(this.statusKetersediaan)) {
+            return "LIBUR";
+        }
+        
+        if ("PENUH".equals(this.statusKetersediaan)) {
+            return "PENUH";
+        }
+        
+        return "TERSEDIA";
+    }
+
+    private String getIndonesianDayName(String englishDay) {
+        switch (englishDay.toUpperCase()) {
+            case "MONDAY": return "Senin";
+            case "TUESDAY": return "Selasa";
+            case "WEDNESDAY": return "Rabu";
+            case "THURSDAY": return "Kamis";
+            case "FRIDAY": return "Jumat";
+            case "SATURDAY": return "Sabtu";
+            case "SUNDAY": return "Minggu";
+            default: return "";
+        }
     }
 
     public void setStatusKetersediaan(String statusKetersediaan) {
         this.statusKetersediaan = statusKetersediaan;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

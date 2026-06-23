@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/css/admin/kelola-jadwal.css">
     <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
     <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/admin/edit-jadwal.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/admin/tambah-jadwal.css" />
+    <link rel="stylesheet" href="/css/fragments/overlay/admin/hapus-jadwal.css" />
     <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -23,12 +26,12 @@
                 <h1 class="page-title">Manajemen Jadwal Praktik Dokter</h1>
                 <p class="page-subtitle">Kelola jadwal praktik dokter dan waktu operasional poli</p>
             </div>
-            <button class="btn btn-primary" onclick="window.location.href='/admin/dokter/create'">
+            <button class="btn btn-primary" onclick="openTambahJadwalOverlay()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                Tambah Dokter
+                Tambah Jadwal
             </button>
         </div>
 
@@ -49,7 +52,9 @@
             <div class="stat-card">
                 <div class="stat-icon stat-icon-orange">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
                         <line x1="12" y1="9" x2="12" y2="13"></line>
                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
@@ -104,37 +109,43 @@
                                 <div class="doctor-info">
                                     <div class="doctor-avatar">
                                         <img th:if="${jadwal.dokter != null and jadwal.dokter.dokterImage != null}"
-                                             th:src="${jadwal.dokter.dokterImage}"
-                                             th:alt="${jadwal.dokter.nama}" />
+                                            th:src="${jadwal.dokter.dokterImage}" th:alt="${jadwal.dokter.nama}" />
                                         <span th:if="${jadwal.dokter == null or jadwal.dokter.dokterImage == null}"
-                                              th:text="${jadwal.dokter != null and jadwal.dokter.nama != null ? jadwal.dokter.nama.substring(0, 1).toUpperCase() : 'D'}">D</span>
+                                            th:text="${jadwal.dokter != null and jadwal.dokter.nama != null ? jadwal.dokter.nama.substring(0, 1).toUpperCase() : 'D'}">D</span>
                                     </div>
                                     <div>
                                         <span class="doctor-name"
-                                              th:text="${jadwal.dokter != null ? jadwal.dokter.nama : '-'}">Dr. Budi Santoso</span>
+                                            th:text="${jadwal.dokter != null ? jadwal.dokter.nama : '-'}">Dr. Budi
+                                            Santoso</span>
                                         <span class="doctor-subtitle"
-                                              th:text="${jadwal.dokter != null and jadwal.dokter.spesialisasi != null ? jadwal.dokter.spesialisasi.nama : ''}">Spesialis Jantung</span>
+                                            th:text="${jadwal.dokter != null and jadwal.dokter.spesialisasi != null ? jadwal.dokter.spesialisasi.nama : ''}">Spesialis
+                                            Jantung</span>
                                     </div>
                                 </div>
                             </td>
 
-                            <td th:text="${jadwal.dokter != null and jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : '-'}">Poli Jantung</td>
+                            <td
+                                th:text="${jadwal.dokter != null and jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : '-'}">
+                                Poli Jantung</td>
 
                             <td th:text="${jadwal.hari != null ? jadwal.hari : '-'}">Selasa</td>
 
-                            <td th:text="${jadwal.jamMulai != null and jadwal.jamSelesai != null ? jadwal.jamMulai + ' - ' + jadwal.jamSelesai : '-'}">09:00 - 13:00</td>
+                            <td
+                                th:text="${jadwal.jamMulai != null and jadwal.jamSelesai != null ? jadwal.jamMulai + ' - ' + jadwal.jamSelesai : '-'}">
+                                09:00 - 13:00</td>
 
                             <!-- Kuota + progress bar -->
                             <td>
                                 <div class="kuota-wrapper">
                                     <span class="kuota-text"
-                                          th:classappend="${jadwal.statusKetersediaan == 'PENUH' ? 'kuota-penuh' : 'kuota-ok'}"
-                                          th:text="${jadwal.sisaKuota != null and jadwal.kuota != null ? jadwal.sisaKuota + '/' + jadwal.kuota : '-'}">8/10</span>
+                                        th:classappend="${jadwal.statusKetersediaan == 'PENUH' ? 'kuota-penuh' : 'kuota-ok'}"
+                                        th:text="${jadwal.sisaKuota != null and jadwal.kuota != null ? (jadwal.kuota - jadwal.sisaKuota) + '/' + jadwal.kuota : '-'}">8/10</span>
                                     <div class="progress-bar"
-                                         th:if="${jadwal.sisaKuota != null and jadwal.kuota != null}">
+                                        th:if="${jadwal.sisaKuota != null and jadwal.kuota != null}">
                                         <div class="progress-fill"
-                                             th:classappend="${jadwal.statusKetersediaan == 'PENUH' ? 'fill-penuh' : 'fill-tersedia'}"
-                                             th:style="|width: ${jadwal.kuota > 0 ? (jadwal.sisaKuota * 100 / jadwal.kuota) : 0}%|"></div>
+                                            th:classappend="${jadwal.statusKetersediaan == 'PENUH' ? 'fill-penuh' : 'fill-tersedia'}"
+                                            th:style="|width: ${jadwal.kuota > 0 ? ((jadwal.kuota - jadwal.sisaKuota) * 100 / jadwal.kuota) : 0}%|">
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -142,28 +153,35 @@
                             <!-- Status badge -->
                             <td>
                                 <span class="status-badge"
-                                      th:classappend="${jadwal.statusKetersediaan == 'AKTIF' ? 'status-active' : jadwal.statusKetersediaan == 'PENUH' ? 'status-full' : 'status-inactive'}"
-                                      th:text="${jadwal.statusKetersediaan != null ? (jadwal.statusKetersediaan == 'AKTIF' ? 'Tersedia' : jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : 'Libur') : '-'}">Tersedia</span>
+                                    th:classappend="${jadwal.statusKetersediaan == 'PENUH' ? 'status-full' : jadwal.statusKetersediaan == 'LIBUR' ? 'status-inactive' : 'status-active'}"
+                                    th:text="${jadwal.statusKetersediaan != null ? (jadwal.statusKetersediaan == 'PENUH' ? 'Penuh' : jadwal.statusKetersediaan == 'LIBUR' ? 'Libur' : 'Tersedia') : '-'}">Tersedia</span>
                             </td>
 
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-action btn-edit"
-                                            th:data-id="${jadwal.idJadwal}"
-                                            onclick="editJadwal(this)"
-                                            title="Edit">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <button class="btn-action btn-edit" th:data-id="${jadwal.idJadwal}"
+                                        th:data-dokter-id="${jadwal.dokter != null ? jadwal.dokter.idUser : ''}"
+                                        th:data-hari="${jadwal.hari != null ? jadwal.hari : ''}"
+                                        th:data-tanggal="${jadwal.tanggal != null ? jadwal.tanggal : ''}"
+                                        th:data-jam-mulai="${jadwal.jamMulai != null ? jadwal.jamMulai : ''}"
+                                        th:data-jam-selesai="${jadwal.jamSelesai != null ? jadwal.jamSelesai : ''}"
+                                        th:data-status-ketersediaan="${jadwal.statusKetersediaan != null ? jadwal.statusKetersediaan : ''}"
+                                        th:data-kuota="${jadwal.kuota != null ? jadwal.kuota : 0}"
+                                        onclick="editJadwal(this)" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
                                     </button>
-                                    <button class="btn-action btn-delete"
-                                            th:data-id="${jadwal.idJadwal}"
-                                            onclick="deleteJadwal(this)"
-                                            title="Hapus">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <button class="btn-action btn-delete" th:data-id="${jadwal.idJadwal}"
+                                        onclick="deleteJadwal(this)" title="Hapus">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
                                             <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
                                         </svg>
                                     </button>
                                 </div>
@@ -181,17 +199,19 @@
 
     <script>
         function editJadwal(btn) {
-            const id = btn.getAttribute('data-id');
-            window.location.href = '/admin/jadwal/edit/' + id;
+            openEditJadwalOverlay(btn);
         }
 
         function deleteJadwal(btn) {
             const id = btn.getAttribute('data-id');
-            if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
-                window.location.href = '/admin/jadwal/delete/' + id;
-            }
+            openHapusJadwalOverlay(id);
         }
     </script>
+
+    <!-- Include Overlays -->
+    <div th:replace="~{fragments/overlay/admin/edit-jadwal :: overlay}"></div>
+    <div th:replace="~{fragments/overlay/admin/tambah-jadwal :: overlay}"></div>
+    <div th:replace="~{fragments/overlay/admin/hapus-jadwal :: overlay}"></div>
 </body>
 
 </html>

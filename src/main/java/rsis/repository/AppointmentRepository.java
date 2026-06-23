@@ -1,5 +1,6 @@
 package rsis.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,15 +52,32 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
         List<Object[]> findBusiestDokterByMonth(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+        @Query("SELECT a.jadwal.dokter.idUser, u.nama, COUNT(a) "
+                        + "FROM Appointment a "
+                        + "JOIN a.jadwal.dokter u "
+                        + "WHERE a.status = 'SELESAI' "
+                        + "AND a.jadwal IS NOT NULL "
+                        + "AND a.jadwal.tanggal >= :startDate AND a.jadwal.tanggal <= :endDate "
+                        + "GROUP BY a.jadwal.dokter.idUser, u.nama "
+                        + "ORDER BY COUNT(a) DESC")
+        List<Object[]> findBusiestDoktersByStatusSelesaiAndMonth(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        Pageable pageable);
+
         @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
         List<Object[]> findPatientsPerDayByMonth(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
         @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking <= :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
-        List<Object[]> countByTanggalBookingBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+        List<Object[]> countByTanggalBookingBetween(@Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 
         Long countByStatus(String status);
 
         @Query("SELECT COUNT(a) FROM Appointment a WHERE a.tanggalBooking = :tanggal")
         Long countTotalAppointmentsByDate(@Param("tanggal") LocalDate tanggal);
+
+        @Query("SELECT COUNT(DISTINCT a.jadwal.dokter.idUser) FROM Appointment a WHERE a.tanggalBooking = :tanggal AND a.jadwal IS NOT NULL AND a.jadwal.dokter IS NOT NULL")
+        Long countDistinctDoctorsByTanggalBooking(@Param("tanggal") LocalDate tanggal);
 }

@@ -1,0 +1,372 @@
+/* Overlay Backdrop Container */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Above regular contents, below specific alerts if any */
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Modal Content Box */
+.overlay-content.tambah-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-20px);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.overlay.active .overlay-content.tambah-modal {
+    transform: translateY(0);
+}
+
+/* Header */
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    border-bottom: 1.5px solid #eaeaea;
+}
+
+.overlay-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.close-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555555;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #f3f4f6;
+    color: #1a1a1a;
+}
+
+/* Form Styles */
+.jadwal-form {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Rows with 2 columns */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* General form group layout */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1f2937;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #1a3d2e; /* dark green matching hospital brand */
+    box-shadow: 0 0 0 3px rgba(26, 61, 46, 0.15);
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+/* Select dropdown caret styling */
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+}
+
+/* Footer / Actions styling */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1.5px solid #eaeaea;
+    margin-top: 8px;
+}
+
+/* Button styles */
+.jadwal-form .btn {
+    padding: 11px 28px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+}
+
+.jadwal-form .btn-primary {
+    background: #1a3d2e; /* dark green */
+    color: #ffffff;
+}
+
+.jadwal-form .btn-primary:hover {
+    background: #122b20;
+    box-shadow: 0 4px 12px rgba(26, 61, 46, 0.3);
+}
+
+.jadwal-form .btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border: 1.5px solid #d1d5db;
+}
+
+.jadwal-form .btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* Responsive Overrides */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .overlay-content.tambah-modal {
+        width: 95%;
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+    
+    .overlay-header {
+        padding: 20px;
+    }
+    
+    .jadwal-form {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+    
+    .jadwal-form .btn {
+        width: 100%;
+        border-radius: 8px;
+    }
+}
+
+/* Tambah Poli Modal Specific Styles */
+.tambah-poli-modal {
+    max-width: 500px !important;
+}
+
+.poli-form {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Custom View Switching (for Tambah Poli / Edit Poli style sub-views) */
+.modal-view {
+    display: none;
+    flex-direction: column;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-view.active {
+    display: flex;
+}
+
+.section-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.section-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.add-doctor-btn-trigger {
+    background: none;
+    border: none;
+    color: #1f2937;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.add-doctor-btn-trigger:hover {
+    background-color: #f3f4f6;
+}
+
+.doctors-list-container {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+.no-doctors-placeholder {
+    padding: 16px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.doctor-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.doctor-item-row:last-child {
+    border-bottom: none;
+}
+
+.doctor-item-row.selectable {
+    cursor: pointer;
+}
+
+.doctor-item-row.selectable:hover {
+    background-color: #f9fafb;
+}
+
+.doctor-item-row.selectable.selected {
+    background-color: #f0fdf4;
+}
+
+.doctor-name {
+    font-size: 14px;
+    font-weight: 400;
+    color: #1f2937;
+}
+
+.delete-doctor-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.delete-doctor-btn:hover {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.checkmark-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    transition: color 0.2s ease;
+    width: 20px;
+    height: 20px;
+}
+
+.doctor-item-row.selectable.selected .checkmark-wrapper {
+    color: #15803d;
+}
+
+/* Custom scrollbar for doctors list box */
+.doctors-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.doctors-list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.doctors-list-container::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 3px;
+}
+
+.doctors-list-container::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+}

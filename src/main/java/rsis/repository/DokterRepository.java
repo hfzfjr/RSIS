@@ -23,4 +23,10 @@ public interface DokterRepository extends JpaRepository<Dokter, String> {
     List<Dokter> searchBySpesialisasiOrNama(@Param("keyword") String keyword);
 
     Optional<Dokter> findFirstByNomorStrStartingWithOrderByNomorStrDesc(String prefix);
+
+    @Query("SELECT d FROM Dokter d WHERE d.poli IS NULL AND (d.isActive IS NULL OR d.isActive = true)")
+    List<Dokter> findActiveDoktersWithoutPoli();
+
+    @Query("SELECT COUNT(d) FROM Dokter d WHERE d.poli.idPoli = :idPoli AND (d.isActive IS NULL OR d.isActive = true)")
+    long countActiveDoctorsByPoliId(@Param("idPoli") String idPoli);
 }

@@ -54,3 +54,10 @@ run.log
 ### OS Files ###
 .DS_Store
 Thumbs.db
+
+update-refactor.md
+STRUKTUR_FOLDER.md
+Solusi_Refactoring_RSIS.md
+PLAN_md
+HELP.md
+audit.md

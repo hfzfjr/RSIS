@@ -15,6 +15,7 @@ import rsis.model.JadwalPraktik;
 import rsis.repository.DokterRepository;
 import rsis.repository.UserRepository;
 import rsis.service.DokterService;
+import rsis.service.JadwalPraktikService;
 import rsis.service.NotifikasiService;
 
 import java.security.Principal;
@@ -45,6 +46,9 @@ public class DokterController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private JadwalPraktikService jadwalPraktikService;
 
     private void addNotifikasiToModel(String userId, Model model) {
         try {
@@ -154,7 +158,7 @@ public class DokterController {
 
             String dokterId = dokter.getIdUser();
             // Ubah pemanggilan fungsinya agar mengambil SEMUA data, bukan cuma yang pending
-            List<Appointment> appointments = dokterService.getDaftarPasien(dokterId); 
+            List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);
             model.addAttribute("appointments", appointments);
         }
 
@@ -335,48 +339,8 @@ public class DokterController {
             }
 
             String dokterId = dokter.getIdUser();
-            List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
-
-            // Get all appointments for this doctor to map tanggal
-            List<Appointment> appointments = appointmentService.getAppointmentsByDokterId(dokterId);
-
-            // Build a list of jadwal entries with tanggal from appointments
-            java.util.List<Map<String, Object>> jadwalWithDates = new java.util.ArrayList<>();
-
-            for (Appointment apt : appointments) {
-                JadwalPraktik j = apt.getJadwal();
-                if (j == null) continue;
-
-                Map<String, Object> entry = new HashMap<>();
-                entry.put("idJadwal", j.getIdJadwal());
-                entry.put("hari", j.getHari());
-                entry.put("tanggal", apt.getTanggalBooking() != null ? apt.getTanggalBooking().toString() : null);
-                entry.put("jamMulai", j.getJamMulai() != null ? j.getJamMulai().toString() : null);
-                entry.put("jamSelesai", j.getJamSelesai() != null ? j.getJamSelesai().toString() : null);
-                entry.put("kuota", j.getKuota());
-                entry.put("sisaKuota", j.getSisaKuota());
-                entry.put("statusKetersediaan", j.getStatusKetersediaan());
-                entry.put("appointmentId", apt.getIdAppointment());
-                entry.put("appointmentStatus", apt.getStatus());
-                entry.put("nomorAntrian", apt.getNomorAntrian());
-                entry.put("catatan", apt.getCatatan());
-
-                // Include poli data
-                if (j.getDokter() != null && j.getDokter().getPoli() != null) {
-                    Map<String, Object> poli = new HashMap<>();
-                    poli.put("namaPoli", j.getDokter().getPoli().getNamaPoli());
-                    Map<String, Object> dokterMap = new HashMap<>();
-                    dokterMap.put("poli", poli);
-                    entry.put("dokter", dokterMap);
-                }
-
-                // Include pasien name
-                if (apt.getUser() != null) {
-                    entry.put("namaPasien", apt.getUser().getNama());
-                }
-
-                jadwalWithDates.add(entry);
-            }
+            java.util.List<Map<String, Object>> jadwalWithDates = jadwalPraktikService
+                    .getJadwalWithDatesForDokter(dokterId);
 
             response.put("success", true);
             response.put("jadwals", jadwalWithDates);

@@ -23,13 +23,14 @@ import rsis.service.AdminRSService;
 import rsis.service.NotifikasiService;
 import rsis.dto.VisitStatistics;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.function.Supplier;
 
 @Controller
 @RequestMapping("/admin")
@@ -63,23 +64,10 @@ public class AdminController {
 
     private void addJadwalStatsToModel(Model model) {
         try {
-            List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
-            long countTersedia = 0;
-            long countPenuh = 0;
-            long countLibur = 0;
-            for (JadwalPraktik j : jadwals) {
-                String status = j.getStatusKetersediaan();
-                if ("TERSEDIA".equalsIgnoreCase(status)) {
-                    countTersedia++;
-                } else if ("PENUH".equalsIgnoreCase(status)) {
-                    countPenuh++;
-                } else if ("LIBUR".equalsIgnoreCase(status)) {
-                    countLibur++;
-                }
-            }
-            model.addAttribute("jadwalAktif", countTersedia);
-            model.addAttribute("jadwalPenuh", countPenuh);
-            model.addAttribute("jadwalLibur", countLibur);
+            Map<String, Long> jadwalStats = adminRSService.getJadwalStatistics();
+            model.addAttribute("jadwalAktif", jadwalStats.getOrDefault("tersedia", 0L));
+            model.addAttribute("jadwalPenuh", jadwalStats.getOrDefault("penuh", 0L));
+            model.addAttribute("jadwalLibur", jadwalStats.getOrDefault("libur", 0L));
         } catch (Exception e) {
             model.addAttribute("jadwalAktif", 0);
             model.addAttribute("jadwalPenuh", 0);
@@ -106,22 +94,14 @@ public class AdminController {
             // Ensure notifikasi is always set even if admin is null
             model.addAttribute("notifikasi", List.of());
         }
-        model.addAttribute("totalPasienHariIni",
-                safeDashboardValue("total pasien hari ini", adminRSService::getTotalPasienHariIni, 0L));
-        model.addAttribute("totalPasienBulanIni",
-                safeDashboardValue("total pasien bulan ini", adminRSService::getTotalPasienBulanIni, 0L));
-        model.addAttribute("dokterTersibuk",
-                safeDashboardValue("dokter tersibuk", adminRSService::getDokterTersibuk, "N/A"));
-        model.addAttribute("pasienPerHari",
-                safeDashboardValue("pasien per hari", adminRSService::getPasienPerHari, Collections.emptyMap()));
-        model.addAttribute("totalDokter",
-                safeDashboardValue("total dokter", adminRSService::getTotalDokter, 0L));
-        model.addAttribute("totalPoli",
-                safeDashboardValue("total poli", adminRSService::getTotalPoli, 0L));
-        model.addAttribute("totalAppointmentHariIni",
-                safeDashboardValue("total appointment hari ini", adminRSService::getTotalAppointmentHariIni, 0L));
-        model.addAttribute("appointmentPending",
-                safeDashboardValue("appointment pending", adminRSService::getAppointmentPending, 0L));
+        model.addAttribute("totalPasienHariIni", adminRSService.getTotalPasienHariIni());
+        model.addAttribute("totalPasienBulanIni", adminRSService.getTotalPasienBulanIni());
+        model.addAttribute("dokterTersibuk", adminRSService.getDokterTersibuk());
+        model.addAttribute("pasienPerHari", adminRSService.getPasienPerHari());
+        model.addAttribute("totalDokter", adminRSService.getTotalDokter());
+        model.addAttribute("totalPoli", adminRSService.getTotalPoli());
+        model.addAttribute("totalAppointmentHariIni", adminRSService.getTotalAppointmentHariIni());
+        model.addAttribute("appointmentPending", adminRSService.getAppointmentPending());
         LocalDate today = LocalDate.now();
         int currentMonth = today.getMonthValue();
         int currentYear = today.getYear();
@@ -158,15 +138,6 @@ public class AdminController {
         return response;
     }
 
-    private <T> T safeDashboardValue(String label, Supplier<T> supplier, T fallback) {
-        try {
-            return supplier.get();
-        } catch (RuntimeException ex) {
-            log.warn("Gagal mengambil statistik dashboard admin: {}", label, ex);
-            return fallback;
-        }
-    }
-
     // Dokter Management
     @GetMapping("/kelola-dokter")
     public String kelolaDokter(@AuthenticationPrincipal UserDetails principal, Model model) {
@@ -193,7 +164,7 @@ public class AdminController {
         model.addAttribute("dokters", dokters);
         model.addAttribute("spesialisasis", spesialisasis);
         model.addAttribute("polis", polis);
-        
+
         long totalDokter = dokters.size();
         long scheduledDokter = adminRSService.getScheduledDoctorsCountByDate(LocalDate.now());
         long liburDokter = Math.max(0, totalDokter - scheduledDokter);
@@ -201,7 +172,7 @@ public class AdminController {
         model.addAttribute("dokterTerdaftar", totalDokter);
         model.addAttribute("dokterTerjadwal", scheduledDokter);
         model.addAttribute("dokterLibur", liburDokter);
-        
+
         model.addAttribute("activeMenu", "kelola-dokter");
         return "admin/kelola-dokter";
     }
@@ -460,7 +431,8 @@ public class AdminController {
             LocalTime localJamMulai = LocalTime.parse(jamMulai);
             LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
 
-            adminRSService.updateJadwal(idJadwal, idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan, kuota, idPoli);
+            adminRSService.updateJadwal(idJadwal, idUser, hari, localTanggal, localJamMulai, localJamSelesai,
+                    statusKetersediaan, kuota, idPoli);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil diperbarui!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -484,8 +456,48 @@ public class AdminController {
             LocalTime localJamMulai = LocalTime.parse(jamMulai);
             LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
 
-            adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan, kuota, idPoli);
+            adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan,
+                    kuota, idPoli);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil ditambahkan!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-jadwal";
+    }
+
+    @PostMapping("/jadwal/create-bulk")
+    public String createBulkJadwal(
+            @RequestParam String idUser,
+            @RequestParam String idPoli,
+            @RequestParam String mode,
+            @RequestParam(required = false) String hari,
+            @RequestParam(required = false) String tanggal,
+            @RequestParam(required = false) List<String> hariList,
+            @RequestParam(required = false) String tanggalMulai,
+            @RequestParam(required = false) String sampaiYearMonth,
+            @RequestParam String jamMulai,
+            @RequestParam String jamSelesai,
+            @RequestParam String statusKetersediaan,
+            @RequestParam int kuota,
+            RedirectAttributes redirectAttributes) {
+        try {
+            LocalTime localJamMulai = LocalTime.parse(jamMulai);
+            LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
+
+            if ("recurring".equals(mode)) {
+                LocalDate localTanggalMulai = (tanggalMulai != null && !tanggalMulai.isEmpty())
+                        ? LocalDate.parse(tanggalMulai)
+                        : LocalDate.now();
+                adminRSService.createBulkRecurringJadwal(
+                        idUser, idPoli, hariList, localTanggalMulai, sampaiYearMonth,
+                        localJamMulai, localJamSelesai, statusKetersediaan, kuota);
+                redirectAttributes.addFlashAttribute("success", "Jadwal berulang berhasil dibuat!");
+            } else {
+                LocalDate localTanggal = (tanggal != null && !tanggal.isEmpty()) ? LocalDate.parse(tanggal) : null;
+                adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai,
+                        statusKetersediaan, kuota, idPoli);
+                redirectAttributes.addFlashAttribute("success", "Jadwal berhasil ditambahkan!");
+            }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

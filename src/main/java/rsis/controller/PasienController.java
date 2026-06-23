@@ -45,6 +45,9 @@ public class PasienController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private rsis.service.DokterService dokterService;
+
     private void addNotifikasiToModel(String userId, Model model) {
         try {
             var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
@@ -100,10 +103,24 @@ public class PasienController {
         model.addAttribute("dokters", availableDoctors);
         model.addAttribute("dokterTersedia", availableDoctors.size());
 
-        // Get upcoming appointments (limit to 2 for display)
+        // Auto-update status for past booking dates
+        appointmentService.updateExpiredAppointments();
+
+        // Get upcoming appointments (filter DIKONFIRMASI only, sort by tanggalBooking
+        // ascending, limit to 2)
         List<Appointment> upcomingAppointments = appointments.stream()
+                .filter(a -> "DIKONFIRMASI".equals(a.getStatus()))
+                .sorted((a1, a2) -> a1.getTanggalBooking().compareTo(a2.getTanggalBooking()))
                 .limit(2)
                 .toList();
+
+        // Populate transient fields for dokter in each upcoming appointment
+        for (Appointment appointment : upcomingAppointments) {
+            if (appointment.getJadwal() != null && appointment.getJadwal().getDokter() != null) {
+                dokterService.enrichWithUserData(appointment.getJadwal().getDokter());
+            }
+        }
+
         model.addAttribute("appointments", upcomingAppointments);
 
         return "pasien/dashboard";
@@ -300,16 +317,13 @@ public class PasienController {
         String pasienId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
 
+        // Auto-update status for past booking dates
+        appointmentService.updateExpiredAppointments();
+
         // Populate transient fields for dokter in each appointment
         for (Appointment appointment : appointments) {
             if (appointment.getJadwal() != null && appointment.getJadwal().getDokter() != null) {
-                Dokter dokter = appointment.getJadwal().getDokter();
-                userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
-                    dokter.setNama(fetchedUser.getNama());
-                    dokter.setEmail(fetchedUser.getEmail());
-                    dokter.setPassword(fetchedUser.getPassword());
-                    dokter.setRole(fetchedUser.getRole());
-                });
+                dokterService.enrichWithUserData(appointment.getJadwal().getDokter());
             }
         }
 
@@ -434,13 +448,7 @@ public class PasienController {
 
             // Populate transient fields for dokter
             if (appointment.getJadwal() != null && appointment.getJadwal().getDokter() != null) {
-                Dokter dokter = appointment.getJadwal().getDokter();
-                userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
-                    dokter.setNama(fetchedUser.getNama());
-                    dokter.setEmail(fetchedUser.getEmail());
-                    dokter.setPassword(fetchedUser.getPassword());
-                    dokter.setRole(fetchedUser.getRole());
-                });
+                dokterService.enrichWithUserData(appointment.getJadwal().getDokter());
             }
 
             response.put("success", true);
@@ -462,13 +470,7 @@ public class PasienController {
             // Populate transient fields for dokter in each jadwal
             for (JadwalPraktik jadwal : jadwals) {
                 if (jadwal.getDokter() != null) {
-                    Dokter dokter = jadwal.getDokter();
-                    userRepository.findById(dokter.getIdUser()).ifPresent(fetchedUser -> {
-                        dokter.setNama(fetchedUser.getNama());
-                        dokter.setEmail(fetchedUser.getEmail());
-                        dokter.setPassword(fetchedUser.getPassword());
-                        dokter.setRole(fetchedUser.getRole());
-                    });
+                    dokterService.enrichWithUserData(jadwal.getDokter());
                 }
             }
 

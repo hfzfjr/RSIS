@@ -19,6 +19,10 @@ import rsis.service.NotifikasiService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import rsis.service.AppointmentService;
+import rsis.model.Appointment;
 
 @Controller
 @RequestMapping("/dokter")
@@ -38,6 +42,9 @@ public class DokterController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     private void addNotifikasiToModel(String userId, Model model) {
         try {
@@ -311,5 +318,72 @@ public class DokterController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/dokter/appointment";
+    }
+
+    @GetMapping("/api/jadwal")
+    @ResponseBody
+    public Map<String, Object> getJadwalDokter(@AuthenticationPrincipal UserDetails principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+            if (dokter == null) {
+                response.put("success", false);
+                response.put("message", "Dokter not found");
+                return response;
+            }
+
+            String dokterId = dokter.getIdUser();
+            List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
+
+            // Get all appointments for this doctor to map tanggal
+            List<Appointment> appointments = appointmentService.getAppointmentsByDokterId(dokterId);
+
+            // Build a list of jadwal entries with tanggal from appointments
+            java.util.List<Map<String, Object>> jadwalWithDates = new java.util.ArrayList<>();
+
+            for (Appointment apt : appointments) {
+                JadwalPraktik j = apt.getJadwal();
+                if (j == null) continue;
+
+                Map<String, Object> entry = new HashMap<>();
+                entry.put("idJadwal", j.getIdJadwal());
+                entry.put("hari", j.getHari());
+                entry.put("tanggal", apt.getTanggalBooking() != null ? apt.getTanggalBooking().toString() : null);
+                entry.put("jamMulai", j.getJamMulai() != null ? j.getJamMulai().toString() : null);
+                entry.put("jamSelesai", j.getJamSelesai() != null ? j.getJamSelesai().toString() : null);
+                entry.put("kuota", j.getKuota());
+                entry.put("sisaKuota", j.getSisaKuota());
+                entry.put("statusKetersediaan", j.getStatusKetersediaan());
+                entry.put("appointmentId", apt.getIdAppointment());
+                entry.put("appointmentStatus", apt.getStatus());
+                entry.put("nomorAntrian", apt.getNomorAntrian());
+                entry.put("catatan", apt.getCatatan());
+
+                // Include poli data
+                if (j.getDokter() != null && j.getDokter().getPoli() != null) {
+                    Map<String, Object> poli = new HashMap<>();
+                    poli.put("namaPoli", j.getDokter().getPoli().getNamaPoli());
+                    Map<String, Object> dokterMap = new HashMap<>();
+                    dokterMap.put("poli", poli);
+                    entry.put("dokter", dokterMap);
+                }
+
+                // Include pasien name
+                if (apt.getUser() != null) {
+                    entry.put("namaPasien", apt.getUser().getNama());
+                }
+
+                jadwalWithDates.add(entry);
+            }
+
+            response.put("success", true);
+            response.put("jadwals", jadwalWithDates);
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
     }
 }

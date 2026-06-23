@@ -68,7 +68,7 @@
             <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal praktik.</td>
           </tr>
           <tr th:each="jadwal : ${jadwals}">
-            <td class="rs-td-bold" th:text="${#strings.capitalize(#strings.toLowerCase(jadwal.hari))}">Hari</td>
+            <td th:text="${#strings.capitalize(#strings.toLowerCase(jadwal.hari))}">Hari</td>
             <td th:text="${#strings.substring(jadwal.jamMulai, 0, 5) + ' - ' + #strings.substring(jadwal.jamSelesai, 0, 5)}">Jam</td>
             <td th:text="${jadwal.dokter != null && jadwal.dokter.poli != null ? jadwal.dokter.poli.namaPoli : 'Poli Umum'}">Poli</td>
             <td th:text="${jadwal.kuota + ' Pasien'}">Kuota</td>
@@ -182,80 +182,86 @@
   <script th:inline="javascript">
     /*<![CDATA[*/
     const rawJadwals = /*[[${jadwals}]]*/ [];
-    window.jadwalData = rawJadwals;
+    window.jadwalData = []; // Will be populated from API
 
-    // Override fetchJadwalData to bypass API call and prevent 403 Forbidden
+    // Override fetchJadwalData to call dokter API
     window.fetchJadwalData = async function() {
-      console.log("Custom fetchJadwalData: Bypassing API call and reusing rawJadwals");
-      window.jadwalData = rawJadwals;
+      try {
+        const response = await fetch('/dokter/api/jadwal');
+        const data = await response.json();
+        if (data.success) {
+          window.jadwalData = data.jadwals;
+          console.log('Dokter jadwal data fetched:', window.jadwalData);
+        } else {
+          console.error('API returned error:', data.message);
+          window.jadwalData = [];
+        }
+      } catch (error) {
+        console.error('Error fetching dokter jadwal data:', error);
+        window.jadwalData = [];
+      }
       window.renderWeeklyGrid();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
       // Initialize global variables
-      window.currentWeekOffset = 0;
+      window.currentMonthOffset = 0;
 
       // Helper function to convert text values and override header
       function setupHeader() {
         const titleEl = document.getElementById('monthToggleTitle');
         if (titleEl) {
-          titleEl.textContent = 'Minggu Ini';
+          titleEl.textContent = window.currentMonthOffset === 0 ? 'Bulan Ini' : 'Bulan Depan';
         }
         const buttonsWrapper = document.querySelector('.month-toggle-buttons');
         if (buttonsWrapper) {
           buttonsWrapper.innerHTML = `
-              <button class="toggle-btn" id="btnMingguLalu" onclick="switchWeek(-1)">Minggu Lalu</button>
-              <button class="toggle-btn active" id="btnMingguIni" onclick="switchWeek(0)">Minggu Ini</button>
-              <button class="toggle-btn" id="btnMingguDepan" onclick="switchWeek(1)">Minggu Depan</button>
+              <button class="toggle-btn${window.currentMonthOffset === 0 ? ' active' : ''}" id="btnBulanIni" onclick="switchMonthMode(0)">Bulan Ini</button>
+              <button class="toggle-btn${window.currentMonthOffset === 1 ? ' active' : ''}" id="btnBulanDepan" onclick="switchMonthMode(1)">Bulan Depan</button>
           `;
         }
       }
       setupHeader();
 
-      // Define helper for getting week days
-      window.getWeekDays = function(offset) {
+      // Define function to switch month
+      window.switchMonthMode = function(offset) {
+        window.currentMonthOffset = offset;
+        setupHeader();
+        window.renderWeeklyGrid();
+      };
+
+      // Define helper for getting target month days
+      window.getMonthDays = function(monthOffset) {
         const today = new Date();
-        let currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, ...
-        if (currentDay === 0) currentDay = 7;
-        
-        const monday = new Date(today);
-        monday.setDate(today.getDate() - (currentDay - 1) + (offset * 7));
-        
+        const targetMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+        const year = targetMonth.getFullYear();
+        const month = targetMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let startDate;
+        let numberOfDays;
+        if (monthOffset === 0) {
+            startDate = new Date(today);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            numberOfDays = Math.ceil((lastDayOfMonth - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        } else {
+            startDate = new Date(year, month, 1);
+            numberOfDays = daysInMonth;
+        }
+
         const days = [];
-        for (let i = 0; i < 7; i++) {
-          const d = new Date(monday);
-          d.setDate(monday.getDate() + i);
-          days.push(d);
+        for (let i = 0; i < numberOfDays; i++) {
+            const d = new Date(startDate);
+            d.setDate(startDate.getDate() + i);
+            days.push(d);
         }
         return days;
       };
 
-      // Define function to switch week
-      window.switchWeek = function(offset) {
-        window.currentWeekOffset = offset;
-        
-        const btnLalu = document.getElementById('btnMingguLalu');
-        const btnIni = document.getElementById('btnMingguIni');
-        const btnDepan = document.getElementById('btnMingguDepan');
-        
-        if (btnLalu) btnLalu.classList.toggle('active', offset === -1);
-        if (btnIni) btnIni.classList.toggle('active', offset === 0);
-        if (btnDepan) btnDepan.classList.toggle('active', offset === 1);
-        
-        const titleEl = document.getElementById('monthToggleTitle');
-        if (titleEl) {
-          if (offset === 0) titleEl.textContent = 'Minggu Ini';
-          else if (offset === -1) titleEl.textContent = 'Minggu Lalu';
-          else if (offset === 1) titleEl.textContent = 'Minggu Depan';
-        }
-        
-        window.renderWeeklyGrid();
-      };
-
       // Override standard switchMonth function
       window.switchMonth = function(mode) {
-        if (mode === 'ini') window.switchWeek(0);
-        else if (mode === 'depan') window.switchWeek(1);
+        if (mode === 'ini') window.switchMonthMode(0);
+        else if (mode === 'depan') window.switchMonthMode(1);
       };
 
       // Helper function to format time (HH:mm)
@@ -273,28 +279,35 @@
         return timeStr;
       }
 
-      // Override renderWeeklyGrid globally to show 7-day week layout
+      // Helper to format date string (YYYY-MM-DD) to match Date object
+      function isSameDate(dateStr, dateObj) {
+        if (!dateStr) return false;
+        const parts = dateStr.split('-');
+        return parseInt(parts[0]) === dateObj.getFullYear()
+            && parseInt(parts[1]) === (dateObj.getMonth() + 1)
+            && parseInt(parts[2]) === dateObj.getDate();
+      }
+
+      // Override renderWeeklyGrid globally to show monthly layout with actual appointment dates
       window.renderWeeklyGrid = function() {
         const grid = document.getElementById('weeklyGrid');
         if (!grid) return;
         grid.innerHTML = '';
         
-        // Ensure grid styling fits exactly 7 columns
+        // Ensure grid styling permits horizontal scrolling for monthly layout
         grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-        grid.style.gridAutoFlow = 'row';
-        grid.style.minWidth = '100%';
+        grid.style.gridTemplateColumns = 'none';
+        grid.style.gridAutoFlow = 'column';
+        grid.style.minWidth = 'fit-content';
         
-        const weekDays = window.getWeekDays(window.currentWeekOffset);
+        const days = window.getMonthDays(window.currentMonthOffset);
         const today = new Date();
         today.setHours(0,0,0,0);
         
-        const dayNamesIndo = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+        const dayNamesIndo = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
         const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         
-        const dayStrings = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
-        
-        weekDays.forEach((date, index) => {
+        days.forEach((date, index) => {
           const col = document.createElement('div');
           col.className = 'day-column';
           
@@ -310,7 +323,7 @@
           
           const dayNameEl = document.createElement('span');
           dayNameEl.className = 'day-name' + (isSunday ? ' sunday' : '');
-          dayNameEl.textContent = dayNamesIndo[date.getDay() === 0 ? 6 : date.getDay() - 1];
+          dayNameEl.textContent = dayNamesIndo[date.getDay()];
           
           const dayDateEl = document.createElement('span');
           dayDateEl.className = 'day-date' + (isSunday ? ' sunday' : '');
@@ -320,8 +333,8 @@
           header.appendChild(dayDateEl);
           col.appendChild(header);
           
-          const dayString = dayStrings[date.getDay()];
-          const dayJadwals = (window.jadwalData || []).filter(j => j.hari && j.hari.toUpperCase() === dayString);
+          // Filter jadwal entries by actual tanggal (appointment date)
+          const dayJadwals = (window.jadwalData || []).filter(j => isSameDate(j.tanggal, date));
           
           const cardsWrapper = document.createElement('div');
           cardsWrapper.className = 'day-cards';
@@ -329,20 +342,28 @@
           if (dayJadwals.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'no-schedule-text';
-            empty.textContent = 'Tidak ada jadwal';
+            empty.textContent = 'Tidak ada appointment';
             empty.style.margin = 'auto';
             empty.style.color = '#94a3b8';
             empty.style.fontSize = '12px';
             cardsWrapper.appendChild(empty);
           } else {
             dayJadwals.forEach(jadwal => {
+              const isPast = date < today;
               const isFull = jadwal.sisaKuota === 0 || jadwal.statusKetersediaan === 'PENUH';
               const isLibur = jadwal.statusKetersediaan === 'LIBUR';
+              const aptStatus = jadwal.appointmentStatus || '';
               
               const card = document.createElement('div');
               card.className = 'schedule-card';
               
-              if (isLibur) {
+              if (isPast || aptStatus === 'DIBATALKAN' || aptStatus === 'DITOLAK') {
+                card.classList.add('card-past');
+              } else if (aptStatus === 'DIKONFIRMASI') {
+                card.classList.add('card-available');
+              } else if (aptStatus === 'MENUNGGU') {
+                card.classList.add('card-full');
+              } else if (isLibur) {
                 card.classList.add('card-past');
               } else if (isFull) {
                 card.classList.add('card-full');
@@ -359,6 +380,14 @@
               poliEl.className = 'card-poli';
               poliEl.textContent = jadwal.dokter?.poli?.namaPoli || 'Poli Umum';
               card.appendChild(poliEl);
+
+              // Show patient name
+              if (jadwal.namaPasien) {
+                const pasienEl = document.createElement('div');
+                pasienEl.className = 'card-pasien-name';
+                pasienEl.textContent = jadwal.namaPasien;
+                card.appendChild(pasienEl);
+              }
               
               const footerEl = document.createElement('div');
               footerEl.className = 'card-footer';
@@ -366,32 +395,31 @@
               const statusBadge = document.createElement('span');
               statusBadge.className = 'card-badge';
               
-              if (isLibur) {
-                statusBadge.classList.add('badge-libur');
-                statusBadge.textContent = 'Libur';
-              } else if (isFull) {
+              // Show appointment status instead of jadwal status
+              if (aptStatus === 'DIKONFIRMASI') {
+                statusBadge.classList.add('badge-aktif');
+                statusBadge.textContent = 'Dikonfirmasi';
+              } else if (aptStatus === 'MENUNGGU') {
                 statusBadge.classList.add('badge-full');
-                statusBadge.textContent = 'Penuh';
+                statusBadge.textContent = 'Menunggu';
+              } else if (aptStatus === 'DIBATALKAN') {
+                statusBadge.classList.add('badge-libur');
+                statusBadge.textContent = 'Dibatalkan';
+              } else if (aptStatus === 'DITOLAK') {
+                statusBadge.classList.add('badge-libur');
+                statusBadge.textContent = 'Ditolak';
               } else {
                 statusBadge.classList.add('badge-aktif');
                 statusBadge.textContent = 'Aktif';
               }
               
-              const quotaEl = document.createElement('span');
-              quotaEl.className = 'card-quota' + (isFull && !isLibur ? ' quota-full' : '');
-              
-              if (isLibur) {
-                quotaEl.textContent = '';
-              } else {
-                const booked = jadwal.kuota - jadwal.sisaKuota;
-                quotaEl.textContent = `${booked}/${jadwal.kuota}`;
-              }
+              const queueEl = document.createElement('span');
+              queueEl.className = 'card-quota';
+              queueEl.textContent = jadwal.nomorAntrian || '';
               
               footerEl.appendChild(statusBadge);
-              footerEl.appendChild(quotaEl);
+              footerEl.appendChild(queueEl);
               
-              card.appendChild(timeEl);
-              card.appendChild(poliEl);
               card.appendChild(footerEl);
               cardsWrapper.appendChild(card);
             });
@@ -405,8 +433,8 @@
       // Periodic check to ensure header is set correctly
       setInterval(setupHeader, 1000);
 
-      // Trigger initial render
-      window.renderWeeklyGrid();
+      // Fetch data from API and trigger initial render
+      window.fetchJadwalData();
     });
     /*]]>*/
   </script>

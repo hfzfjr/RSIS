@@ -1,20 +1,3 @@
-:root {
-    --rs-primary: #044332;
-    --rs-primary-light: #e8f4f0;
-    --rs-primary-text: #016d55;
-    --rs-bg: #f8fafc;
-    --rs-card-bg: #ffffff;
-    --rs-text-primary: #1e293b;
-    --rs-text-secondary: #64748b;
-    --rs-text-muted: #94a3b8;
-    --rs-border: #e2e8f0;
-    --rs-border-light: #f1f5f9;
-    --rs-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --rs-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --rs-radius: 12px;
-    --rs-radius-lg: 18px;
-}
-
 /* ==========================================================================
    PAGE HEADER & BUTTONS
    ========================================================================== */
@@ -40,13 +23,13 @@
 .rs-title {
     font-size: 28px;
     font-weight: 700;
-    color: var(--rs-primary);
+    color: var(--color-brand);
     letter-spacing: -0.5px;
 }
 
 .rs-subtitle {
     font-size: 15px;
-    color: var(--rs-text-secondary);
+    color: var(--color-text-secondary);
 }
 
 .rs-btn {
@@ -63,12 +46,12 @@
 }
 
 .rs-btn-primary {
-    background-color: var(--rs-primary);
-    color: #ffffff;
+    background-color: var(--color-brand);
+    color: var(--color-white);
 }
 
 .rs-btn-primary:hover {
-    background-color: #033024;
+    background-color: var(--color-brand-dark);
     transform: translateY(-1px);
 }
 
@@ -85,15 +68,15 @@
 .rs-section-title {
     font-size: 20px;
     font-weight: 700;
-    color: var(--rs-text-primary);
+    color: var(--color-text-primary);
 }
 
 .rs-segmented-control {
     display: flex;
-    background-color: #f1f5f9;
+    background-color: var(--color-surface-gray-light);
     padding: 4px;
     border-radius: 8px;
-    border: 1px solid var(--rs-border-light);
+    border: 1px solid var(--border-divider);
 }
 
 .rs-segment-btn {
@@ -102,32 +85,32 @@
     padding: 6px 16px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--rs-text-secondary);
+    color: var(--color-text-secondary);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .rs-segment-btn:hover {
-    color: var(--rs-text-primary);
+    color: var(--color-text-primary);
 }
 
 .rs-segment-btn.active {
-    background-color: #ffffff;
-    color: var(--rs-text-primary);
-    box-shadow: var(--rs-shadow-sm);
+    background-color: var(--color-white);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-subtle);
 }
 
 /* ==========================================================================
    7-DAY CALENDAR GRID
    ========================================================================== */
 .rs-calendar-panel {
-    background-color: var(--rs-card-bg);
-    border: 1px solid var(--rs-border);
-    border-radius: var(--rs-radius-lg);
+    background-color: var(--color-white);
+    border: 1px solid var(--border-divider);
+    border-radius: var(--radius-card);
     overflow: hidden;
     margin-bottom: 40px;
-    box-shadow: var(--rs-shadow-sm);
+    box-shadow: var(--shadow-subtle);
 }
 
 .rs-calendar-grid {
@@ -136,7 +119,7 @@
 }
 
 .rs-calendar-col {
-    border-right: 1px solid var(--rs-border-light);
+    border-right: 1px solid var(--border-divider);
     min-height: 380px;
     display: flex;
     flex-direction: column;
@@ -150,9 +133,9 @@
 
 /* Wednesday active highlighting */
 .rs-calendar-col.active {
-    background-color: rgba(4, 67, 50, 0.02);
-    border-left: 2px solid var(--rs-primary-text);
-    border-right: 2px solid var(--rs-primary-text);
+    background-color: var(--color-brand-light);
+    border-left: 2px solid var(--color-brand);
+    border-right: 2px solid var(--color-brand);
     position: relative;
     z-index: 10;
 }
@@ -160,7 +143,7 @@
 .rs-calendar-header {
     text-align: center;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--rs-border-light);
+    border-bottom: 1px solid var(--border-divider);
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -169,24 +152,24 @@
 .rs-day-lbl {
     font-size: 13px;
     font-weight: 500;
-    color: var(--rs-text-secondary);
+    color: var(--color-text-secondary);
 }
 
 .rs-date-lbl {
     font-size: 15px;
     font-weight: 700;
-    color: var(--rs-text-primary);
+    color: var(--color-text-primary);
 }
 
 .rs-calendar-col.active .rs-day-lbl,
 .rs-calendar-col.active .rs-date-lbl {
-    color: var(--rs-primary-text);
+    color: var(--color-brand);
 }
 
 /* Highlight Sunday in red */
 .rs-day-sunday .rs-day-lbl,
 .rs-day-sunday .rs-date-lbl {
-    color: #ef4444;
+    color: var(--color-danger);
 }
 
 /* Empty day placeholder styling */
@@ -194,7 +177,7 @@
     margin: auto;
     font-size: 12px;
     font-weight: 500;
-    color: var(--rs-text-muted);
+    color: var(--color-text-muted);
     text-align: center;
 }
 
@@ -202,9 +185,9 @@
    SCHEDULE CARDS
    ========================================================================== */
 .rs-schedule-card {
-    background-color: var(--rs-card-bg);
-    border: 1px solid var(--rs-border);
-    border-radius: var(--rs-radius);
+    background-color: var(--color-white);
+    border: 1px solid var(--border-divider);
+    border-radius: var(--radius-input);
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -215,19 +198,19 @@
 
 .rs-schedule-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--rs-shadow);
+    box-shadow: var(--shadow-default);
 }
 
 .rs-card-time {
     font-size: 13px;
     font-weight: 700;
-    color: var(--rs-primary-text);
+    color: var(--color-brand);
 }
 
 .rs-card-poli {
     font-size: 13px;
     font-weight: 600;
-    color: var(--rs-text-primary);
+    color: var(--color-text-primary);
 }
 
 .rs-card-bottom {
@@ -238,43 +221,46 @@
 }
 
 .rs-status-badge {
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: capitalize;
 }
 
 .rs-status-badge.aktif {
-    background-color: #f0fdf4;
-    color: #16a34a;
+    background-color: var(--color-brand-light);
+    color: var(--color-brand);
 }
 
 .rs-status-badge.penuh {
     background-color: #fef2f2;
-    color: #dc2626;
+    color: var(--color-danger);
 }
 
 .rs-status-badge.libur {
-    background-color: #f1f5f9;
-    color: #475569;
+    background-color: var(--color-surface-gray-light);
+    color: var(--color-text-slate);
 }
 
 .rs-card-slots {
     font-size: 11px;
     font-weight: 600;
-    color: var(--rs-text-secondary);
+    color: var(--color-text-secondary);
 }
 
 /* ==========================================================================
    SCHEDULE TABLE
    ========================================================================== */
 .rs-table-panel {
-    background-color: var(--rs-card-bg);
-    border: 1px solid var(--rs-border);
-    border-radius: var(--rs-radius-lg);
+    background-color: var(--color-white);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: var(--rs-shadow-sm);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
 .rs-table {
@@ -283,20 +269,20 @@
 }
 
 .rs-table th {
-    background-color: #fafbfc;
+    background-color: var(--color-white);
     padding: 16px 24px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--rs-text-secondary);
+    color: var(--color-text-secondary);
     text-align: left;
-    border-bottom: 1px solid var(--rs-border-light);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .rs-table td {
     padding: 18px 24px;
     font-size: 14px;
-    color: var(--rs-text-primary);
-    border-bottom: 1px solid var(--rs-border-light);
+    color: var(--color-text-primary);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .rs-table tr:last-child td {
@@ -304,7 +290,7 @@
 }
 
 .rs-table tbody tr:hover {
-    background-color: #fafbfc;
+    background-color: #f8fafc;
 }
 
 .rs-td-bold {
@@ -321,8 +307,8 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    color: var(--rs-text-secondary);
+    font-size: 18px;
+    color: var(--color-text-secondary);
     transition: color 0.15s ease;
     padding: 4px;
     display: flex;
@@ -331,11 +317,11 @@
 }
 
 .rs-action-btn.edit:hover {
-    color: var(--rs-primary-text);
+    color: var(--color-brand);
 }
 
 .rs-action-btn.delete:hover {
-    color: #dc2626;
+    color: var(--color-danger);
 }
 
 /* ==========================================================================
@@ -347,7 +333,7 @@
     }
 
     .rs-calendar-col {
-        border-bottom: 1px solid var(--rs-border-light);
+        border-bottom: 1px solid var(--border-divider);
         min-height: 280px;
     }
 
@@ -356,7 +342,7 @@
     }
 
     .rs-calendar-col.active {
-        border: 2px solid var(--rs-primary-text);
+        border: 2px solid var(--color-brand);
     }
 }
 
@@ -401,31 +387,36 @@
 /* ==========================================================
    DOCTOR PAGE WEEKLY GRID CUSTOM OVERRIDES & LAYOUT SPEC
    ========================================================== */
+.rs-main-container .jadwal-dokter-container.dokter {
+    max-width: 800px !important;
+}
+
 .rs-main-container .weekly-schedule-wrapper {
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
     border: 1px solid #e2e8f0;
-    border-radius: 18px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: 16px;
+    background-color: var(--color-white);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
     margin-bottom: 40px;
 }
 
 .rs-main-container .weekly-grid {
     display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
-    grid-auto-flow: row !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 120px !important;
     width: 100% !important;
-    min-width: unset !important;
+    min-width: fit-content !important;
 }
 
 .rs-main-container .day-column {
     border-right: 1px solid #e2e8f0 !important;
-    min-height: 420px;
+    min-height: 320px;
     display: flex;
     flex-direction: column;
-    padding: 20px 12px;
-    gap: 16px;
-    background-color: #ffffff;
+    padding: 12px 8px;
+    gap: 10px;
+    background-color: var(--color-white);
 }
 
 .rs-main-container .day-column:last-child {
@@ -434,54 +425,47 @@
 
 /* Day Column Active Highlighting */
 .rs-main-container .day-column.active {
-    background-color: rgba(4, 67, 50, 0.01) !important;
-    border-left: 2px solid #044332 !important;
-    border-right: 2px solid #044332 !important;
+    background-color: transparent !important;
+    box-shadow: -2px 0 0 0 var(--color-brand), 2px 0 0 0 var(--color-brand) !important;
     position: relative;
     z-index: 10;
 }
 
-.rs-main-container .day-column.active .day-header {
-    border-top: 3px solid #016d55 !important;
-    background-color: rgba(4, 67, 50, 0.02) !important;
-    margin-top: -20px; /* offset the padding of day-column */
-    padding-top: 15px;
-    padding-bottom: 12px;
-}
-
 .rs-main-container .day-column.active .day-name,
 .rs-main-container .day-column.active .day-date {
-    color: #016d55 !important;
+    color: var(--color-brand) !important;
+    font-weight: 700 !important;
 }
 
 .rs-main-container .day-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f1f5f9;
+    gap: 3px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
     text-align: center;
-    width: calc(100% + 24px);
-    margin-left: -12px;
+    width: calc(100% + 16px);
+    margin-left: -8px;
+    background: transparent !important;
 }
 
 .rs-main-container .day-name {
     font-size: 13px;
     font-weight: 600;
-    color: #64748b;
+    color: var(--color-text-secondary);
 }
 
 .rs-main-container .day-date {
     font-size: 15px;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--color-text-primary);
 }
 
 /* Sunday Red Highlighting */
 .rs-main-container .day-name.sunday,
 .rs-main-container .day-date.sunday {
-    color: #ef4444 !important;
+    color: var(--color-danger) !important;
 }
 
 .rs-main-container .day-cards {
@@ -495,28 +479,28 @@
 /* Schedule Card Redesign */
 .rs-main-container .schedule-card {
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: var(--radius-input);
     padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-subtle);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default !important;
 }
 
 .rs-main-container .schedule-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-default);
 }
 
 .rs-main-container .schedule-card.card-available {
-    background-color: #f0fdf4 !important;
-    border-color: #d1fae5 !important;
+    background-color: var(--color-brand-light) !important;
+    border-color: var(--color-teal-light) !important;
 }
 .rs-main-container .schedule-card.card-available .card-time {
-    color: #15803d !important;
+    color: var(--color-brand) !important;
 }
 
 .rs-main-container .schedule-card.card-full {
@@ -524,26 +508,33 @@
     border-color: #fecaca !important;
 }
 .rs-main-container .schedule-card.card-full .card-time {
-    color: #dc2626 !important;
+    color: var(--color-danger) !important;
 }
 
 .rs-main-container .schedule-card.card-past {
-    background-color: #f8fafc !important;
+    background-color: var(--color-surface-gray-light) !important;
     border-color: #e2e8f0 !important;
 }
 .rs-main-container .schedule-card.card-past .card-time {
-    color: #94a3b8 !important;
+    color: var(--color-text-muted) !important;
 }
 
 .rs-main-container .card-time {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .rs-main-container .card-poli {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    color: #64748b;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
 }
 
 .rs-main-container .card-footer {
@@ -562,36 +553,55 @@
 }
 
 .rs-main-container .badge-aktif {
-    background-color: #f0fdf4;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
+    background-color: var(--color-brand-light);
+    color: var(--color-brand);
+    border: 1px solid var(--color-teal-light);
 }
 
 .rs-main-container .badge-full {
     background-color: #fef2f2;
-    color: #dc2626;
+    color: var(--color-danger);
     border: 1px solid #fecaca;
 }
 
 .rs-main-container .badge-libur {
-    background-color: #f1f5f9;
-    color: #475569;
+    background-color: var(--color-surface-gray-light);
+    color: var(--color-text-slate);
     border: 1px solid #e2e8f0;
 }
 
 .rs-main-container .card-quota {
     font-size: 11px;
     font-weight: 600;
-    color: #64748b;
+    color: var(--color-text-secondary);
 }
 
 .rs-main-container .card-quota.quota-full {
-    color: #dc2626 !important;
+    color: var(--color-danger) !important;
 }
 
 .rs-main-container .no-schedule-text {
     font-size: 12px;
     font-weight: 500;
-    color: #94a3b8;
+    color: var(--color-text-muted);
     text-align: center;
 }
+
+/* Patient name in doctor card */
+.rs-main-container .card-pasien-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+/* Make badge fit 120px columns */
+.rs-main-container .card-badge {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+    border-radius: 5px;
+    white-space: nowrap;
+}

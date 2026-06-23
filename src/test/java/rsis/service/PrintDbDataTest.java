@@ -22,6 +22,9 @@ class PrintDbDataTest {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private rsis.repository.UserRepository userRepository;
+
     @Test
     void printAppointments() {
         System.out.println("=== APPOINTMENTS IN DB ===");
@@ -33,6 +36,19 @@ class PrintDbDataTest {
                     + ", Date: " + app.getTanggalBooking() 
                     + ", Status: " + app.getStatus());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("==========================");
+    }
+
+    @Test
+    void printUsers() {
+        System.out.println("=== USERS IN DB ===");
+        try {
+            userRepository.findAll().forEach(u -> {
+                System.out.println("Email: " + u.getEmail() + ", Role: " + u.getRole());
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }

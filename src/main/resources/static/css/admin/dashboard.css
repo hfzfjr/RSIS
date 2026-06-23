@@ -23,7 +23,7 @@ main {
 }
 
 .stat-card.featured {
-  background: #1a4d3a;
+  background: var(--color-brand);
   color: #fff;
 }
 
@@ -148,13 +148,13 @@ main {
 .bar {
   width: 100%;
   max-width: 24px;
-  background: #5f8f7e;
+  background: var(--color-brand);
   border-radius: 4px 4px 0 0;
   transition: background 0.2s;
   position: relative;
 }
 
-.bar:hover { background: #1a4d3a; }
+.bar:hover { background: var(--color-brand-dark); }
 
 /* Tooltip text */
 .bar::after {

@@ -170,7 +170,7 @@
    Doctor Card
    ========================= */
 
-.doctor-card {
+.overlay-doctor-card {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -179,7 +179,7 @@
     border-radius: 12px;
 }
 
-.doctor-avatar {
+.overlay-doctor-avatar {
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -187,24 +187,24 @@
     flex-shrink: 0;
 }
 
-.doctor-avatar img {
+.overlay-doctor-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.doctor-details {
+.overlay-doctor-details {
     flex: 1;
 }
 
-.doctor-name {
+.overlay-doctor-name {
     font-size: 18px;
     font-weight: 700;
     color: #111827;
     margin: 0 0 4px 0;
 }
 
-.doctor-specialty {
+.overlay-doctor-specialty {
     font-size: 14px;
     color: #6b7280;
     margin: 0;
@@ -359,12 +359,12 @@
         font-size: 18px;
     }
 
-    .doctor-card {
+    .overlay-doctor-card {
         flex-direction: column;
         text-align: center;
     }
 
-    .doctor-details {
+    .overlay-doctor-details {
         text-align: center;
     }
 

@@ -370,3 +370,74 @@
 .doctors-list-container::-webkit-scrollbar-thumb:hover {
     background-color: #9ca3af;
 }
+
+/* mode toggle */
+.mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--bg-secondary, #f3f4f6);
+    border-radius: 8px;
+    padding: 4px;
+}
+.mode-btn {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+    transition: all .2s;
+}
+.mode-btn.active {
+    background: white;
+    color: var(--primary, #2563eb);
+    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+
+/* checkbox hari */
+.hari-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+.hari-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .15s;
+}
+.hari-checkbox:has(input:checked) {
+    border-color: var(--primary, #2563eb);
+    background: #eff6ff;
+    color: var(--primary, #2563eb);
+    font-weight: 600;
+}
+
+/* preview box */
+.preview-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+.preview-title { font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; }
+.preview-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.preview-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+.preview-more { background: #e2e8f0; color: #64748b; }
+.preview-count { font-size: 13px; color: #64748b; margin: 0; }

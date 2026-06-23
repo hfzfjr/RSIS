@@ -322,6 +322,21 @@
     border-color: #e74c3c;
 }
 
+/* Tombol Lihat Jadwal */
+.btn-schedule {
+    text-decoration: none;
+    background: transparent;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.btn-schedule:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+}
+
 .no-data {
     text-align: center;
     padding: 48px;

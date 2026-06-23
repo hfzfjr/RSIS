@@ -336,6 +336,7 @@ public class PasienController {
     public String showBookingForm(@AuthenticationPrincipal UserDetails principal,
             @RequestParam(required = false) String jadwalId,
             @RequestParam(required = false) String dokterId,
+            @RequestParam(required = false) String reschedule,
             Model model) {
         // Add navbar attributes
         User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
@@ -347,44 +348,74 @@ public class PasienController {
         model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "booking");
+        model.addAttribute("nomorHp", user.getNomorHp());
+        model.addAttribute("tanggalLahir", pasien != null ? pasien.getTanggalLahir() : null);
+        model.addAttribute("alamat", pasien != null ? pasien.getAlamat() : null);
 
         // Get notifications
         addNotifikasiToModel(userId, model);
 
+        // Handle reschedule - fetch existing appointment
+        if (reschedule != null && !reschedule.isEmpty()) {
+            try {
+                Optional<Appointment> appointmentOpt = appointmentService.getAppointmentById(reschedule);
+                if (appointmentOpt.isPresent()) {
+                    Appointment appointment = appointmentOpt.get();
+                    // Verify the appointment belongs to the logged-in pasien
+                    if (appointment.getUser().getIdUser().equals(userId)) {
+                        model.addAttribute("rescheduleAppointment", appointment);
+                        model.addAttribute("isReschedule", true);
+                    }
+                }
+            } catch (RuntimeException e) {
+                model.addAttribute("error", "Appointment tidak ditemukan untuk reschedule");
+            }
+        }
+
         // If jadwalId is provided, fetch doctor and schedule data
         if (jadwalId != null && !jadwalId.isEmpty()) {
-            Optional<JadwalPraktik> jadwalOpt = appointmentService.getJadwalById(jadwalId);
-            if (jadwalOpt.isPresent()) {
-                JadwalPraktik jadwal = jadwalOpt.get();
-                model.addAttribute("jadwal", jadwal);
-                model.addAttribute("dokter", jadwal.getDokter());
-                model.addAttribute("spesialisasi", jadwal.getDokter().getSpesialisasi());
-                model.addAttribute("poli", jadwal.getDokter().getPoli());
+            try {
+                Optional<JadwalPraktik> jadwalOpt = appointmentService.getJadwalById(jadwalId);
+                if (jadwalOpt.isPresent()) {
+                    JadwalPraktik jadwal = jadwalOpt.get();
+                    model.addAttribute("jadwal", jadwal);
+                    model.addAttribute("dokter", jadwal.getDokter());
+                    model.addAttribute("spesialisasi", jadwal.getDokter().getSpesialisasi());
+                    model.addAttribute("poli", jadwal.getDokter().getPoli());
 
-                // Pre-fill bookingRequest with jadwalId
-                BookingRequestDTO bookingRequest = new BookingRequestDTO();
-                bookingRequest.setJadwalId(jadwalId);
-                model.addAttribute("bookingRequest", bookingRequest);
-            } else {
-                model.addAttribute("error", "Jadwal tidak ditemukan");
+                    // Pre-fill bookingRequest with jadwalId
+                    BookingRequestDTO bookingRequest = new BookingRequestDTO();
+                    bookingRequest.setJadwalId(jadwalId);
+                    model.addAttribute("bookingRequest", bookingRequest);
+                } else {
+                    model.addAttribute("error", "Jadwal tidak ditemukan");
+                    model.addAttribute("bookingRequest", new BookingRequestDTO());
+                }
+            } catch (RuntimeException e) {
+                model.addAttribute("error", e.getMessage());
                 model.addAttribute("bookingRequest", new BookingRequestDTO());
             }
         } else if (dokterId != null && !dokterId.isEmpty()) {
             // If dokterId is provided, fetch doctor data and available schedules
-            Optional<rsis.model.Dokter> dokterOpt = appointmentService.getDokterById(dokterId);
-            if (dokterOpt.isPresent()) {
-                rsis.model.Dokter dokter = dokterOpt.get();
-                model.addAttribute("dokter", dokter);
-                model.addAttribute("spesialisasi", dokter.getSpesialisasi());
-                model.addAttribute("poli", dokter.getPoli());
+            try {
+                Optional<rsis.model.Dokter> dokterOpt = appointmentService.getDokterById(dokterId);
+                if (dokterOpt.isPresent()) {
+                    rsis.model.Dokter dokter = dokterOpt.get();
+                    model.addAttribute("dokter", dokter);
+                    model.addAttribute("spesialisasi", dokter.getSpesialisasi());
+                    model.addAttribute("poli", dokter.getPoli());
 
-                // Fetch available schedules for this doctor
-                List<JadwalPraktik> availableJadwal = appointmentService.getJadwalByDokterId(dokterId);
-                model.addAttribute("availableDates", availableJadwal);
+                    // Fetch available schedules for this doctor
+                    List<JadwalPraktik> availableJadwal = appointmentService.getJadwalByDokterId(dokterId);
+                    model.addAttribute("availableDates", availableJadwal);
 
-                model.addAttribute("bookingRequest", new BookingRequestDTO());
-            } else {
-                model.addAttribute("error", "Dokter tidak ditemukan");
+                    model.addAttribute("bookingRequest", new BookingRequestDTO());
+                } else {
+                    model.addAttribute("error", "Dokter tidak ditemukan");
+                    model.addAttribute("bookingRequest", new BookingRequestDTO());
+                }
+            } catch (RuntimeException e) {
+                model.addAttribute("error", e.getMessage());
                 model.addAttribute("bookingRequest", new BookingRequestDTO());
             }
         } else {
@@ -396,6 +427,7 @@ public class PasienController {
 
     @PostMapping("/booking")
     public String bookAppointment(@ModelAttribute BookingRequestDTO bookingRequest,
+            @RequestParam(required = false) String reschedule,
             @AuthenticationPrincipal UserDetails principal,
             RedirectAttributes redirectAttributes) {
         try {
@@ -408,22 +440,41 @@ public class PasienController {
             // Set pasienId from logged-in user
             bookingRequest.setPasienId(pasien.getIdUser());
 
+            // Handle reschedule - cancel old appointment first
+            if (reschedule != null && !reschedule.isEmpty()) {
+                Optional<Appointment> oldAppointmentOpt = appointmentService.getAppointmentById(reschedule);
+                if (oldAppointmentOpt.isPresent()) {
+                    Appointment oldAppointment = oldAppointmentOpt.get();
+                    // Verify the appointment belongs to the logged-in pasien
+                    if (oldAppointment.getUser().getIdUser().equals(pasien.getIdUser())) {
+                        appointmentService.cancelAppointment(reschedule);
+                    }
+                }
+            }
+
             Appointment appointment = appointmentService.bookAppointment(bookingRequest);
 
             // Send notification to pasien
-            notifikasiService.kirimNotifikasi(pasien.getIdUser(),
-                    "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment(),
-                    "APPOINTMENT_BARU");
+            String message = reschedule != null && !reschedule.isEmpty()
+                    ? "Appointment berhasil dijadwalkan ulang dengan ID: " + appointment.getIdAppointment()
+                    : "Appointment berhasil dibuat dengan ID: " + appointment.getIdAppointment();
+            notifikasiService.kirimNotifikasi(pasien.getIdUser(), message, "APPOINTMENT_BARU");
 
-            redirectAttributes.addFlashAttribute("success", "Appointment berhasil dibuat!");
+            redirectAttributes.addFlashAttribute("success",
+                    reschedule != null && !reschedule.isEmpty() ? "Appointment berhasil dijadwalkan ulang!"
+                            : "Appointment berhasil dibuat!");
             return "redirect:/pasien/jadwal-riwayat";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            // Include jadwalId in redirect to preserve context
+            // Include parameters in redirect to preserve context
+            String redirectUrl = "redirect:/pasien/booking";
             if (bookingRequest.getJadwalId() != null && !bookingRequest.getJadwalId().isEmpty()) {
-                return "redirect:/pasien/booking?jadwalId=" + bookingRequest.getJadwalId();
+                redirectUrl += "?jadwalId=" + bookingRequest.getJadwalId();
             }
-            return "redirect:/pasien/booking";
+            if (reschedule != null && !reschedule.isEmpty()) {
+                redirectUrl += (redirectUrl.contains("?") ? "&" : "?") + "reschedule=" + reschedule;
+            }
+            return redirectUrl;
         }
     }
 

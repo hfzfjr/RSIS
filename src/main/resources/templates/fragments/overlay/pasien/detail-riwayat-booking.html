@@ -176,10 +176,12 @@
 
                         if (appointment.status === 'SELESAI' || appointment.status === 'DIBATALKAN') {
                             btnBookingLagi.style.display = 'inline-flex';
-                            btnBookingLagi.onclick = () => window.location.href = '/pasien/cari-dokter';
+                            const dokterId = appointment.jadwal?.dokter?.idUser || '';
+                            btnBookingLagi.onclick = () => window.location.href = `/pasien/booking?dokterId=${dokterId}`;
                         } else if (appointment.status === 'MENUNGGU' || appointment.status === 'DIKONFIRMASI') {
                             btnReschedule.style.display = 'inline-flex';
-                            btnReschedule.onclick = () => window.location.href = `/pasien/booking/reschedule/${appointment.idAppointment}`;
+                            const dokterId = appointment.jadwal?.dokter?.idUser || '';
+                            btnReschedule.onclick = () => window.location.href = `/pasien/booking?reschedule=${appointment.idAppointment}&dokterId=${dokterId}`;
 
                             // Check if can cancel (H-1 or more)
                             const jadwalDate = new Date(appointment.jadwal?.tanggal);
@@ -190,7 +192,7 @@
 
                             if (diffDays >= 1) {
                                 btnBatal.style.display = 'inline-flex';
-                                btnBatal.onclick = () => cancelAppointment(appointment.idAppointment);
+                                btnBatal.onclick = () => openKonfirmasiBatal(appointment.idAppointment);
                             }
                         }
 

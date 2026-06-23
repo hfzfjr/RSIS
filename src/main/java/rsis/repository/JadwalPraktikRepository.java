@@ -22,12 +22,12 @@ public interface JadwalPraktikRepository extends JpaRepository<JadwalPraktik, St
 
     List<JadwalPraktik> findByDokter_IdUserAndHari(String idUser, String hari);
 
-    @Query("SELECT j FROM JadwalPraktik j WHERE j.dokter.idUser = :dokterId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
+    @Query("SELECT j FROM JadwalPraktik j WHERE (j.isActive IS NULL OR j.isActive = true) AND j.dokter.idUser = :dokterId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
     List<JadwalPraktik> findAvailableJadwalByDokterId(@Param("dokterId") String dokterId);
 
-    @Query("SELECT j FROM JadwalPraktik j WHERE j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
+    @Query("SELECT j FROM JadwalPraktik j WHERE (j.isActive IS NULL OR j.isActive = true) AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
     List<JadwalPraktik> findAllAvailableJadwal();
 
-    @Query("SELECT j FROM JadwalPraktik j WHERE j.dokter.poli.idPoli = :poliId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
+    @Query("SELECT j FROM JadwalPraktik j WHERE (j.isActive IS NULL OR j.isActive = true) AND j.dokter.poli.idPoli = :poliId AND j.sisaKuota > 0 AND j.statusKetersediaan = 'TERSEDIA' ORDER BY j.hari ASC, j.jamMulai ASC")
     List<JadwalPraktik> findAvailableJadwalByPoliId(@Param("poliId") String poliId);
 }

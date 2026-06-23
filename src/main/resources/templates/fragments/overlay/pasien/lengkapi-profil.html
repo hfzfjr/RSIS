@@ -1,0 +1,61 @@
+<div th:fragment="lengkapi-profil-overlay" class="lengkapi-profil-overlay" id="lengkapiProfilOverlay">
+    <div class="lengkapi-profil-content">
+        <div class="lengkapi-profil-header">
+            <div class="lengkapi-profil-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+            </div>
+            <h3 class="lengkapi-profil-title">Lengkapi Profil Anda</h3>
+            <button class="lengkapi-profil-close" id="closeLengkapiProfil">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="lengkapi-profil-body">
+            <p class="lengkapi-profil-message">
+                Untuk melanjutkan booking, silakan lengkapi data profil Anda terlebih dahulu.
+                Data yang diperlukan:
+            </p>
+            <ul class="lengkapi-profil-list">
+                <li class="lengkapi-profil-item">
+                    <span class="lengkapi-profil-item-icon"
+                        th:classappend="${nomorHp != null and !nomorHp.isEmpty()} ? 'lengkapi-profil-item-icon-success' : 'lengkapi-profil-item-icon-error'">
+                        <span th:if="${nomorHp == null or nomorHp.isEmpty()}">✗</span>
+                        <span th:if="${nomorHp != null and !nomorHp.isEmpty()}">✓</span>
+                    </span>
+                    Nomor Telepon
+                </li>
+                <li class="lengkapi-profil-item">
+                    <span class="lengkapi-profil-item-icon"
+                        th:classappend="${tanggalLahir != null} ? 'lengkapi-profil-item-icon-success' : 'lengkapi-profil-item-icon-error'">
+                        <span th:if="${tanggalLahir == null}">✗</span>
+                        <span th:if="${tanggalLahir != null}">✓</span>
+                    </span>
+                    Tanggal Lahir
+                </li>
+                <li class="lengkapi-profil-item">
+                    <span class="lengkapi-profil-item-icon"
+                        th:classappend="${alamat != null and !alamat.isEmpty()} ? 'lengkapi-profil-item-icon-success' : 'lengkapi-profil-item-icon-error'">
+                        <span th:if="${alamat == null or alamat.isEmpty()}">✗</span>
+                        <span th:if="${alamat != null and !alamat.isEmpty()}">✓</span>
+                    </span>
+                    Alamat Lengkap
+                </li>
+            </ul>
+            <div class="lengkapi-profil-actions">
+                <button class="lengkapi-profil-btn lengkapi-profil-btn-secondary" id="cancelLengkapiProfil">
+                    Nanti Saja
+                </button>
+                <a href="/pasien/profil" class="lengkapi-profil-btn lengkapi-profil-btn-primary">
+                    Lengkapi Profil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

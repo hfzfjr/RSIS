@@ -234,10 +234,9 @@ public class AdminRSService {
     }
 
     public List<Dokter> getAllDokter() {
-        List<Dokter> dokters = dokterRepository.findAll();
-        // Populate transient fields from users table and filter only active doctors
+        List<Dokter> dokters = dokterRepository.findAllActive();
+        // Populate transient fields from users table
         return dokters.stream()
-                .filter(dokter -> dokter.getIsActive() != null && dokter.getIsActive())
                 .map(dokter -> {
                     userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
                         dokter.setNama(user.getNama());
@@ -346,9 +345,8 @@ public class AdminRSService {
     }
 
     public List<Poli> getAllPoli() {
-        List<Poli> allPoli = poliRepository.findAll();
+        List<Poli> allPoli = poliRepository.findAllActive();
         return allPoli.stream()
-                .filter(p -> p.getIsActive() == null || p.getIsActive())
                 .map(p -> {
                     long count = dokterRepository.countActiveDoctorsByPoliId(p.getIdPoli());
                     p.setJumlahDokter((int) count);
@@ -539,12 +537,11 @@ public class AdminRSService {
     }
 
     public List<JadwalPraktik> getAllJadwal() {
-        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findAll();
-        List<JadwalPraktik> activeJadwals = jadwals.stream()
+        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findAll().stream()
                 .filter(j -> j.getIsActive() == null || j.getIsActive())
                 .toList();
         // Populate transient fields for each active jadwal's dokter
-        for (JadwalPraktik jadwal : activeJadwals) {
+        for (JadwalPraktik jadwal : jadwals) {
             if (jadwal.getDokter() != null) {
                 Dokter dokter = jadwal.getDokter();
                 userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
@@ -555,7 +552,7 @@ public class AdminRSService {
                 });
             }
         }
-        return activeJadwals;
+        return jadwals;
     }
 
     // Statistik Methods (as per class diagram AdminRS)

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/css/pasien/booking.css" />
   <link rel="stylesheet" href="/css/fragments/jadwal-dokter.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/pasien/konfirmasi-booking.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/pasien/lengkapi-profil.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -94,6 +95,9 @@
   <!-- Konfirmasi Booking Overlay -->
   <div th:replace="~{fragments/overlay/pasien/konfirmasi-booking}"></div>
 
+  <!-- Lengkapi Profil Overlay -->
+  <div th:replace="~{fragments/overlay/pasien/lengkapi-profil :: lengkapi-profil-overlay}"></div>
+
   <script th:inline="javascript">
     /*<![CDATA[*/
 
@@ -103,7 +107,20 @@
     let selectedSpesialisasiForBooking = /*[[${spesialisasi}]]*/ null;
     let selectedPoliForBooking = /*[[${poli}]]*/ null;
 
+    // Profile data from server
+    const profileData = {
+      nomorHp: /*[[${nomorHp}]]*/ null,
+      tanggalLahir: /*[[${tanggalLahir}]]*/ null,
+      alamat: /*[[${alamat}]]*/ null
+    };
+
     function showKonfirmasiBooking() {
+      // Validate profile data first
+      if (!profileData.nomorHp || !profileData.tanggalLahir || !profileData.alamat) {
+        showLengkapiProfilOverlay();
+        return;
+      }
+
       const jadwalIdInput = document.getElementById('jadwalId');
       const catatanInput = document.getElementById('catatan');
 
@@ -147,6 +164,43 @@
         );
       }
     }
+
+    function showLengkapiProfilOverlay() {
+      const overlay = document.getElementById('lengkapiProfilOverlay');
+      if (overlay) {
+        overlay.classList.add('active');
+      }
+    }
+
+    function hideLengkapiProfilOverlay() {
+      const overlay = document.getElementById('lengkapiProfilOverlay');
+      if (overlay) {
+        overlay.classList.remove('active');
+      }
+    }
+
+    // Initialize lengkapi-profil overlay event listeners
+    document.addEventListener('DOMContentLoaded', function () {
+      const closeBtn = document.getElementById('closeLengkapiProfil');
+      const cancelBtn = document.getElementById('cancelLengkapiProfil');
+      const overlay = document.getElementById('lengkapiProfilOverlay');
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', hideLengkapiProfilOverlay);
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', hideLengkapiProfilOverlay);
+      }
+
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) {
+            hideLengkapiProfilOverlay();
+          }
+        });
+      }
+    });
 
     /*]]>*/
   </script>

@@ -36,15 +36,21 @@ public class JadwalPraktikService {
     private AppointmentRepository appointmentRepository;
 
     public List<JadwalPraktik> getAllJadwal() {
-        return jadwalPraktikRepository.findAll();
+        return jadwalPraktikRepository.findAll().stream()
+                .filter(j -> j.getIsActive() == null || j.getIsActive())
+                .toList();
     }
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        return jadwalPraktikRepository.findByDokter_IdUser(dokterId);
+        return jadwalPraktikRepository.findByDokter_IdUser(dokterId).stream()
+                .filter(j -> j.getIsActive() == null || j.getIsActive())
+                .toList();
     }
 
     public List<JadwalPraktik> getJadwalByPoliId(String poliId) {
-        return jadwalPraktikRepository.findByDokter_Poli_IdPoli(poliId);
+        return jadwalPraktikRepository.findByDokter_Poli_IdPoli(poliId).stream()
+                .filter(j -> j.getIsActive() == null || j.getIsActive())
+                .toList();
     }
 
     public List<JadwalPraktik> getAvailableJadwal() {

@@ -266,12 +266,12 @@
 }
 
 .btn-primary {
-    background: #022c22; /* very dark green/teal */
+    background: var(--color-brand); /* very dark green/teal */
     color: #ffffff;
 }
 
 .btn-primary:hover {
-    background: #064e3b;
+    background: var(--color-brand-dark);
     box-shadow: 0 4px 12px rgba(2, 44, 34, 0.2);
 }
 

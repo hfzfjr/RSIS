@@ -1,5 +1,152 @@
 package rsis.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import rsis.model.AdminRS;
+import rsis.model.Dokter;
+import rsis.model.Poli;
+import rsis.model.User;
+import rsis.repository.AdminRSRepository;
+import rsis.repository.UserRepository;
+import rsis.service.AdminRSService;
+import rsis.service.NotifikasiService;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/admin")
 public class PoliController {
-    
+
+    @Autowired
+    private AdminRSService adminRSService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AdminRSRepository adminRSRepository;
+
+    @Autowired
+    private NotifikasiService notifikasiService;
+
+    private void addNotifikasiToModel(String userId, Model model) {
+        try {
+            var notifikasis = notifikasiService.getNotifikasiByPenerimaId(userId);
+            model.addAttribute("notifikasi", notifikasis);
+        } catch (Exception e) {
+            model.addAttribute("notifikasi", List.of());
+        }
+    }
+
+    // Poli Management
+    @GetMapping("/kelola-poli")
+    public String kelolaPoli(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
+        // Always set basic user attributes
+        model.addAttribute("nama", user.getNama());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("activeMenu", "kelola-poli");
+
+        if (admin != null) {
+            // Get notifications
+            addNotifikasiToModel(admin.getIdUser(), model);
+        } else {
+            // Ensure notifikasi is always set even if admin is null
+            model.addAttribute("notifikasi", List.of());
+        }
+        List<Poli> polis = adminRSService.getAllPoli();
+        model.addAttribute("polis", polis);
+        model.addAttribute("activeMenu", "kelola-poli");
+        return "admin/kelola-poli";
+    }
+
+    @PostMapping("/poli/create")
+    public String createPoli(@ModelAttribute Poli poli,
+            @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
+            RedirectAttributes redirectAttributes) {
+        try {
+            adminRSService.createPoli(poli, dokterIds);
+            redirectAttributes.addFlashAttribute("success", "Poli berhasil ditambahkan!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-poli";
+    }
+
+    @GetMapping("/poli/unassigned-doctors")
+    @ResponseBody
+    public List<Dokter> getUnassignedDoctors() {
+        try {
+            return adminRSService.getDokterTanpaPoli();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    @GetMapping("/poli/all-doctors")
+    @ResponseBody
+    public List<Dokter> getAllDoctors() {
+        try {
+            return adminRSService.getAllDokter();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    @PostMapping("/poli/update")
+    public String updatePoli(@ModelAttribute Poli poli,
+            @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
+            RedirectAttributes redirectAttributes) {
+        try {
+            adminRSService.updatePoli(poli, dokterIds);
+            redirectAttributes.addFlashAttribute("success", "Poli berhasil diperbarui!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-poli";
+    }
+
+    @GetMapping("/poli/detail/{id}")
+    @ResponseBody
+    public java.util.Map<String, Object> getPoliDetail(@PathVariable String id) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            Poli poli = adminRSService.getAllPoli().stream()
+                    .filter(p -> p.getIdPoli().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
+            List<Dokter> assignedDoctors = adminRSService.getDokterByPoli(id);
+            List<Dokter> unassignedDoctors = adminRSService.getDokterTanpaPoli();
+
+            response.put("success", true);
+            response.put("poli", poli);
+            response.put("assignedDoctors", assignedDoctors);
+            response.put("unassignedDoctors", unassignedDoctors);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+    @PostMapping("/poli/delete/{id}")
+    public String deletePoli(@PathVariable String id,
+            RedirectAttributes redirectAttributes) {
+        try {
+            adminRSService.deletePoli(id);
+            redirectAttributes.addFlashAttribute("success", "Poli berhasil dihapus!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/kelola-poli";
+    }
 }

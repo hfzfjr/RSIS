@@ -67,7 +67,7 @@
         <div class="booking-footer">
           <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-          <form th:action="@{/pasien/booking}" th:object="${bookingRequest}" method="post">
+          <form th:action="@{/appointment/booking}" th:object="${bookingRequest}" method="post">
             <input type="hidden" id="jadwalId" th:field="*{jadwalId}"
               th:value="${jadwal != null ? jadwal.idJadwal : ''}" />
 

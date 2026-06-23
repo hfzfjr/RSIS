@@ -119,7 +119,7 @@
         /*<![CDATA[*/
 
         function openOverlay(appointmentId) {
-            fetch(`/pasien/appointment/detail/${appointmentId}`)
+            fetch(`/appointment/detail/${appointmentId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -177,11 +177,11 @@
                         if (appointment.status === 'SELESAI' || appointment.status === 'DIBATALKAN') {
                             btnBookingLagi.style.display = 'inline-flex';
                             const dokterId = appointment.jadwal?.dokter?.idUser || '';
-                            btnBookingLagi.onclick = () => window.location.href = `/pasien/booking?dokterId=${dokterId}`;
+                            btnBookingLagi.onclick = () => window.location.href = `/appointment/booking?dokterId=${dokterId}`;
                         } else if (appointment.status === 'MENUNGGU' || appointment.status === 'DIKONFIRMASI') {
                             btnReschedule.style.display = 'inline-flex';
                             const dokterId = appointment.jadwal?.dokter?.idUser || '';
-                            btnReschedule.onclick = () => window.location.href = `/pasien/booking?reschedule=${appointment.idAppointment}&dokterId=${dokterId}`;
+                            btnReschedule.onclick = () => window.location.href = `/appointment/booking?reschedule=${appointment.idAppointment}&dokterId=${dokterId}`;
 
                             // Check if can cancel (H-1 or more)
                             const jadwalDate = new Date(appointment.jadwal?.tanggal);

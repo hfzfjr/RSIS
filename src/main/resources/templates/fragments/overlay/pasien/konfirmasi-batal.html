@@ -64,7 +64,7 @@
             currentCancelAppointmentId = appointmentId;
 
             // Fetch appointment details to show summary
-            fetch(`/pasien/appointment/detail/${appointmentId}`)
+            fetch(`/appointment/detail/${appointmentId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

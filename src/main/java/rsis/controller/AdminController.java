@@ -360,22 +360,6 @@ public class AdminController {
         return "redirect:/admin/kelola-jadwal";
     }
 
-    // Laporan
-    @GetMapping("/laporan-bulanan")
-    public String laporanBulanan(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
-        model.addAttribute("role", user.getRole());
-        model.addAttribute("activeMenu", "laporan");
-
-        // This will be handled by LaporanController
-        return "redirect:/laporan";
-    }
-
     @GetMapping("/profil")
     public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar

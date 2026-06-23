@@ -58,7 +58,11 @@
           <h2 class="rs-section-title">Jadwal Praktik Anda</h2>
           <div class="rs-schedule-panel">
             <div class="rs-timeline" id="timeline-container">
-               </div>
+            </div>
+            <div class="rs-timeline-footer" id="timeline-footer" style="display: none;">
+              <span class="rs-footer-text" id="timeline-footer-text"></span>
+              <a href="#" class="rs-footer-link" id="timeline-show-more">Lihat Semua</a>
+            </div>
             <a href="/dokter/jadwal-praktik" class="rs-btn rs-btn-wide" style="text-decoration: none;">
               <i class="bi bi-calendar-check"></i> Kelola Jadwal
             </a>
@@ -154,6 +158,7 @@
           const rows = doc.querySelectorAll('.rs-table tbody tr');
           let timelineHTML = '';
           let countSesi = 0;
+          const maxVisible = 3;
 
           rows.forEach((row, index) => {
             const cols = row.querySelectorAll('td');
@@ -161,10 +166,12 @@
             countSesi++;
             const day = cols[0].textContent.trim();
             const time = cols[1].textContent.trim();
-            const isActive = index === 0 ? 'active' : '';
+            const isActive = countSesi === 1 ? 'active' : '';
+
+            const displayStyle = countSesi > maxVisible ? 'style="display: none;" class="rs-timeline-item hidden-timeline-item"' : 'class="rs-timeline-item"';
 
             timelineHTML += `
-              <div class="rs-timeline-item">
+              <div ${displayStyle}>
                 <div class="rs-timeline-dot ${isActive}"></div>
                 <div class="rs-timeline-content">
                   <div class="rs-timeline-title">Hari ${day}</div>
@@ -174,7 +181,16 @@
           });
 
           document.getElementById('count-active-sessions').textContent = countSesi;
-          if (countSesi > 0) document.getElementById('timeline-container').innerHTML = timelineHTML;
+          if (countSesi > 0) {
+            document.getElementById('timeline-container').innerHTML = timelineHTML;
+          }
+
+          // Show "Lihat Semua" button if there are more than maxVisible items
+          if (countSesi > maxVisible) {
+            const remaining = countSesi - maxVisible;
+            document.getElementById('timeline-footer-text').textContent = `+ ${remaining} Jadwal berikutnya`;
+            document.getElementById('timeline-footer').style.display = 'flex';
+          }
         }).catch(err => console.warn(err));
     });
 
@@ -195,6 +211,27 @@
         form.append(csrf, resInput); document.body.appendChild(form); form.submit();
       }
     }
+
+    // Toggle show more for timeline
+    document.getElementById('timeline-show-more').addEventListener('click', function(e) {
+      e.preventDefault();
+      const showMoreBtn = document.getElementById('timeline-show-more');
+      const footerText = document.getElementById('timeline-footer-text');
+      const hiddenItems = document.querySelectorAll('#timeline-container .hidden-timeline-item');
+      
+      const isCurrentlyHidden = hiddenItems.length > 0 && hiddenItems[0].style.display === 'none';
+
+      if (isCurrentlyHidden) {
+        hiddenItems.forEach(item => item.style.display = 'block');
+        showMoreBtn.textContent = 'Tutup';
+        footerText.textContent = '';
+      } else {
+        hiddenItems.forEach(item => item.style.display = 'none');
+        showMoreBtn.textContent = 'Lihat Semua';
+        const remaining = hiddenItems.length;
+        footerText.textContent = `+ ${remaining} Jadwal berikutnya`;
+      }
+    });
   </script>
 </body>
 </html>

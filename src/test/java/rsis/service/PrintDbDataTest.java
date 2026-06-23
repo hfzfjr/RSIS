@@ -27,6 +27,9 @@ class PrintDbDataTest {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private rsis.repository.UserRepository userRepository;
+
     @Test
     void testOutofSyncFullSchedules() {
         System.out.println("=== VERIFYING ALL SCHEDULE QUOTAS ===");
@@ -79,6 +82,19 @@ class PrintDbDataTest {
             e.printStackTrace();
         }
         System.out.println("======================================");
+    }
+
+    @Test
+    void printUsers() {
+        System.out.println("=== USERS IN DB ===");
+        try {
+            userRepository.findAll().forEach(u -> {
+                System.out.println("Email: " + u.getEmail() + ", Role: " + u.getRole());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("==========================");
     }
 }
 

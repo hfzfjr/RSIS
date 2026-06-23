@@ -3,9 +3,16 @@
    ========================= */
 
 .jadwal-dokter-container {
-    width: 100%;
-    max-width: 800px;
+    min-width: 100%;
     background: transparent;
+}
+
+.jadwal-dokter-container.pasien {
+    max-width: 800px;
+}
+
+.jadwal-dokter-container.dokter {
+    max-width: 800px;
 }
 
 /* =========================
@@ -191,12 +198,40 @@
     opacity: 0.7;
 }
 
+/* Doctor-only: pending appointment (MENUNGGU) */
+.schedule-card.card-pending {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.schedule-card.card-pending .card-time {
+    color: #92400e;
+}
+
+/* Doctor card: patient name row */
+.card-pasien-name {
+    font-weight: 600 !important;
+    color: #111827 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Pending badge (amber) */
+.badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
 .card-time {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #111827;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .schedule-card.card-past .card-time {
@@ -204,9 +239,12 @@
 }
 
 .card-poli {
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-footer {

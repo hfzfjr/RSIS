@@ -10,6 +10,7 @@ import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,9 @@ public class AdminRSService {
     // ====================
     public Long getTotalPasienHariIni() {
         LocalDate today = LocalDate.now();
-        return appointmentRepository.countConfirmedAppointmentsByDate(today);
+        return appointmentRepository.countConfirmedAppointmentsByDate(
+                today.atStartOfDay(),
+                today.plusDays(1).atStartOfDay());
     }
 
     public Long getTotalPasienBulanIni() {
@@ -46,7 +49,9 @@ public class AdminRSService {
 
     public Long getTotalPasienBulanIni(int bulan, int tahun) {
         YearMonth month = YearMonth.of(tahun, bulan);
-        return appointmentRepository.countConfirmedAppointmentsByMonth(month.atDay(1), month.plusMonths(1).atDay(1));
+        return appointmentRepository.countConfirmedAppointmentsByMonth(
+                month.atDay(1).atStartOfDay(),
+                month.plusMonths(1).atDay(1).atStartOfDay());
     }
 
     public String getDokterTersibuk() {
@@ -110,13 +115,14 @@ public class AdminRSService {
 
     public Map<String, Long> getPasienPerHari(int bulan, int tahun) {
         YearMonth month = YearMonth.of(tahun, bulan);
-        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(month.atDay(1),
-                month.plusMonths(1).atDay(1));
+        List<Object[]> results = appointmentRepository.findPatientsPerDayByMonth(
+                month.atDay(1).atStartOfDay(),
+                month.plusMonths(1).atDay(1).atStartOfDay());
         Map<String, Long> pasienPerHari = new HashMap<>();
         for (Object[] result : results) {
-            String date = result[0].toString();
+            LocalDateTime date = (LocalDateTime) result[0];
             Long count = ((Number) result[1]).longValue();
-            pasienPerHari.put(date, count);
+            pasienPerHari.put(date.toLocalDate().toString(), count);
         }
         return pasienPerHari;
     }
@@ -166,13 +172,15 @@ public class AdminRSService {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
+        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(
+                startDate.atStartOfDay(),
+                endDate.atTime(23, 59, 59));
 
         Map<LocalDate, Long> dateCountMap = new HashMap<>();
         for (Object[] result : results) {
-            LocalDate date = (LocalDate) result[0];
+            LocalDateTime date = (LocalDateTime) result[0];
             Long count = ((Number) result[1]).longValue();
-            dateCountMap.put(date, count);
+            dateCountMap.put(date.toLocalDate(), count);
         }
 
         long maxCount = 0;
@@ -199,7 +207,9 @@ public class AdminRSService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(6);
 
-        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
+        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(
+                startDate.atStartOfDay(),
+                endDate.atTime(23, 59, 59));
         List<VisitStatistics> stats = new java.util.ArrayList<>();
 
         // Find maximum count for percentage calculation
@@ -219,8 +229,8 @@ public class AdminRSService {
 
             long count = 0;
             for (Object[] result : results) {
-                LocalDate resultDate = (LocalDate) result[0];
-                if (resultDate.equals(date)) {
+                LocalDateTime resultDate = (LocalDateTime) result[0];
+                if (resultDate.toLocalDate().equals(date)) {
                     count = ((Number) result[1]).longValue();
                     break;
                 }
@@ -235,7 +245,9 @@ public class AdminRSService {
 
     public Long getTotalAppointmentHariIni() {
         LocalDate today = LocalDate.now();
-        return appointmentRepository.countTotalAppointmentsByDate(today);
+        return appointmentRepository.countTotalAppointmentsByDate(
+                today.atStartOfDay(),
+                today.plusDays(1).atStartOfDay());
     }
 
     public Long getAppointmentPending() {
@@ -247,15 +259,17 @@ public class AdminRSService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusWeeks(3).with(java.time.DayOfWeek.MONDAY);
 
-        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(startDate, endDate);
+        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(
+                startDate.atStartOfDay(),
+                endDate.atTime(23, 59, 59));
         List<VisitStatistics> stats = new java.util.ArrayList<>();
 
         // Group by week
         Map<Integer, Long> weeklyCounts = new java.util.HashMap<>();
         for (Object[] result : results) {
-            LocalDate date = (LocalDate) result[0];
+            LocalDateTime date = (LocalDateTime) result[0];
             Long count = ((Number) result[1]).longValue();
-            int weekNumber = date.get(java.time.temporal.WeekFields.ISO.weekOfYear());
+            int weekNumber = date.toLocalDate().get(java.time.temporal.WeekFields.ISO.weekOfYear());
             weeklyCounts.put(weekNumber, weeklyCounts.getOrDefault(weekNumber, 0L) + count);
         }
 
@@ -277,7 +291,9 @@ public class AdminRSService {
     }
 
     public Long getScheduledDoctorsCountByDate(LocalDate date) {
-        return appointmentRepository.countDistinctDoctorsByTanggalBooking(date);
+        return appointmentRepository.countDistinctDoctorsByTanggalBooking(
+                date.atStartOfDay(),
+                date.plusDays(1).atStartOfDay());
     }
 
 }

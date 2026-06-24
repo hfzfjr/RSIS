@@ -181,7 +181,8 @@
                         } else if (appointment.status === 'MENUNGGU' || appointment.status === 'DIKONFIRMASI') {
                             btnReschedule.style.display = 'inline-flex';
                             const dokterId = appointment.jadwal?.dokter?.idUser || '';
-                            btnReschedule.onclick = () => window.location.href = `/appointment/booking?reschedule=${appointment.idAppointment}&dokterId=${dokterId}`;
+                            const jadwalIdLama = appointment.jadwal?.idJadwal || '';
+                            btnReschedule.onclick = () => window.location.href = `/appointment/booking?reschedule=${appointment.idAppointment}&dokterId=${dokterId}&jadwalId=${jadwalIdLama}`;
 
                             // Check if can cancel (H-1 or more)
                             const jadwalDate = new Date(appointment.jadwal?.tanggal);

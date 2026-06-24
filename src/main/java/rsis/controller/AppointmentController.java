@@ -75,6 +75,7 @@ public class AppointmentController {
         addNotifikasiToModel(userId, model);
 
         // Handle reschedule - fetch existing appointment
+        Appointment rescheduleAppointmentEntity = null;
         if (reschedule != null && !reschedule.isEmpty()) {
             try {
                 Optional<Appointment> appointmentOpt = appointmentService.getAppointmentById(reschedule);
@@ -82,6 +83,7 @@ public class AppointmentController {
                     Appointment appointment = appointmentOpt.get();
                     // Verify the appointment belongs to the logged-in pasien
                     if (appointment.getUser().getIdUser().equals(userId)) {
+                        rescheduleAppointmentEntity = appointment;
                         model.addAttribute("rescheduleAppointment", appointment);
                         model.addAttribute("isReschedule", true);
                     }
@@ -105,6 +107,10 @@ public class AppointmentController {
                     // Pre-fill bookingRequest with jadwalId
                     BookingRequestDTO bookingRequest = new BookingRequestDTO();
                     bookingRequest.setJadwalId(jadwalId);
+                    // Prefill catatan from reschedule appointment if available
+                    if (rescheduleAppointmentEntity != null && bookingRequest.getCatatan() == null) {
+                        bookingRequest.setCatatan(rescheduleAppointmentEntity.getCatatan());
+                    }
                     model.addAttribute("bookingRequest", bookingRequest);
                 } else {
                     model.addAttribute("error", "Jadwal tidak ditemukan");
@@ -128,7 +134,12 @@ public class AppointmentController {
                     List<JadwalPraktik> availableJadwal = appointmentService.getJadwalByDokterId(dokterId);
                     model.addAttribute("availableDates", availableJadwal);
 
-                    model.addAttribute("bookingRequest", new BookingRequestDTO());
+                    BookingRequestDTO bookingRequest = new BookingRequestDTO();
+                    // Prefill catatan from reschedule appointment if available
+                    if (rescheduleAppointmentEntity != null && bookingRequest.getCatatan() == null) {
+                        bookingRequest.setCatatan(rescheduleAppointmentEntity.getCatatan());
+                    }
+                    model.addAttribute("bookingRequest", bookingRequest);
                 } else {
                     model.addAttribute("error", "Dokter tidak ditemukan");
                     model.addAttribute("bookingRequest", new BookingRequestDTO());
@@ -138,7 +149,12 @@ public class AppointmentController {
                 model.addAttribute("bookingRequest", new BookingRequestDTO());
             }
         } else {
-            model.addAttribute("bookingRequest", new BookingRequestDTO());
+            BookingRequestDTO bookingRequest = new BookingRequestDTO();
+            // Prefill catatan from reschedule appointment if available
+            if (rescheduleAppointmentEntity != null && bookingRequest.getCatatan() == null) {
+                bookingRequest.setCatatan(rescheduleAppointmentEntity.getCatatan());
+            }
+            model.addAttribute("bookingRequest", bookingRequest);
         }
 
         return "pasien/booking";
@@ -159,7 +175,10 @@ public class AppointmentController {
             // Set pasienId from logged-in user
             bookingRequest.setPasienId(pasien.getIdUser());
 
-            // Handle reschedule - cancel old appointment first
+            // Book new appointment first
+            Appointment appointment = appointmentService.bookAppointment(bookingRequest);
+
+            // Handle reschedule - cancel old appointment after successful booking
             if (reschedule != null && !reschedule.isEmpty()) {
                 Optional<Appointment> oldAppointmentOpt = appointmentService.getAppointmentById(reschedule);
                 if (oldAppointmentOpt.isPresent()) {
@@ -170,8 +189,6 @@ public class AppointmentController {
                     }
                 }
             }
-
-            Appointment appointment = appointmentService.bookAppointment(bookingRequest);
 
             // Send notification to pasien
             String message = reschedule != null && !reschedule.isEmpty()

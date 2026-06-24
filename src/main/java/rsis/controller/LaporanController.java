@@ -103,4 +103,22 @@ public class LaporanController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/bulanan/data")
+    @ResponseBody
+    public java.util.Map<String, Object> getLaporanBulananData(
+            @RequestParam int bulan,
+            @RequestParam int tahun) {
+        try {
+            return laporanBulananService.getLaporanBulanan(bulan, tahun);
+        } catch (Exception e) {
+            java.util.Map<String, Object> error = new java.util.HashMap<>();
+            error.put("totalPasien", 0);
+            error.put("totalAppointment", 0);
+            error.put("labelPeriode", "");
+            error.put("visitStats", java.util.Collections.emptyList());
+            error.put("busiestDoctors", java.util.Collections.emptyList());
+            return error;
+        }
+    }
 }

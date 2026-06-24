@@ -40,16 +40,21 @@ public class PoliService {
         // Associate new doctors to this poli
         if (dokterIds != null) {
             for (String docId : dokterIds) {
-                dokterRepository.findById(docId).ifPresent(d -> {
-                    d.setPoli(savedPoli);
-                    dokterRepository.save(d);
-                });
+                if (docId != null) {
+                    dokterRepository.findById(docId).ifPresent(d -> {
+                        d.setPoli(savedPoli);
+                        dokterRepository.save(d);
+                    });
+                }
             }
         }
     }
 
     @Transactional
     public Poli updatePoli(Poli poli) {
+        if (poli == null) {
+            throw new RuntimeException("Poli cannot be null");
+        }
         return poliRepository.save(poli);
     }
 
@@ -67,7 +72,11 @@ public class PoliService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public void updatePoli(Poli poli, List<String> dokterIds) {
+        if (poli == null || poli.getIdPoli() == null) {
+            throw new RuntimeException("Poli or Poli ID cannot be null");
+        }
         Poli existingPoli = poliRepository.findById(poli.getIdPoli())
                 .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
         existingPoli.setNamaPoli(poli.getNamaPoli());
@@ -86,18 +95,23 @@ public class PoliService {
         // Associate new doctors to this poli
         if (dokterIds != null) {
             for (String docId : dokterIds) {
-                dokterRepository.findById(docId).ifPresent(d -> {
-                    if (d.getPoli() == null || !d.getPoli().getIdPoli().equals(poli.getIdPoli())) {
-                        d.setPoli(existingPoli);
-                        dokterRepository.save(d);
-                    }
-                });
+                if (docId != null) {
+                    dokterRepository.findById(docId).ifPresent(d -> {
+                        if (d.getPoli() == null || !d.getPoli().getIdPoli().equals(poli.getIdPoli())) {
+                            d.setPoli(existingPoli);
+                            dokterRepository.save(d);
+                        }
+                    });
+                }
             }
         }
     }
 
     @Transactional
     public void deletePoli(String poliId) {
+        if (poliId == null) {
+            throw new RuntimeException("Poli ID cannot be null");
+        }
         Poli existingPoli = poliRepository.findById(poliId)
                 .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
         existingPoli.setIsActive(false);
@@ -123,6 +137,9 @@ public class PoliService {
     }
 
     public Optional<Poli> getPoliById(String poliId) {
+        if (poliId == null) {
+            return Optional.empty();
+        }
         return poliRepository.findById(poliId);
     }
 

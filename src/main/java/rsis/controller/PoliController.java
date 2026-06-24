@@ -13,7 +13,6 @@ import rsis.model.Poli;
 import rsis.model.User;
 import rsis.repository.AdminRSRepository;
 import rsis.repository.UserRepository;
-import rsis.service.AdminRSService;
 import rsis.service.DokterService;
 import rsis.service.PoliService;
 import rsis.service.NotifikasiService;
@@ -23,9 +22,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class PoliController {
-
-    @Autowired
-    private AdminRSService adminRSService;
 
     @Autowired
     private PoliService poliService;

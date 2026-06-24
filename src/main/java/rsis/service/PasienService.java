@@ -53,12 +53,15 @@ public class PasienService {
                     return true;
                 })
                 .map(dokter -> {
-                    userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-                        dokter.setNama(user.getNama());
-                        dokter.setEmail(user.getEmail());
-                        dokter.setPassword(user.getPassword());
-                        dokter.setRole(user.getRole());
-                    });
+                    String userId = dokter.getIdUser();
+                    if (userId != null) {
+                        userRepository.findById(userId).ifPresent(user -> {
+                            dokter.setNama(user.getNama());
+                            dokter.setEmail(user.getEmail());
+                            dokter.setPassword(user.getPassword());
+                            dokter.setRole(user.getRole());
+                        });
+                    }
                     return dokter;
                 }).toList();
     }
@@ -72,8 +75,12 @@ public class PasienService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public Pasien updateProfil(String pasienId, String namaLengkap, String nomorRekamMedis, String tanggalLahir,
             String alamat) {
+        if (pasienId == null) {
+            throw new RuntimeException("Pasien ID cannot be null");
+        }
         Optional<Pasien> pasienOpt = pasienRepository.findById(pasienId);
         if (pasienOpt.isEmpty()) {
             throw new RuntimeException("Pasien not found");
@@ -97,6 +104,9 @@ public class PasienService {
     }
 
     public Optional<Pasien> getPasienById(String pasienId) {
+        if (pasienId == null) {
+            return Optional.empty();
+        }
         return pasienRepository.findById(pasienId);
     }
 
@@ -111,6 +121,9 @@ public class PasienService {
 
     @Transactional
     public Pasien createPasien(Pasien pasien) {
+        if (pasien == null) {
+            throw new RuntimeException("Pasien cannot be null");
+        }
         pasien.setRole("PASIEN");
         return pasienRepository.save(pasien);
     }

@@ -38,7 +38,11 @@ public class AppointmentService {
     @Transactional
     public Appointment bookAppointment(BookingRequestDTO bookingRequest) {
         // Validate pasien exists and profile is complete
-        Optional<Pasien> pasienOpt = pasienRepository.findById(bookingRequest.getPasienId());
+        String pasienId = bookingRequest.getPasienId();
+        if (pasienId == null) {
+            throw new RuntimeException("Pasien ID cannot be null");
+        }
+        Optional<Pasien> pasienOpt = pasienRepository.findById(pasienId);
         if (pasienOpt.isEmpty()) {
             throw new RuntimeException("Pasien not found");
         }
@@ -49,7 +53,11 @@ public class AppointmentService {
         }
 
         // Validate jadwal exists and has available quota
-        Optional<JadwalPraktik> jadwalOpt = jadwalPraktikRepository.findById(bookingRequest.getJadwalId());
+        String jadwalId = bookingRequest.getJadwalId();
+        if (jadwalId == null) {
+            throw new RuntimeException("Jadwal ID cannot be null");
+        }
+        Optional<JadwalPraktik> jadwalOpt = jadwalPraktikRepository.findById(jadwalId);
         if (jadwalOpt.isEmpty()) {
             throw new RuntimeException("Jadwal not found");
         }
@@ -81,6 +89,9 @@ public class AppointmentService {
 
     @Transactional
     public void cancelAppointment(String appointmentId) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -104,6 +115,12 @@ public class AppointmentService {
 
     @Transactional
     public void rescheduleAppointment(String appointmentId, String newJadwalId) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
+        if (newJadwalId == null) {
+            throw new RuntimeException("New Jadwal ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -144,6 +161,9 @@ public class AppointmentService {
 
     @Transactional
     public void confirmAppointment(String appointmentId) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -156,6 +176,9 @@ public class AppointmentService {
 
     @Transactional
     public void rejectAppointment(String appointmentId, String alasan) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -184,10 +207,16 @@ public class AppointmentService {
     }
 
     public Optional<Appointment> getAppointmentById(String appointmentId) {
+        if (appointmentId == null) {
+            return Optional.empty();
+        }
         return appointmentRepository.findById(appointmentId);
     }
 
     public Optional<JadwalPraktik> getJadwalById(String jadwalId) {
+        if (jadwalId == null) {
+            return Optional.empty();
+        }
         Optional<JadwalPraktik> jadwalOpt = jadwalPraktikRepository.findById(jadwalId);
         if (jadwalOpt.isPresent()) {
             JadwalPraktik jadwal = jadwalOpt.get();
@@ -216,6 +245,9 @@ public class AppointmentService {
     }
 
     public Optional<rsis.model.Dokter> getDokterById(String dokterId) {
+        if (dokterId == null) {
+            return Optional.empty();
+        }
         Optional<rsis.model.Dokter> dokterOpt = dokterRepository.findById(dokterId);
         if (dokterOpt.isPresent()) {
             rsis.model.Dokter dokter = dokterOpt.get();
@@ -238,12 +270,15 @@ public class AppointmentService {
     }
 
     private void populateDokterWithUserData(rsis.model.Dokter dokter) {
-        userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-            dokter.setNama(user.getNama());
-            dokter.setEmail(user.getEmail());
-            dokter.setPassword(user.getPassword());
-            dokter.setRole(user.getRole());
-        });
+        String userId = dokter.getIdUser();
+        if (userId != null) {
+            userRepository.findById(userId).ifPresent(user -> {
+                dokter.setNama(user.getNama());
+                dokter.setEmail(user.getEmail());
+                dokter.setPassword(user.getPassword());
+                dokter.setRole(user.getRole());
+            });
+        }
     }
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
@@ -274,9 +309,10 @@ public class AppointmentService {
                 appointmentRepository.save(appointment);
 
                 // Restore quota
-                if (appointment.getJadwal() != null) {
-                    appointment.getJadwal().tambahKuota();
-                    jadwalPraktikRepository.save(appointment.getJadwal());
+                JadwalPraktik jadwal = appointment.getJadwal();
+                if (jadwal != null) {
+                    jadwal.tambahKuota();
+                    jadwalPraktikRepository.save(jadwal);
                 }
             }
         }
@@ -292,6 +328,9 @@ public class AppointmentService {
 
     @Transactional
     public Appointment updateAppointment(Appointment appointment) {
+        if (appointment == null) {
+            throw new RuntimeException("Appointment cannot be null");
+        }
         return appointmentRepository.save(appointment);
     }
 

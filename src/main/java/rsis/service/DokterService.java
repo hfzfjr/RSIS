@@ -56,6 +56,9 @@ public class DokterService {
 
     @Transactional
     public void konfirmasiAppointment(String appointmentId) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -67,6 +70,9 @@ public class DokterService {
 
     @Transactional
     public void tolakAppointment(String appointmentId, String alasan) {
+        if (appointmentId == null) {
+            throw new RuntimeException("Appointment ID cannot be null");
+        }
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isEmpty()) {
             throw new RuntimeException("Appointment not found");
@@ -88,13 +94,16 @@ public class DokterService {
      * This method should be used by all services to avoid duplication
      */
     public Dokter enrichWithUserData(Dokter dokter) {
-        userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-            dokter.setNama(user.getNama());
-            dokter.setEmail(user.getEmail());
-            dokter.setNomorHp(user.getNomorHp());
-            dokter.setPassword(user.getPassword());
-            dokter.setRole(user.getRole());
-        });
+        String userId = dokter.getIdUser();
+        if (userId != null) {
+            userRepository.findById(userId).ifPresent(user -> {
+                dokter.setNama(user.getNama());
+                dokter.setEmail(user.getEmail());
+                dokter.setNomorHp(user.getNomorHp());
+                dokter.setPassword(user.getPassword());
+                dokter.setRole(user.getRole());
+            });
+        }
         return dokter;
     }
 
@@ -162,12 +171,18 @@ public class DokterService {
 
     @Transactional
     public Dokter updateDokter(Dokter dokter) {
+        if (dokter == null) {
+            throw new RuntimeException("Dokter cannot be null");
+        }
         return dokterRepository.save(dokter);
     }
 
     @Transactional
     public Dokter updateDokter(String idUser, String nama, String nomorHp, String nomorStr,
             String spesialisasiId, String poliId) {
+        if (idUser == null) {
+            throw new RuntimeException("User ID cannot be null");
+        }
         Dokter existingDokter = dokterRepository.findById(idUser)
                 .orElseThrow(() -> new RuntimeException("Dokter tidak ditemukan"));
 
@@ -196,11 +211,17 @@ public class DokterService {
 
     @Transactional
     public void deleteDokter(String dokterId) {
+        if (dokterId == null) {
+            throw new RuntimeException("Dokter ID cannot be null");
+        }
         dokterRepository.deleteById(dokterId);
     }
 
     @Transactional
     public void softDeleteDokter(String dokterId) {
+        if (dokterId == null) {
+            throw new RuntimeException("Dokter ID cannot be null");
+        }
         Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
         if (dokterOpt.isPresent()) {
             Dokter dokter = dokterOpt.get();
@@ -217,6 +238,9 @@ public class DokterService {
     }
 
     public Optional<Dokter> getDokterById(String dokterId) {
+        if (dokterId == null) {
+            return Optional.empty();
+        }
         return dokterRepository.findById(dokterId);
     }
 
@@ -226,16 +250,25 @@ public class DokterService {
 
     @Transactional
     public Spesialisasi createSpesialisasi(Spesialisasi spesialisasi) {
+        if (spesialisasi == null) {
+            throw new RuntimeException("Spesialisasi cannot be null");
+        }
         return spesialisasiRepository.save(spesialisasi);
     }
 
     @Transactional
     public Spesialisasi updateSpesialisasi(Spesialisasi spesialisasi) {
+        if (spesialisasi == null) {
+            throw new RuntimeException("Spesialisasi cannot be null");
+        }
         return spesialisasiRepository.save(spesialisasi);
     }
 
     @Transactional
     public void deleteSpesialisasi(String spesialisasiId) {
+        if (spesialisasiId == null) {
+            throw new RuntimeException("Spesialisasi ID cannot be null");
+        }
         spesialisasiRepository.deleteById(spesialisasiId);
     }
 

@@ -97,11 +97,13 @@ public class AdminRSService {
             long count = ((Number) result[2]).longValue();
             int percentage = maxCount > 0 ? (int) ((count * 100) / maxCount) : 0;
 
-            Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
-            if (dokterOpt.isPresent()) {
-                Dokter d = dokterOpt.get();
-                d.setNama(dokterNama);
-                list.add(new BusiestDoctorDTO(d, count, percentage));
+            if (dokterId != null) {
+                Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
+                if (dokterOpt.isPresent()) {
+                    Dokter d = dokterOpt.get();
+                    d.setNama(dokterNama);
+                    list.add(new BusiestDoctorDTO(d, count, percentage));
+                }
             }
         }
 

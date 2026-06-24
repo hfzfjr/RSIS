@@ -23,6 +23,9 @@ public class NotifikasiService {
 
     @Transactional
     public Notifikasi kirimNotifikasi(String penerimaId, String pesan, String tipe) {
+        if (penerimaId == null) {
+            throw new RuntimeException("Penerima ID cannot be null");
+        }
         Optional<User> penerimaOpt = userRepository.findById(penerimaId);
         if (penerimaOpt.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -44,6 +47,9 @@ public class NotifikasiService {
 
     @Transactional
     public void tandaiDibaca(String notifikasiId) {
+        if (notifikasiId == null) {
+            throw new RuntimeException("Notifikasi ID cannot be null");
+        }
         notifikasiRepository.findById(notifikasiId).ifPresent(notif -> {
             notif.markAsRead();
             notifikasiRepository.save(notif);
@@ -52,11 +58,17 @@ public class NotifikasiService {
 
     @Transactional
     public void deleteNotifikasi(String notifikasiId) {
+        if (notifikasiId == null) {
+            throw new RuntimeException("Notifikasi ID cannot be null");
+        }
         notifikasiRepository.deleteById(notifikasiId);
     }
 
     @Transactional
     public void markAsRead(String notifikasiId) {
+        if (notifikasiId == null) {
+            throw new RuntimeException("Notifikasi ID cannot be null");
+        }
         notifikasiRepository.findById(notifikasiId).ifPresent(notif -> {
             notif.markAsRead();
             notifikasiRepository.save(notif);

@@ -12,7 +12,6 @@ import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PoliRepository;
-import rsis.repository.UserRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -40,9 +39,6 @@ public class JadwalPraktikService {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private DokterService dokterService;
@@ -84,6 +80,9 @@ public class JadwalPraktikService {
 
     @Transactional
     public JadwalPraktik createJadwal(JadwalPraktik jadwal) {
+        if (jadwal == null) {
+            throw new RuntimeException("Jadwal cannot be null");
+        }
         String idJadwal = generateJadwalId();
         jadwal.setIdJadwal(idJadwal);
         jadwal.setStatusKetersediaan("TERSEDIA");
@@ -92,11 +91,17 @@ public class JadwalPraktikService {
 
     @Transactional
     public JadwalPraktik updateJadwal(JadwalPraktik jadwal) {
+        if (jadwal == null) {
+            throw new RuntimeException("Jadwal cannot be null");
+        }
         return jadwalPraktikRepository.save(jadwal);
     }
 
     @Transactional
     public void deleteJadwal(String jadwalId) {
+        if (jadwalId == null) {
+            throw new RuntimeException("Jadwal ID cannot be null");
+        }
         // Check if there are any active appointments (MENUNGGU or DIKONFIRMASI)
         List<Appointment> activeAppointments = appointmentRepository.findByJadwal_IdJadwalAndStatusIn(
                 jadwalId, List.of("MENUNGGU", "DIKONFIRMASI"));
@@ -107,6 +112,9 @@ public class JadwalPraktikService {
     }
 
     public Optional<JadwalPraktik> getJadwalById(String jadwalId) {
+        if (jadwalId == null) {
+            return Optional.empty();
+        }
         return jadwalPraktikRepository.findById(jadwalId);
     }
 
@@ -234,7 +242,9 @@ public class JadwalPraktikService {
             LocalDate tanggalMulai, String sampaiYearMonth,
             LocalTime jamMulai, LocalTime jamSelesai,
             String statusKetersediaan, int kuota) {
-
+        if (idUser == null) {
+            throw new RuntimeException("User ID cannot be null");
+        }
         Dokter dokter = dokterRepository.findById(idUser)
                 .orElseThrow(() -> new RuntimeException("Dokter tidak ditemukan"));
 
@@ -302,6 +312,9 @@ public class JadwalPraktikService {
     @Transactional
     public JadwalPraktik updateJadwal(String idJadwal, String idUser, String hari, LocalDate tanggal,
             LocalTime jamMulai, LocalTime jamSelesai, String statusKetersediaan, int kuota, String idPoli) {
+        if (idJadwal == null) {
+            throw new RuntimeException("Jadwal ID cannot be null");
+        }
         JadwalPraktik existingJadwal = jadwalPraktikRepository.findById(idJadwal)
                 .orElseThrow(() -> new RuntimeException("Jadwal tidak ditemukan"));
 
@@ -352,6 +365,9 @@ public class JadwalPraktikService {
 
     @Transactional
     public void softDeleteJadwal(String idJadwal) {
+        if (idJadwal == null) {
+            throw new RuntimeException("Jadwal ID cannot be null");
+        }
         JadwalPraktik existingJadwal = jadwalPraktikRepository.findById(idJadwal)
                 .orElseThrow(() -> new RuntimeException("Jadwal tidak ditemukan"));
         existingJadwal.setIsActive(false);

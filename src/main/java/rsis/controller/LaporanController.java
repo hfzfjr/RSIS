@@ -71,6 +71,7 @@ public class LaporanController {
     }
 
     @GetMapping("/export/pdf")
+    @SuppressWarnings("null")
     public ResponseEntity<byte[]> exportPDF(@RequestParam int bulan,
             @RequestParam int tahun) {
         try {

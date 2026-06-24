@@ -339,4 +339,49 @@ public class AppointmentController {
         }
         return "redirect:/appointment/dokter";
     }
+
+    @PostMapping("/update/{id}")
+    @ResponseBody
+    public java.util.Map<String, Object> updateAppointment(@PathVariable String id,
+            @RequestBody java.util.Map<String, String> request,
+            @AuthenticationPrincipal UserDetails principal) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+                    .orElseThrow(() -> new RuntimeException("Pasien not found"));
+
+            Appointment appointment = appointmentService.getAppointmentById(id)
+                    .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+            // Verify the appointment belongs to the logged-in pasien
+            if (!appointment.getUser().getIdUser().equals(pasien.getIdUser())) {
+                throw new RuntimeException("Unauthorized access to appointment");
+            }
+
+            String newJadwalId = request.get("jadwalId");
+            String newCatatan = request.get("catatan");
+
+            if (newJadwalId != null && !newJadwalId.isEmpty()) {
+                Optional<JadwalPraktik> newJadwalOpt = appointmentService.getJadwalById(newJadwalId);
+                if (newJadwalOpt.isPresent()) {
+                    appointment.setJadwal(newJadwalOpt.get());
+                }
+            }
+
+            if (newCatatan != null) {
+                appointment.setCatatan(newCatatan);
+            }
+
+            appointmentService.updateAppointment(appointment);
+
+            response.put("success", true);
+            response.put("message", "Appointment berhasil diperbarui");
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
 }

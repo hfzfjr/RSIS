@@ -97,7 +97,8 @@
               </td>
               <td class="col-date">
                 <div class="date-time">
-                  <span class="date" th:text="${appointment.tanggalBooking}"></span>
+                  <span class="date"
+                    th:text="${appointment.jadwal != null ? appointment.jadwal.tanggal : 'N/A'}"></span>
                   <span class="time"
                     th:text="${appointment.jadwal != null ? appointment.jadwal.jamMulai : 'N/A'}"></span>
                 </div>

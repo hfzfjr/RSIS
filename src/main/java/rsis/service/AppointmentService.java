@@ -13,7 +13,7 @@ import rsis.repository.PasienRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.UserRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +64,7 @@ public class AppointmentService {
         appointment.setIdAppointment(generateAppointmentId());
         appointment.setUser(pasien);
         appointment.setJadwal(jadwal);
-        appointment.setTanggalBooking(LocalDate.now());
+        appointment.setTanggalBooking(LocalDateTime.now());
         appointment.setStatus("MENUNGGU");
         appointment.setCatatan(bookingRequest.getCatatan());
         appointment.setNomorAntrian(generateNomorAntrian(jadwal));
@@ -265,7 +265,7 @@ public class AppointmentService {
 
     @Transactional
     public void updateExpiredAppointments() {
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = LocalDateTime.now().toLocalDate().atStartOfDay();
         List<Appointment> expiredAppointments = appointmentRepository.findByStatus("MENUNGGU");
 
         for (Appointment appointment : expiredAppointments) {
@@ -288,6 +288,11 @@ public class AppointmentService {
                 appointmentRepository.save(appointment);
             }
         }
+    }
+
+    @Transactional
+    public Appointment updateAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
     }
 
     public AppointmentRepository getAppointmentRepository() {

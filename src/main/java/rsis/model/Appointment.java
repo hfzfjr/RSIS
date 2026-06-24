@@ -8,7 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "appointment")
@@ -27,7 +27,7 @@ public class Appointment {
     private JadwalPraktik jadwal;
 
     @Column(name = "tanggal_booking", nullable = false)
-    private LocalDate tanggalBooking;
+    private LocalDateTime tanggalBooking;
 
     @Column(name = "status")
     private String status = "MENUNGGU";
@@ -97,11 +97,11 @@ public class Appointment {
         return jadwal != null ? jadwal.getDokter() : null;
     }
 
-    public LocalDate getTanggalBooking() {
+    public LocalDateTime getTanggalBooking() {
         return tanggalBooking;
     }
 
-    public void setTanggalBooking(LocalDate tanggalBooking) {
+    public void setTanggalBooking(LocalDateTime tanggalBooking) {
         this.tanggalBooking = tanggalBooking;
     }
 

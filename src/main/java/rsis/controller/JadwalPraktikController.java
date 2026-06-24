@@ -119,6 +119,15 @@ public class JadwalPraktikController {
             }
         }
 
+        // Sort appointments by appointment.tanggalBooking descending
+        appointments.sort((a1, a2) -> {
+            if (a1.getTanggalBooking() == null)
+                return 1;
+            if (a2.getTanggalBooking() == null)
+                return -1;
+            return a2.getTanggalBooking().compareTo(a1.getTanggalBooking());
+        });
+
         model.addAttribute("appointments", appointments);
 
         return "pasien/jadwal-riwayat";

@@ -103,11 +103,17 @@ public class PasienController {
         // Auto-update status for past booking dates
         appointmentService.updateExpiredAppointments();
 
-        // Get upcoming appointments (filter DIKONFIRMASI only, sort by tanggalBooking
-        // ascending, limit to 2)
+        // Get upcoming appointments (filter DIKONFIRMASI only, sort by jadwal.tanggal
+        // ascending (closest to today first), limit to 2)
         List<Appointment> upcomingAppointments = appointments.stream()
                 .filter(a -> "DIKONFIRMASI".equals(a.getStatus()))
-                .sorted((a1, a2) -> a1.getTanggalBooking().compareTo(a2.getTanggalBooking()))
+                .sorted((a1, a2) -> {
+                    if (a1.getJadwal() == null || a1.getJadwal().getTanggal() == null)
+                        return 1;
+                    if (a2.getJadwal() == null || a2.getJadwal().getTanggal() == null)
+                        return -1;
+                    return a1.getJadwal().getTanggal().compareTo(a2.getJadwal().getTanggal());
+                })
                 .limit(2)
                 .toList();
 

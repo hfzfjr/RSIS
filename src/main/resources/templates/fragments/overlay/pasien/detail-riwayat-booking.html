@@ -101,10 +101,10 @@
                     <button class="btn btn-close-overlay" onclick="closeOverlay()">
                         Tutup
                     </button>
-                    <button id="btn-batal" class="btn btn-danger btn-batal" style="display: none;">
+                    <button id="btn-batal" class="btn btn-batal" style="display: none;">
                         Batalkan Booking
                     </button>
-                    <button id="btn-reschedule" class="btn btn-secondary btn-reschedule" style="display: none;">
+                    <button id="btn-reschedule" class="btn btn-reschedule" style="display: none;">
                         Reschedule
                     </button>
                     <button id="btn-booking-lagi" class="btn btn-primary btn-booking-lagi" style="display: none;">
@@ -151,7 +151,7 @@
                         statusElement.textContent = appointment.status || '-';
                         statusElement.className = 'detail-value status-badge ' + getStatusClass(appointment.status);
                         document.getElementById('overlay-tanggal-booking').textContent =
-                            appointment.tanggalBooking || '-';
+                            appointment.tanggalBooking ? appointment.tanggalBooking.replace('T', ' ') : '-';
                         document.getElementById('overlay-keluhan').textContent =
                             appointment.catatan || '-';
 

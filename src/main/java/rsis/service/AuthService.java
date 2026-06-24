@@ -63,4 +63,14 @@ public class AuthService {
 
         return String.format("usr-%03d", next);
     }
+
+    /**
+     * Encode password using PasswordEncoder
+     * 
+     * @param rawPassword The raw password to encode
+     * @return The encoded password
+     */
+    public String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
 }

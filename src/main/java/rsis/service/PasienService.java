@@ -32,7 +32,7 @@ public class PasienService {
     public List<Dokter> cariDokter(String keyword) {
         List<Dokter> dokters;
         if (keyword == null || keyword.isEmpty()) {
-            dokters = dokterRepository.findAll();
+            dokters = dokterRepository.findAllActive();
         } else {
             dokters = dokterRepository.searchBySpesialisasiOrNama(keyword);
         }
@@ -41,15 +41,26 @@ public class PasienService {
     }
 
     private List<Dokter> populateDokterWithUserData(List<Dokter> dokters) {
-        return dokters.stream().map(dokter -> {
-            userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-                dokter.setNama(user.getNama());
-                dokter.setEmail(user.getEmail());
-                dokter.setPassword(user.getPassword());
-                dokter.setRole(user.getRole());
-            });
-            return dokter;
-        }).toList();
+        return dokters.stream()
+                .filter(dokter -> {
+                    // Filter out doctors with inactive poli
+                    if (dokter.getPoli() != null) {
+                        Boolean poliActive = dokter.getPoli().getIsActive();
+                        if (poliActive != null && !poliActive) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                .map(dokter -> {
+                    userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
+                        dokter.setNama(user.getNama());
+                        dokter.setEmail(user.getEmail());
+                        dokter.setPassword(user.getPassword());
+                        dokter.setRole(user.getRole());
+                    });
+                    return dokter;
+                }).toList();
     }
 
     public List<Dokter> cariDokterBySpesialisasi(String spesialisasi) {

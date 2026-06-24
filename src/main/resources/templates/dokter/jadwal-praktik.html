@@ -285,7 +285,7 @@
     // Override fetchJadwalData to call dokter API
     window.fetchJadwalData = async function () {
       try {
-        const response = await fetch('/dokter/api/jadwal');
+        const response = await fetch('/jadwal/api');
         const data = await response.json();
         if (data.success) {
           window.jadwalData = data.jadwals;

@@ -57,8 +57,8 @@
             async function fetchJadwalData() {
                 try {
                     const url = userRole === 'dokter'
-                        ? '/dokter/api/jadwal'
-                        : `/pasien/api/jadwal/dokter/${dokterId}`;
+                        ? '/jadwal/api'
+                        : `/jadwal/api/dokter/${dokterId}`;
 
                     const response = await fetch(url);
                     const data = await response.json();

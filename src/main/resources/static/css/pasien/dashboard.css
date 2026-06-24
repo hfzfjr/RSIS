@@ -612,7 +612,7 @@
 }
 
 .btn-primary:hover {
-  background: #005a4a;
+  background: var(--color-brand-dark);
 }
 
 .btn-outline {

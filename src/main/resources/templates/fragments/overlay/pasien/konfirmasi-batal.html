@@ -1,0 +1,138 @@
+<th:block th:fragment="konfirmasi-batal">
+    <div id="konfirmasi-batal-overlay" class="overlay">
+        <div class="overlay-content konfirmasi-batal-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title">Konfirmasi Pembatalan</h2>
+                <button class="overlay-close" onclick="closeKonfirmasiBatal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="overlay-body">
+                <div class="warning-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+
+                <h3 class="warning-title">Apakah Anda yakin ingin membatalkan booking ini?</h3>
+                <p class="warning-message">
+                    Tindakan ini tidak dapat dibatalkan. Kuota jadwal akan dikembalikan dan status appointment akan
+                    berubah menjadi "DIBATALKAN".
+                </p>
+
+                <div class="appointment-summary" id="batal-appointment-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">ID Appointment:</span>
+                        <span class="summary-value" id="batal-appointment-id">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Dokter:</span>
+                        <span class="summary-value" id="batal-dokter-nama">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tanggal:</span>
+                        <span class="summary-value" id="batal-tanggal">-</span>
+                    </div>
+                </div>
+
+                <div class="overlay-actions">
+                    <button class="btn btn-secondary" onclick="closeKonfirmasiBatal()">
+                        Batal
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmCancelAppointment()">
+                        Ya, Batalkan Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        let currentCancelAppointmentId = null;
+
+        function openKonfirmasiBatal(appointmentId) {
+            currentCancelAppointmentId = appointmentId;
+
+            // Fetch appointment details to show summary
+            fetch(`/appointment/detail/${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const appointment = data.appointment;
+                        document.getElementById('batal-appointment-id').textContent = appointment.idAppointment || '-';
+                        document.getElementById('batal-dokter-nama').textContent =
+                            appointment.jadwal?.dokter?.nama ? 'dr. ' + appointment.jadwal.dokter.nama : '-';
+                        document.getElementById('batal-tanggal').textContent = appointment.jadwal?.tanggal || '-';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching appointment details:', error);
+                });
+
+            document.getElementById('konfirmasi-batal-overlay').classList.add('active');
+        }
+
+        function closeKonfirmasiBatal() {
+            document.getElementById('konfirmasi-batal-overlay').classList.remove('active');
+            currentCancelAppointmentId = null;
+        }
+
+        function confirmCancelAppointment() {
+            if (!currentCancelAppointmentId) {
+                alert('ID appointment tidak ditemukan');
+                return;
+            }
+
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            fetch(`/appointment/cancel/${currentCancelAppointmentId}/api`, {
+                method: 'POST',
+                headers: headers
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeKonfirmasiBatal();
+                        closeOverlay();
+                        alert('Booking berhasil dibatalkan');
+                        location.reload();
+                    } else {
+                        alert('Gagal membatalkan booking: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat membatalkan booking');
+                });
+        }
+
+        // Close overlay when clicking outside
+        document.getElementById('konfirmasi-batal-overlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeKonfirmasiBatal();
+            }
+        });
+
+        /*]]>*/
+    </script>
+</th:block>

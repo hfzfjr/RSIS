@@ -13,7 +13,7 @@ import rsis.repository.PasienRepository;
 import rsis.repository.DokterRepository;
 import rsis.repository.UserRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +64,7 @@ public class AppointmentService {
         appointment.setIdAppointment(generateAppointmentId());
         appointment.setUser(pasien);
         appointment.setJadwal(jadwal);
-        appointment.setTanggalBooking(LocalDate.now());
+        appointment.setTanggalBooking(LocalDateTime.now());
         appointment.setStatus("MENUNGGU");
         appointment.setCatatan(bookingRequest.getCatatan());
         appointment.setNomorAntrian(generateNomorAntrian(jadwal));
@@ -188,13 +188,49 @@ public class AppointmentService {
     }
 
     public Optional<JadwalPraktik> getJadwalById(String jadwalId) {
-        return jadwalPraktikRepository.findById(jadwalId);
+        Optional<JadwalPraktik> jadwalOpt = jadwalPraktikRepository.findById(jadwalId);
+        if (jadwalOpt.isPresent()) {
+            JadwalPraktik jadwal = jadwalOpt.get();
+            // Check if jadwal is active
+            Boolean isActive = jadwal.getIsActive();
+            if (isActive != null && !isActive) {
+                throw new RuntimeException("Jadwal tidak tersedia");
+            }
+            // Check if jadwal's doctor is active
+            if (jadwal.getDokter() != null) {
+                Boolean dokterActive = jadwal.getDokter().getIsActive();
+                if (dokterActive != null && !dokterActive) {
+                    throw new RuntimeException("Dokter tidak tersedia");
+                }
+                // Check if doctor's poli is active
+                if (jadwal.getDokter().getPoli() != null) {
+                    Boolean poliActive = jadwal.getDokter().getPoli().getIsActive();
+                    if (poliActive != null && !poliActive) {
+                        throw new RuntimeException("Poli tidak tersedia");
+                    }
+                }
+            }
+            return jadwalOpt;
+        }
+        return jadwalOpt;
     }
 
     public Optional<rsis.model.Dokter> getDokterById(String dokterId) {
         Optional<rsis.model.Dokter> dokterOpt = dokterRepository.findById(dokterId);
         if (dokterOpt.isPresent()) {
             rsis.model.Dokter dokter = dokterOpt.get();
+            // Check if doctor is active
+            Boolean isActive = dokter.getIsActive();
+            if (isActive != null && !isActive) {
+                throw new RuntimeException("Dokter tidak tersedia");
+            }
+            // Check if doctor's poli is active
+            if (dokter.getPoli() != null) {
+                Boolean poliActive = dokter.getPoli().getIsActive();
+                if (poliActive != null && !poliActive) {
+                    throw new RuntimeException("Poli dokter tidak tersedia");
+                }
+            }
             populateDokterWithUserData(dokter);
             return Optional.of(dokter);
         }
@@ -211,7 +247,9 @@ public class AppointmentService {
     }
 
     public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        return jadwalPraktikRepository.findByDokter_IdUser(dokterId);
+        return jadwalPraktikRepository.findByDokter_IdUser(dokterId).stream()
+                .filter(j -> j.getIsActive() == null || j.getIsActive())
+                .toList();
     }
 
     private String generateAppointmentId() {
@@ -227,7 +265,7 @@ public class AppointmentService {
 
     @Transactional
     public void updateExpiredAppointments() {
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = LocalDateTime.now().toLocalDate().atStartOfDay();
         List<Appointment> expiredAppointments = appointmentRepository.findByStatus("MENUNGGU");
 
         for (Appointment appointment : expiredAppointments) {
@@ -250,6 +288,11 @@ public class AppointmentService {
                 appointmentRepository.save(appointment);
             }
         }
+    }
+
+    @Transactional
+    public Appointment updateAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
     }
 
     public AppointmentRepository getAppointmentRepository() {

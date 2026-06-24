@@ -35,10 +35,10 @@
                     <th:block th:if="${role == 'DOKTER'}">
                         <a href="/dokter/dashboard" class="nav-link"
                             th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
-                        <a href="/dokter/jadwal-praktik" class="nav-link"
+                        <a href="/jadwal/praktik" class="nav-link"
                             th:class="${activeMenu == 'jadwal-praktik'} ? 'nav-link active' : 'nav-link'">Jadwal
                             Praktik</a>
-                        <a href="/dokter/appointment" class="nav-link"
+                        <a href="/appointment/dokter" class="nav-link"
                             th:class="${activeMenu == 'appointment'} ? 'nav-link active' : 'nav-link'">Appointment</a>
                     </th:block>
 
@@ -48,7 +48,7 @@
                             th:class="${activeMenu == 'dashboard'} ? 'nav-link active' : 'nav-link'">Dashboard</a>
                         <a href="/pasien/cari-dokter" class="nav-link"
                             th:class="${activeMenu == 'cari-dokter'} ? 'nav-link active' : 'nav-link'">Cari Dokter</a>
-                        <a href="/pasien/jadwal-riwayat" class="nav-link"
+                        <a href="/jadwal/riwayat" class="nav-link"
                             th:class="${activeMenu == 'jadwal'} ? 'nav-link active' : 'nav-link'">Jadwal & Riwayat</a>
                     </th:block>
                 </div>

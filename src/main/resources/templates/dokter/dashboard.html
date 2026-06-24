@@ -51,7 +51,7 @@
             </div>
             <div class="rs-panel-footer">
               <span class="rs-footer-text" id="queue-footer-text"></span>
-              <a href="/dokter/appointment" class="rs-footer-link">Lihat Semua</a>
+              <a href="/appointment/dokter" class="rs-footer-link">Lihat Semua</a>
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@
             </div>
             <div class="rs-panel-footer">
               <span class="rs-footer-text" id="pending-footer-text"></span>
-              <a href="/dokter/appointment" class="rs-footer-link">Lihat Semua</a>
+              <a href="/appointment/dokter" class="rs-footer-link">Lihat Semua</a>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@
               <span class="rs-footer-text" id="timeline-footer-text"></span>
               <a href="#" class="rs-footer-link" id="timeline-show-more">Lihat Semua</a>
             </div>
-            <a href="/dokter/jadwal-praktik" class="rs-btn rs-btn-wide" style="text-decoration: none;">
+            <a href="/jadwal/praktik" class="rs-btn rs-btn-wide" style="text-decoration: none;">
               <i class="bi bi-calendar-check"></i> Kelola Jadwal
             </a>
           </div>
@@ -95,7 +95,7 @@
     document.addEventListener("DOMContentLoaded", function () {
 
       // FETCH APPOINTMENTS & QUEUE
-      fetch('/dokter/appointment')
+      fetch('/appointment/dokter')
         .then(response => response.text())
         .then(html => {
           const parser = new DOMParser();
@@ -167,7 +167,7 @@
         }).catch(err => console.warn(err));
 
       // FETCH TIMELINE JADWAL
-      fetch('/dokter/jadwal-praktik')
+      fetch('/jadwal/praktik')
         .then(response => response.text())
         .then(html => {
           const parser = new DOMParser();
@@ -213,7 +213,7 @@
 
     function confirmAppointment(id) {
       if (confirm('Konfirmasi pasien ini?')) {
-        const form = document.createElement('form'); form.method = 'POST'; form.action = `/dokter/appointment/konfirmasi/${id}`;
+        const form = document.createElement('form'); form.method = 'POST'; form.action = `/appointment/konfirmasi/${id}`;
         const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = '_csrf'; csrf.value = document.querySelector('meta[name="_csrf"]').content;
         form.appendChild(csrf); document.body.appendChild(form); form.submit();
       }
@@ -222,7 +222,7 @@
     function rejectAppointment(id) {
       const reason = prompt('Alasan penolakan:');
       if (reason) {
-        const form = document.createElement('form'); form.method = 'POST'; form.action = `/dokter/appointment/tolak/${id}`;
+        const form = document.createElement('form'); form.method = 'POST'; form.action = `/appointment/tolak/${id}`;
         const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = '_csrf'; csrf.value = document.querySelector('meta[name="_csrf"]').content;
         const resInput = document.createElement('input'); resInput.type = 'hidden'; resInput.name = 'alasan'; resInput.value = reason;
         form.append(csrf, resInput); document.body.appendChild(form); form.submit();

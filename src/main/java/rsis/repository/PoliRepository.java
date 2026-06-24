@@ -12,8 +12,11 @@ import java.util.Optional;
 @Repository
 public interface PoliRepository extends JpaRepository<Poli, String> {
 
-    @Query("SELECT p FROM Poli p WHERE p.namaPoli LIKE %:nama%")
+    @Query("SELECT p FROM Poli p WHERE (p.isActive IS NULL OR p.isActive = true) AND p.namaPoli LIKE %:nama%")
     List<Poli> findByNamaContainingIgnoreCase(@Param("nama") String nama);
+
+    @Query("SELECT p FROM Poli p WHERE p.isActive IS NULL OR p.isActive = true")
+    List<Poli> findAllActive();
 
     @Query(value = "SELECT id_poli FROM poli WHERE id_poli LIKE 'pli-%' ORDER BY CAST(SUBSTRING(id_poli FROM 5) AS INTEGER) DESC LIMIT 1", nativeQuery = true)
     Optional<String> findLatestPoliId();

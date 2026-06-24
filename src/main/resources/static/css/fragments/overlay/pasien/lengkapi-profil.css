@@ -1,0 +1,179 @@
+/* Lengkapi Profil Overlay - RSIS */
+
+.lengkapi-profil-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lengkapi-profil-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lengkapi-profil-content {
+    background: var(--color-surface, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    max-width: 480px;
+    width: calc(100vw - 32px);
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.lengkapi-profil-overlay.active .lengkapi-profil-content {
+    transform: scale(1);
+}
+
+.lengkapi-profil-header {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid var(--border-subtle, #E5E7EB);
+    position: relative;
+}
+
+.lengkapi-profil-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--color-warning-light, #FEF3C7);
+    border-radius: 50%;
+    color: var(--color-warning, #F59E0B);
+    margin-right: 16px;
+}
+
+.lengkapi-profil-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary, #1A1A2E);
+    margin: 0;
+}
+
+.lengkapi-profil-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--color-text-secondary, #6B7280);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.lengkapi-profil-close:hover {
+    background: var(--color-surface-gray, #F3F4F6);
+    color: var(--color-text-primary, #1A1A2E);
+}
+
+.lengkapi-profil-body {
+    padding: 24px;
+}
+
+.lengkapi-profil-message {
+    font-size: 14px;
+    color: var(--color-text-secondary, #6B7280);
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.lengkapi-profil-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+}
+
+.lengkapi-profil-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--color-surface-gray, #F9FAFB);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--color-text-primary, #1A1A2E);
+}
+
+.lengkapi-profil-item:last-child {
+    margin-bottom: 0;
+}
+
+.lengkapi-profil-item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+.lengkapi-profil-item-icon-error {
+    background: var(--color-error-light, #FEE2E2);
+    color: var(--color-error, #EF4444);
+}
+
+.lengkapi-profil-item-icon-success {
+    background: var(--color-success-light, #D1FAE5);
+    color: var(--color-success, #10B981);
+}
+
+.lengkapi-profil-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.lengkapi-profil-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lengkapi-profil-btn-secondary {
+    background: var(--color-surface-gray, #F3F4F6);
+    color: var(--color-text-primary, #1A1A2E);
+}
+
+.lengkapi-profil-btn-secondary:hover {
+    background: var(--color-surface-gray-dark, #E5E7EB);
+}
+
+.lengkapi-profil-btn-primary {
+    background: var(--color-brand, #008080);
+    color: #ffffff;
+}
+
+.lengkapi-profil-btn-primary:hover {
+    background: var(--color-brand-dark, #006666);
+}

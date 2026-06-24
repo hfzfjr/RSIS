@@ -12,14 +12,19 @@ import java.util.Optional;
 @Repository
 public interface DokterRepository extends JpaRepository<Dokter, String> {
 
-    List<Dokter> findBySpesialisasi_Nama(String spesialisasi);
+    @Query("SELECT d FROM Dokter d WHERE d.spesialisasi.nama = :spesialisasi AND (d.isActive IS NULL OR d.isActive = true)")
+    List<Dokter> findBySpesialisasi_Nama(@Param("spesialisasi") String spesialisasi);
 
-    List<Dokter> findByPoli_IdPoli(String idPoli);
+    @Query("SELECT d FROM Dokter d WHERE d.poli.idPoli = :idPoli AND (d.isActive IS NULL OR d.isActive = true)")
+    List<Dokter> findByPoli_IdPoli(@Param("idPoli") String idPoli);
 
-    @Query("SELECT d FROM Dokter d WHERE d.idUser = :idUser")
+    @Query("SELECT d FROM Dokter d WHERE d.idUser = :idUser AND (d.isActive IS NULL OR d.isActive = true)")
     Optional<Dokter> findByIdUser(@Param("idUser") String idUser);
 
-    @Query("SELECT d FROM Dokter d WHERE LOWER(d.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.spesialisasi.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.poli.namaPoli) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    @Query("SELECT d FROM Dokter d WHERE d.isActive IS NULL OR d.isActive = true")
+    List<Dokter> findAllActive();
+
+    @Query("SELECT d FROM Dokter d WHERE (d.isActive IS NULL OR d.isActive = true) AND (LOWER(d.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.spesialisasi.nama) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.poli.namaPoli) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Dokter> searchBySpesialisasiOrNama(@Param("keyword") String keyword);
 
     Optional<Dokter> findFirstByNomorStrStartingWithOrderByNomorStrDesc(String prefix);

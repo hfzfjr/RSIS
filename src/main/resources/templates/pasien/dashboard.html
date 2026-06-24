@@ -162,7 +162,7 @@
                   class="text-sm">
               </div>
             </div>
-            <a th:href="@{/pasien/booking(dokterId=${dokter.idUser})}" class="btn btn-primary btn-full">
+            <a th:href="@{/appointment/booking(dokterId=${dokter.idUser})}" class="btn btn-primary btn-full">
               Booking
             </a>
           </div>
@@ -177,7 +177,7 @@
           <span class="section-label">APPOINTMENT MENDATANG</span>
           <h2 class="section-title">Jadwal Konsultasi Anda</h2>
         </div>
-        <a href="/pasien/jadwal-riwayat" class="section-link">
+        <a href="/jadwal/riwayat" class="section-link">
           Lihat Semua
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9 18 15 12 9 6"></polyline>
@@ -226,7 +226,7 @@
                   <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
                 <span
-                  th:text="${appointment.tanggalBooking != null ? appointment.tanggalBooking : 'Tanggal belum ditentukan'}">Tanggal</span>
+                  th:text="${appointment.jadwal != null ? appointment.jadwal.tanggal : 'Tanggal belum ditentukan'}">Tanggal</span>
               </div>
               <span class="appointment-status"
                 th:classappend="${appointment.status == 'DIKONFIRMASI' ? 'status-confirmed' : (appointment.status == 'MENUNGGU' ? 'status-pending' : 'status-canceled')}"

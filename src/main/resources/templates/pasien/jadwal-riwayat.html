@@ -5,11 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jadwal & Riwayat - RSIS</title>
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
   <link rel="stylesheet" href="/css/pasien/jadwal-riwayat.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/pasien/detail-riwayat-booking.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/pasien/konfirmasi-batal.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -94,7 +97,8 @@
               </td>
               <td class="col-date">
                 <div class="date-time">
-                  <span class="date" th:text="${appointment.tanggalBooking}"></span>
+                  <span class="date"
+                    th:text="${appointment.jadwal != null ? appointment.jadwal.tanggal : 'N/A'}"></span>
                   <span class="time"
                     th:text="${appointment.jadwal != null ? appointment.jadwal.jamMulai : 'N/A'}"></span>
                 </div>
@@ -124,6 +128,9 @@
 
   <!-- Detail Booking Overlay -->
   <div th:replace="~{fragments/overlay/pasien/detail-riwayat-booking.html}"></div>
+
+  <!-- Konfirmasi Batal Overlay -->
+  <div th:replace="~{fragments/overlay/pasien/konfirmasi-batal.html :: konfirmasi-batal}"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

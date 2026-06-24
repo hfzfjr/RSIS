@@ -5,75 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appointment Dokter - RSIS</title>
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1055;
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-dialog {
-      position: relative;
-      width: auto;
-      margin: 30px auto;
-      max-width: 500px;
-      display: flex;
-      align-items: center;
-      min-height: calc(100% - 60px);
-    }
-
-    .modal-content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid #dee2e6;
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-    }
-
-    .modal-body {
-      position: relative;
-      padding: 24px;
-    }
-
-    .btn-close {
-      width: 1.5em;
-      height: 1.5em;
-      background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-      border: 0;
-      opacity: .5;
-      cursor: pointer;
-    }
-
-    .form-control {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ced4da;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-  </style>
-
   <link rel="stylesheet" href="/css/style.css" />
+
   <link rel="stylesheet" href="/css/dokter/appointment.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
@@ -88,32 +21,25 @@
   <main class="appointment-main">
     <div class="appointment-header">
       <h1 class="appointment-title">Daftar Appointment</h1>
-      <div class="appointment-actions" style="display: flex; gap: 10px;">
-        <button
-          style="background: white; border: 1px solid #ccc; border-radius: 8px; padding: 8px 16px; font-weight: 600; color: #333; cursor: pointer;">
-          <i class="bi bi-download"></i> Export Riwayat
-        </button>
-        <a href="/dokter/appointment/buat"
-          style="background: #1f6b5b; border: none; border-radius: 8px; padding: 8px 16px; font-weight: 600; color: white; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-          <i class="bi bi-plus-lg"></i> Janji Temu Baru
-        </a>
-      </div>
+
     </div>
 
     <div class="appointment-filter">
       <div class="search-box">
         <i class="bi bi-search"></i>
-        <input type="text" placeholder="Cari nama pasien..." class="form-control" style="border:none;" />
+        <input type="text" id="searchInput" placeholder="Cari nama pasien..." class="form-control" />
       </div>
       <div class="filter-options">
-        <select class="form-select" style="border: 1px solid #ced4da; padding: 8px; border-radius: 8px;">
+        <select class="form-select" id="statusFilter">
           <option value="">Semua Status</option>
           <option value="MENUNGGU">Menunggu</option>
           <option value="DIKONFIRMASI">Dikonfirmasi</option>
         </select>
-        <select class="form-select" style="border: 1px solid #ced4da; padding: 8px; border-radius: 8px;">
+        <select class="form-select" id="dateFilter">
           <option value="">Semua Tanggal</option>
           <option value="today">Hari Ini</option>
+          <option value="this_week">Minggu Ini</option>
+          <option value="this_month">Bulan Ini</option>
         </select>
       </div>
     </div>
@@ -131,48 +57,48 @@
         </thead>
         <tbody>
           <tr th:if="${#lists.isEmpty(appointments)}">
-            <td colspan="5" class="text-center" style="padding: 20px; color: #666;">Tidak ada data appointment.</td>
+            <td colspan="5" class="text-center">Tidak ada data appointment.</td>
           </tr>
 
-          <tr th:each="appt : ${appointments}">
-            <td style="display:none;" th:text="${appt.idAppointment}"></td>
+          <tr th:each="appt : ${appointments}"
+              th:data-status="${appt.status}"
+              th:data-date="${appt.tanggalBooking}"
+              th:data-name="${appt.user.nama}">
+            <td class="hidden-id" th:text="${appt.idAppointment}"></td>
 
             <td>
-              <div class="patient-info" style="display: flex; align-items: center; gap: 10px;">
-                <div class="patient-avatar"
-                  style="width: 40px; height: 40px; background: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="bi bi-person"></i></div>
+              <div class="patient-info">
+                <div class="patient-avatar">
+                  <img src="/images/user-avatar.svg" alt="Avatar" />
+                </div>
                 <div class="patient-details">
-                  <div class="patient-name" style="font-weight: 600;" th:text="${appt.user.nama}">Nama Pasien</div>
-                  <div class="patient-id" style="font-size: 12px; color: #666;"
-                    th:text="${'ID: P-' + appt.user.idUser.substring(0,5)}">ID</div>
+                  <div class="patient-name" th:text="${appt.user.nama}">Nama Pasien</div>
+                  <div class="patient-id" th:text="${'ID: ' + appt.user.idUser}">ID</div>
                 </div>
               </div>
             </td>
 
             <td>
-              <div th:text="${#strings.capitalize(#strings.toLowerCase(appt.jadwal.hari))}">Hari</div>
-              <div style="font-size: 12px; color: #666;"
-                th:text="${#strings.substring(appt.jadwal.jamMulai, 0, 5) + ' WIB'}">Waktu</div>
+              <div class="date-time">
+                <span class="date" th:text="${appt.tanggalBooking}">2025-10-05</span>
+                <span class="time" th:text="${#strings.substring(appt.jadwal.jamMulai, 0, 5) + ' WIB'}">09:30 WIB</span>
+              </div>
             </td>
 
-            <td th:text="${appt.catatan != null ? appt.catatan : 'Konsultasi Umum'}">Keluhan</td>
+            <td class="keluhan" th:text="${appt.catatan != null ? appt.catatan : 'Konsultasi Umum'}">Keluhan</td>
 
             <td>
-              <span th:if="${appt.status == 'MENUNGGU'}"
-                style="background: #fef08a; color: #854d0e; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Menunggu</span>
-
-              <span th:if="${appt.status == 'DIKONFIRMASI'}"
-                style="background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Diterima</span>
-
-              <span th:if="${appt.status == 'DITOLAK'}"
-                style="background: #fee2e2; color: #dc2626; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Ditolak</span>
+              <span th:if="${appt.status == 'MENUNGGU'}" class="status-badge status-purple"><span class="status-dot"></span>Menunggu</span>
+              <span th:if="${appt.status == 'DIKONFIRMASI'}" class="status-badge status-green"><span class="status-dot"></span>Dikonfirmasi</span>
+              <span th:if="${appt.status == 'DITOLAK'}" class="status-badge status-red"><span class="status-dot"></span>Ditolak</span>
+              <span th:if="${appt.status == 'BATAL'}" class="status-badge status-red"><span class="status-dot"></span>Batal</span>
+              <span th:if="${appt.status == 'SELESAI'}" class="status-badge status-green"><span class="status-dot"></span>Selesai</span>
             </td>
 
             <td>
-              <button style="background: transparent; color: #1f6b5b; border: none; font-weight: 600; cursor: pointer;"
-                th:data-target="'detailModal-' + ${appt.idAppointment}"
-                onclick="openModal(this.getAttribute('data-target'))">
+              <button class="btn-selengkapnya"
+                      th:data-target="'detailModal-' + ${appt.idAppointment}"
+                      onclick="openModal(this.getAttribute('data-target'))">
                 Selengkapnya
               </button>
             </td>
@@ -210,6 +136,76 @@
         document.body.style.overflow = 'auto';
       }
     }
+
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const statusFilter = document.getElementById('statusFilter');
+      const dateFilter = document.getElementById('dateFilter');
+      const searchInput = document.getElementById('searchInput');
+      const tableRows = document.querySelectorAll('tbody tr[data-status]');
+
+      function filterAppointments() {
+        const selectedStatus = statusFilter.value;
+        const selectedDate = dateFilter.value;
+        const searchValue = searchInput.value.toLowerCase();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        tableRows.forEach(row => {
+          const rowStatus = row.getAttribute('data-status');
+          const rowDate = new Date(row.getAttribute('data-date'));
+          const rowName = row.getAttribute('data-name')?.toLowerCase() || '';
+          rowDate.setHours(0, 0, 0, 0);
+
+          // When 'Semua Status' is selected, only show MENUNGGU and DIKONFIRMASI
+          let statusMatch;
+          if (selectedStatus === '') {
+            statusMatch = rowStatus === 'MENUNGGU' || rowStatus === 'DIKONFIRMASI';
+          } else {
+            statusMatch = rowStatus === selectedStatus;
+          }
+          
+          let dateMatch = true;
+
+          if (selectedDate === 'today') {
+            dateMatch = rowDate.getTime() === today.getTime();
+          } else if (selectedDate === 'this_week') {
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            dateMatch = rowDate >= weekStart && rowDate <= weekEnd;
+          } else if (selectedDate === 'this_month') {
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            dateMatch = rowDate >= monthStart && rowDate <= monthEnd;
+          }
+
+          const searchMatch = rowName.includes(searchValue);
+
+          if (statusMatch && dateMatch && searchMatch) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      }
+
+      statusFilter.addEventListener('change', filterAppointments);
+      dateFilter.addEventListener('change', filterAppointments);
+      searchInput.addEventListener('input', filterAppointments);
+
+      // Initial filter to show only MENUNGGU and DIKONFIRMASI
+      tableRows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        if (rowStatus !== 'MENUNGGU' && rowStatus !== 'DIKONFIRMASI') {
+          row.style.display = 'none';
+        }
+      });
+
+      // Set initial status filter value
+      statusFilter.value = '';
+    });
   </script>
 </body>
 

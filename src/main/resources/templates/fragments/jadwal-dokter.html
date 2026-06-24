@@ -235,20 +235,21 @@
                 return card;
             }
 
-            /* ---- DOKTER CARD (appointment view, same layout as pasien) ---- */
+            /* ---- DOKTER CARD (schedule view, shows all doctor schedules) ---- */
             function buildDokterCard(jadwal, date, today) {
                 const isPast = date < today;
-                const aptStatus = jadwal.appointmentStatus || '';
+                const isFull = jadwal.sisaKuota === 0 || jadwal.statusKetersediaan === 'PENUH';
+                const isLibur = jadwal.statusKetersediaan === 'LIBUR';
 
                 const card = document.createElement('div');
                 card.className = 'schedule-card';
 
-                if (isPast || aptStatus === 'DIBATALKAN' || aptStatus === 'DITOLAK') {
+                if (isPast || isLibur) {
                     card.classList.add('card-past');
-                } else if (aptStatus === 'DIKONFIRMASI') {
-                    card.classList.add('card-available');
+                } else if (isFull) {
+                    card.classList.add('card-full');
                 } else {
-                    card.classList.add('card-pending');
+                    card.classList.add('card-available');
                 }
 
                 /* Time */
@@ -256,50 +257,38 @@
                 timeEl.className = 'card-time';
                 timeEl.textContent = `${formatTime(jadwal.jamMulai)} - ${formatTime(jadwal.jamSelesai)}`;
 
-                /* Patient name */
-                const pasienEl = document.createElement('div');
-                pasienEl.className = 'card-poli card-pasien-name';
-                pasienEl.textContent = jadwal.namaPasien || '—';
+                /* Hari */
+                const hariEl = document.createElement('div');
+                hariEl.className = 'card-poli';
+                hariEl.textContent = jadwal.hari || '—';
 
-                /* Poli */
-                const poliEl = document.createElement('div');
-                poliEl.className = 'card-poli';
-                poliEl.textContent = jadwal.dokter?.poli?.namaPoli || 'Poli Umum';
-
-                /* Footer: status badge + antrian */
+                /* Footer: status badge + quota */
                 const footerEl = document.createElement('div');
                 footerEl.className = 'card-footer';
 
                 const statusBadge = document.createElement('span');
                 statusBadge.className = 'card-badge';
 
-                if (aptStatus === 'DIKONFIRMASI') {
-                    statusBadge.classList.add('badge-aktif');
-                    statusBadge.textContent = 'Konfirmasi';
-                } else if (aptStatus === 'MENUNGGU') {
-                    statusBadge.classList.add('badge-pending');
-                    statusBadge.textContent = 'Menunggu';
-                } else if (aptStatus === 'DIBATALKAN') {
+                if (isLibur) {
                     statusBadge.classList.add('badge-libur');
-                    statusBadge.textContent = 'Batal';
-                } else if (aptStatus === 'DITOLAK') {
+                    statusBadge.textContent = 'Libur';
+                } else if (isFull) {
                     statusBadge.classList.add('badge-full');
-                    statusBadge.textContent = 'Ditolak';
+                    statusBadge.textContent = 'Penuh';
                 } else {
                     statusBadge.classList.add('badge-aktif');
                     statusBadge.textContent = 'Aktif';
                 }
 
-                const queueEl = document.createElement('span');
-                queueEl.className = 'card-quota';
-                queueEl.textContent = jadwal.nomorAntrian || '';
+                const quotaEl = document.createElement('span');
+                quotaEl.className = 'card-quota' + (isFull && !isLibur ? ' quota-full' : '');
+                quotaEl.textContent = isLibur ? '' : `${jadwal.sisaKuota}/${jadwal.kuota}`;
 
                 footerEl.appendChild(statusBadge);
-                footerEl.appendChild(queueEl);
+                if (!isLibur) footerEl.appendChild(quotaEl);
 
                 card.appendChild(timeEl);
-                card.appendChild(pasienEl);
-                card.appendChild(poliEl);
+                card.appendChild(hariEl);
                 card.appendChild(footerEl);
                 return card;
             }

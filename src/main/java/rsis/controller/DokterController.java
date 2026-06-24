@@ -17,6 +17,7 @@ import rsis.repository.UserRepository;
 import rsis.service.DokterService;
 import rsis.service.JadwalPraktikService;
 import rsis.service.NotifikasiService;
+import rsis.service.AppointmentService;
 
 import java.util.List;
 
@@ -41,6 +42,9 @@ public class DokterController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     private void addNotifikasiToModel(String userId, Model model) {
         try {
@@ -94,6 +98,29 @@ public class DokterController {
         }
 
         return "dokter/daftar-pasien";
+    }
+
+    @GetMapping("/appointment")
+    public String appointment(@AuthenticationPrincipal UserDetails principal, Model model) {
+        // Get user data for navbar
+        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        if (dokter != null) {
+            model.addAttribute("nama", user.getNama());
+            model.addAttribute("role", user.getRole());
+            model.addAttribute("activeMenu", "appointment");
+
+            // Get notifications
+            addNotifikasiToModel(dokter.getIdUser(), model);
+
+            String dokterId = dokter.getIdUser();
+            List<Appointment> appointments = appointmentService.getAppointmentsByDokterId(dokterId);
+            model.addAttribute("appointments", appointments);
+        }
+
+        return "dokter/appointment";
     }
 
     @GetMapping("/profil")

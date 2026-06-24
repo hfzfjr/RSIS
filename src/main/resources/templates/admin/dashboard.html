@@ -14,7 +14,7 @@
 <body>
 
   <div th:replace="~{layout/navbar :: navbar('dashboard')}"></div>
-  
+
 
   <main>
 
@@ -30,7 +30,7 @@
 
       <div class="stat-card">
         <div class="stat-header">
-          <span class="stat-label">Total Dokter Aktif</span>
+          <span class="stat-label">Total Pasien Bulan Ini</span>
           <div class="stat-icon">👨‍⚕️</div>
         </div>
         <div class="stat-value" th:text="${totalDokter}">24</div>
@@ -46,7 +46,7 @@
 
       <div class="stat-card">
         <div class="stat-header">
-          <span class="stat-label">Appointment Pending</span>
+          <span class="stat-label">Total Appointment Bulan Ini</span>
           <div class="stat-icon">📋</div>
         </div>
         <div class="stat-value" th:text="${appointmentPending}">7</div>
@@ -78,7 +78,8 @@
         <div id="patientChart" class="chart-content">
           <th:block th:if="${visitStats != null and !visitStats.isEmpty()}">
             <div th:each="stat : ${visitStats}" class="bar-wrap">
-              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'" th:data-tooltip="${stat.count} + ' pasien'"></div>
+              <div class="bar" th:style="'height:' + ${stat.percentage} + '%'"
+                th:data-tooltip="${stat.count} + ' pasien'"></div>
               <div class="bar-label" th:text="${stat.label}"></div>
             </div>
           </th:block>
@@ -93,31 +94,131 @@
     <div class="section-card">
       <div class="section-header">
         <h2 class="section-title">Dokter Tersibuk</h2>
-        <a class="lihat-semua" href="#">Lihat Semua</a>
       </div>
 
-      <div class="doctor-list">
-        <th:block th:if="${busiestDoctors != null and !busiestDoctors.isEmpty()}">
-          <div th:each="stat, iter : ${busiestDoctors}" class="doctor-item">
-            <span class="doctor-rank" th:text="${iter.index < 9 ? '0' + (iter.index + 1) : (iter.index + 1)}">01</span>
-            <div class="doctor-avatar">👨‍⚕️</div>
-            <div class="doctor-info">
-              <div class="doctor-name" th:text="${stat.dokter.nama}">Nama Dokter</div>
-              <div class="doctor-spec" th:text="${stat.dokter.spesialisasi != null ? stat.dokter.spesialisasi.nama : '-'}">Spesialisasi</div>
-            </div>
-            <div class="doctor-stat">
-              <div class="doctor-count" th:text="${stat.count} + ' Pasien'">0 Pasien</div>
-              <div class="progress-bar">
-                <div class="progress-fill" th:style="'width:' + ${stat.percentage} + '%'"></div>
-              </div>
-            </div>
-          </div>
-        </th:block>
-        <div th:if="${busiestDoctors == null or busiestDoctors.isEmpty()}" class="chart-empty" style="text-align: center; color: #888; padding: 20px;">
+      <div class="doctor-table-wrap" id="doctorTableWrap">
+        <table class="doctor-table" th:if="${busiestDoctors != null and !busiestDoctors.isEmpty()}">
+          <thead>
+            <tr>
+              <th class="col-rank">Rank</th>
+              <th class="col-nama">Dokter</th>
+              <th class="col-spesialisasi">Spesialisasi</th>
+              <th class="col-poli">Poli</th>
+              <th class="col-total">Total Pasien</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="stat, iter : ${busiestDoctors}">
+              <td class="col-rank" th:text="'#' + (${iter.index + 1})">#1</td>
+              <td class="col-nama" th:text="${stat.dokter.nama}">Nama Dokter</td>
+              <td class="col-spesialisasi"
+                th:text="${stat.dokter.spesialisasi != null ? stat.dokter.spesialisasi.nama : '-'}">Spesialisasi</td>
+              <td class="col-poli" th:text="${stat.dokter.poli != null ? stat.dokter.poli.namaPoli : '-'}">Poli</td>
+              <td class="col-total" th:text="${stat.count} + ' Pasien'">0 Pasien</td>
+            </tr>
+          </tbody>
+        </table>
+        <div th:if="${busiestDoctors == null or busiestDoctors.isEmpty()}" class="chart-empty"
+          style="text-align: center; color: #888; padding: 20px;">
           Tidak ada data dokter tersibuk bulan ini
         </div>
       </div>
     </div>
+
+    <section class="laporan-section">
+      <div class="laporan-header">
+        <h1 class="laporan-title">Laporan Bulanan</h1>
+        <p class="laporan-subtitle">Generate dan ekspor laporan rekap aktivitas rumah sakit</p>
+      </div>
+
+      <!-- Filter Periode -->
+      <div class="section-card filter-card">
+        <label class="filter-label">Pilih Periode Laporan</label>
+        <div class="filter-row">
+          <select id="filterBulan" class="filter-select">
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Maret</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">Agustus</option>
+            <option value="9">September</option>
+            <option value="10" selected>Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+          </select>
+          <select id="filterTahun" class="filter-select">
+            <option value="2023">2023</option>
+            <option value="2024" selected>2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+          <button type="button" id="btnCariLaporan" class="btn-cari-laporan" onclick="cariLaporan()">
+            Cari Laporan
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="laporan-summary-grid">
+        <div class="stat-card featured">
+          <div class="stat-header">
+            <span class="stat-label">Total Pasien</span>
+          </div>
+          <div class="stat-value" id="laporanTotalPasien">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Total Appointment</span>
+          </div>
+          <div class="stat-value" id="laporanTotalAppointment">-</div>
+        </div>
+      </div>
+
+      <!-- Hasil Laporan -->
+      <div class="section-card">
+        <div class="hasil-laporan-header">
+          <span class="badge-hasil-laporan">HASIL LAPORAN</span>
+          <h2 class="hasil-laporan-title">Rekap Bulan <span id="laporanBulanTahunLabel">- -</span></h2>
+        </div>
+        <hr class="hasil-laporan-divider" />
+
+        <h3 class="laporan-chart-title">Pasien per Hari</h3>
+        <div class="chart-area laporan-chart-area">
+          <div class="chart-content" id="laporanChartArea">
+            <div class="chart-empty">Pilih periode lalu klik "Cari Laporan" untuk melihat data</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dokter Tersibuk (laporan periode terpilih) -->
+      <div class="section-card">
+        <h3 class="laporan-chart-title">Dokter Tersibuk</h3>
+        <div class="doctor-table-wrap" id="laporanDokterTersibukWrap">
+          <div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">
+            Pilih periode lalu klik "Cari Laporan" untuk melihat data
+          </div>
+        </div>
+      </div>
+
+      <!-- Ekspor Laporan -->
+      <div class="section-card ekspor-card">
+        <div class="ekspor-info">
+          <h3 class="ekspor-title">Ekspor Laporan</h3>
+          <p class="ekspor-subtitle">Unduh laporan ini untuk keperluan arsip atau presentasi.</p>
+        </div>
+        <div class="ekspor-actions">
+          <button type="button" id="btnEksporCSV" class="btn-ekspor btn-ekspor-csv" onclick="eksporCSV()">
+            ⬇ Ekspor CSV
+          </button>
+          <button type="button" id="btnEksporPDF" class="btn-ekspor btn-ekspor-pdf" onclick="eksporPDF()">
+            📄 Ekspor PDF
+          </button>
+        </div>
+      </div>
+    </section>
 
   </main>
 
@@ -125,10 +226,10 @@
     function fetchMonthlyStats() {
       const month = document.getElementById('monthSelector').value;
       const chartContainer = document.getElementById('patientChart');
-      const doctorListContainer = document.querySelector('.doctor-list');
-      
+      const doctorTableWrap = document.getElementById('doctorTableWrap');
+
       chartContainer.innerHTML = '<div class="chart-empty">Memuat data...</div>';
-      doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Memuat data...</div>';
+      doctorTableWrap.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Memuat data...</div>';
 
       fetch(`/admin/dashboard/visit-stats?month=${month}`)
         .then(response => response.json())
@@ -158,42 +259,145 @@
             });
           }
 
-          // 2. Render Doctor List
-          doctorListContainer.innerHTML = '';
+          // 2. Render Doctor Table
           const busiestDoctors = data.busiestDoctors || [];
           if (busiestDoctors.length === 0) {
-            doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Tidak ada data dokter tersibuk bulan ini</div>';
+            doctorTableWrap.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Tidak ada data dokter tersibuk bulan ini</div>';
           } else {
+            let rows = '';
             busiestDoctors.forEach((stat, index) => {
-              const doctorItem = document.createElement('div');
-              doctorItem.className = 'doctor-item';
-
-              const rankIndex = index < 9 ? `0${index + 1}` : `${index + 1}`;
               const specName = stat.dokter.spesialisasi ? stat.dokter.spesialisasi.nama : '-';
-
-              doctorItem.innerHTML = `
-                <span class="doctor-rank">${rankIndex}</span>
-                <div class="doctor-avatar">👨‍⚕️</div>
-                <div class="doctor-info">
-                  <div class="doctor-name">${stat.dokter.nama}</div>
-                  <div class="doctor-spec">${specName}</div>
-                </div>
-                <div class="doctor-stat">
-                  <div class="doctor-count">${stat.count} Pasien</div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${stat.percentage}%"></div>
-                  </div>
-                </div>
-              `;
-              doctorListContainer.appendChild(doctorItem);
+              const poliName = stat.dokter.poli ? stat.dokter.poli.namaPoli : '-';
+              rows += `
+                <tr>
+                  <td class="col-rank">#${index + 1}</td>
+                  <td class="col-nama">${stat.dokter.nama}</td>
+                  <td class="col-spesialisasi">${specName}</td>
+                  <td class="col-poli">${poliName}</td>
+                  <td class="col-total">${stat.count} Pasien</td>
+                </tr>`;
             });
+            doctorTableWrap.innerHTML = `
+              <table class="doctor-table">
+                <thead>
+                  <tr>
+                    <th class="col-rank">Rank</th>
+                    <th class="col-nama">Dokter</th>
+                    <th class="col-spesialisasi">Spesialisasi</th>
+                    <th class="col-poli">Poli</th>
+                    <th class="col-total">Total Pasien</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>`;
           }
         })
         .catch(err => {
           console.error('Error fetching stats:', err);
           chartContainer.innerHTML = '<div class="chart-empty">Gagal memuat data statistik</div>';
-          doctorListContainer.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Gagal memuat data dokter tersibuk</div>';
+          doctorTableWrap.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Gagal memuat data dokter tersibuk</div>';
         });
+    }
+
+    // =====================================================================
+    // LAPORAN BULANAN - CONNECTED TO BACKEND
+    // =====================================================================
+    function cariLaporan() {
+      const bulan = document.getElementById('filterBulan').value;
+      const tahun = document.getElementById('filterTahun').value;
+
+      // Show loading state
+      document.getElementById('laporanTotalPasien').textContent = '-';
+      document.getElementById('laporanTotalAppointment').textContent = '-';
+      document.getElementById('laporanBulanTahunLabel').textContent = '-';
+      document.getElementById('laporanChartArea').innerHTML = '<div class="chart-empty">Memuat data...</div>';
+      document.getElementById('laporanDokterTersibukWrap').innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Memuat data...</div>';
+
+      fetch(`/laporan/bulanan/data?bulan=${bulan}&tahun=${tahun}`)
+        .then(response => response.json())
+        .then(data => {
+          // Update summary cards
+          document.getElementById('laporanTotalPasien').textContent = data.totalPasien || 0;
+          document.getElementById('laporanTotalAppointment').textContent = data.totalAppointment || 0;
+          document.getElementById('laporanBulanTahunLabel').textContent = data.labelPeriode || '-';
+
+          // Render chart (Pasien per Hari)
+          const chartArea = document.getElementById('laporanChartArea');
+          const visitStats = data.visitStats || [];
+          if (visitStats.length === 0) {
+            chartArea.innerHTML = '<div class="chart-empty">Tidak ada data statistik kunjungan</div>';
+          } else {
+            chartArea.innerHTML = '';
+            visitStats.forEach(stat => {
+              const barWrap = document.createElement('div');
+              barWrap.className = 'bar-wrap';
+
+              const bar = document.createElement('div');
+              bar.className = 'bar';
+              bar.style.height = `${stat.percentage}%`;
+              bar.setAttribute('data-tooltip', `${stat.count} pasien`);
+
+              const barLabel = document.createElement('div');
+              barLabel.className = 'bar-label';
+              barLabel.textContent = stat.label;
+
+              barWrap.appendChild(bar);
+              barWrap.appendChild(barLabel);
+              chartArea.appendChild(barWrap);
+            });
+          }
+
+          // Render doctor table (Dokter Tersibuk)
+          const dokterTersibukWrap = document.getElementById('laporanDokterTersibukWrap');
+          const busiestDoctors = data.busiestDoctors || [];
+          if (busiestDoctors.length === 0) {
+            dokterTersibukWrap.innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Tidak ada data dokter tersibuk bulan ini</div>';
+          } else {
+            let rows = '';
+            busiestDoctors.forEach((stat, index) => {
+              const specName = stat.dokter.spesialisasi ? stat.dokter.spesialisasi.nama : '-';
+              const poliName = stat.dokter.poli ? stat.dokter.poli.namaPoli : '-';
+              rows += `
+                <tr>
+                  <td class="col-rank">#${index + 1}</td>
+                  <td class="col-nama">${stat.dokter.nama}</td>
+                  <td class="col-spesialisasi">${specName}</td>
+                  <td class="col-poli">${poliName}</td>
+                  <td class="col-total">${stat.count} Pasien</td>
+                </tr>`;
+            });
+            dokterTersibukWrap.innerHTML = `
+              <table class="doctor-table">
+                <thead>
+                  <tr>
+                    <th class="col-rank">Rank</th>
+                    <th class="col-nama">Dokter</th>
+                    <th class="col-spesialisasi">Spesialisasi</th>
+                    <th class="col-poli">Poli</th>
+                    <th class="col-total">Total Pasien</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>`;
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching laporan bulanan:', err);
+          document.getElementById('laporanChartArea').innerHTML = '<div class="chart-empty">Gagal memuat data statistik</div>';
+          document.getElementById('laporanDokterTersibukWrap').innerHTML = '<div class="chart-empty" style="text-align: center; color: #888; padding: 20px;">Gagal memuat data dokter tersibuk</div>';
+        });
+    }
+
+    function eksporCSV() {
+      const bulan = document.getElementById('filterBulan').value;
+      const tahun = document.getElementById('filterTahun').value;
+      window.location.href = `/laporan/export/csv?bulan=${bulan}&tahun=${tahun}`;
+    }
+
+    function eksporPDF() {
+      const bulan = document.getElementById('filterBulan').value;
+      const tahun = document.getElementById('filterTahun').value;
+      window.location.href = `/laporan/export/pdf?bulan=${bulan}&tahun=${tahun}`;
     }
   </script>
 

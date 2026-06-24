@@ -84,4 +84,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
         @Query("SELECT COUNT(DISTINCT a.jadwal.dokter.idUser) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate AND a.jadwal IS NOT NULL AND a.jadwal.dokter IS NOT NULL")
         Long countDistinctDoctorsByTanggalBooking(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
+
+        @Query("SELECT a FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate ORDER BY a.tanggalBooking")
+        List<Appointment> findByTanggalBookingBetween(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 }

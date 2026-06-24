@@ -162,6 +162,9 @@
                     /* Filter jadwal for this day */
                     const dayJadwals = jadwalData.filter(j => isSameDate(j.tanggal, date));
 
+                    /* Sort by jamMulai ascending */
+                    dayJadwals.sort((a, b) => a.jamMulai.localeCompare(b.jamMulai));
+
                     const cardsWrapper = document.createElement('div');
                     cardsWrapper.className = 'day-cards';
 

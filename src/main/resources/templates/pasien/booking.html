@@ -66,10 +66,16 @@
         <!-- Detail Keluhan & Konfirmasi -->
         <div class="booking-footer">
           <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+          <div th:if="${isReschedule}" class="alert alert-info">
+            Anda sedang melakukan reschedule untuk appointment <span
+              th:text="${rescheduleAppointment != null ? rescheduleAppointment.idAppointment : ''}"></span>
+          </div>
 
           <form th:action="@{/appointment/booking}" th:object="${bookingRequest}" method="post">
             <input type="hidden" id="jadwalId" th:field="*{jadwalId}"
               th:value="${jadwal != null ? jadwal.idJadwal : ''}" />
+            <input type="hidden" name="reschedule"
+              th:value="${rescheduleAppointment != null ? rescheduleAppointment.idAppointment : ''}" />
 
             <!-- Detail Keluhan -->
             <div class="keluhan-card" style="margin-bottom: 16px;">

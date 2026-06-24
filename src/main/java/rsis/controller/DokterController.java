@@ -181,7 +181,7 @@ public class DokterController {
             addNotifikasiToModel(dokter.getIdUser(), model);
 
             String dokterId = dokter.getIdUser();
-            List<Appointment> appointments = dokterService.getPendingAppointments(dokterId);
+            List<Appointment> appointments = appointmentService.getAppointmentsByDokterId(dokterId);
             model.addAttribute("appointments", appointments);
         }
 

@@ -63,8 +63,7 @@ public class Pasien extends User implements INotifiable {
 
     // Getters and Setters
     public boolean isProfileComplete() {
-        return nomorRekamMedis != null && !nomorRekamMedis.isEmpty()
-                && tanggalLahir != null
+        return tanggalLahir != null
                 && alamat != null && !alamat.isEmpty();
     }
 

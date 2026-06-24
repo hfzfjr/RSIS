@@ -7,6 +7,7 @@ import rsis.dto.BookingRequestDTO;
 import rsis.model.Appointment;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
+import rsis.model.User;
 import rsis.repository.AppointmentRepository;
 import rsis.repository.JadwalPraktikRepository;
 import rsis.repository.PasienRepository;
@@ -170,8 +171,27 @@ public class AppointmentService {
         }
 
         Appointment appointment = appointmentOpt.get();
+
+        // Generate nomor rekam medis for pasien if not exists
+        User user = appointment.getUser();
+        if (user instanceof Pasien) {
+            Pasien pasien = (Pasien) user;
+            if (pasien.getNomorRekamMedis() == null || pasien.getNomorRekamMedis().isEmpty()) {
+                String nomorRekamMedis = generateNomorRekamMedis();
+                pasien.setNomorRekamMedis(nomorRekamMedis);
+                pasienRepository.save(pasien);
+            }
+        }
+
         appointment.konfirmasi();
         appointmentRepository.save(appointment);
+    }
+
+    private String generateNomorRekamMedis() {
+        // Format: RM-XXXXX (5 digit sequential number)
+        long count = pasienRepository.countAll();
+        long nextNumber = count + 1;
+        return String.format("RM-%05d", nextNumber);
     }
 
     @Transactional

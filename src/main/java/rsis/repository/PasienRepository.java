@@ -13,4 +13,7 @@ public interface PasienRepository extends JpaRepository<Pasien, String> {
 
     @Query("SELECT p FROM Pasien p WHERE p.idUser = :idUser")
     Optional<Pasien> findByIdUser(@Param("idUser") String idUser);
+
+    @Query("SELECT COUNT(p) FROM Pasien p")
+    long countAll();
 }

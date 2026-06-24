@@ -170,7 +170,7 @@
                   th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <form th:action="@{/dokter/jadwal/delete/{id}(id=${jadwal.idJadwal})}" method="post"
+                <form th:action="@{/jadwal/delete/{id}(id=${jadwal.idJadwal})}" method="post"
                   style="display: inline">
                   <button type="submit" class="rs-action-btn delete" onclick="return confirm('Hapus jadwal ini?');">
                     <i class="bi bi-trash"></i>
@@ -192,7 +192,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form th:action="@{/dokter/jadwal/create}" method="post">
+          <form th:action="@{/jadwal/create}" method="post">
             <label class="form-label">Hari Praktik</label>
             <select class="form-select" name="hari" required>
               <option value="SENIN">Senin</option>
@@ -231,7 +231,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form th:action="@{/dokter/jadwal/update}" method="post">
+          <form th:action="@{/jadwal/update}" method="post">
             <input type="hidden" name="idJadwal" th:value="${jadwal.idJadwal}" />
             <label class="form-label">Hari Praktik</label>
             <select class="form-select" name="hari" required>

@@ -122,6 +122,7 @@ public class DokterController {
 
         return "dokter/appointment";
     }
+
     @GetMapping("/profil")
     public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
         // Get user data for navbar

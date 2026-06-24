@@ -14,6 +14,8 @@ import rsis.model.User;
 import rsis.repository.AdminRSRepository;
 import rsis.repository.UserRepository;
 import rsis.service.AdminRSService;
+import rsis.service.DokterService;
+import rsis.service.PoliService;
 import rsis.service.NotifikasiService;
 
 import java.util.List;
@@ -24,6 +26,12 @@ public class PoliController {
 
     @Autowired
     private AdminRSService adminRSService;
+
+    @Autowired
+    private PoliService poliService;
+
+    @Autowired
+    private DokterService dokterService;
 
     @Autowired
     private UserRepository userRepository;
@@ -63,7 +71,7 @@ public class PoliController {
             // Ensure notifikasi is always set even if admin is null
             model.addAttribute("notifikasi", List.of());
         }
-        List<Poli> polis = adminRSService.getAllPoli();
+        List<Poli> polis = poliService.getAllPoli();
         model.addAttribute("polis", polis);
         model.addAttribute("activeMenu", "kelola-poli");
         return "admin/kelola-poli";
@@ -74,7 +82,7 @@ public class PoliController {
             @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.createPoli(poli, dokterIds);
+            poliService.createPoli(poli, dokterIds);
             redirectAttributes.addFlashAttribute("success", "Poli berhasil ditambahkan!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -86,7 +94,7 @@ public class PoliController {
     @ResponseBody
     public List<Dokter> getUnassignedDoctors() {
         try {
-            return adminRSService.getDokterTanpaPoli();
+            return poliService.getDokterTanpaPoli();
         } catch (Exception e) {
             return List.of();
         }
@@ -96,7 +104,7 @@ public class PoliController {
     @ResponseBody
     public List<Dokter> getAllDoctors() {
         try {
-            return adminRSService.getAllDokter();
+            return dokterService.getAllDokter();
         } catch (Exception e) {
             return List.of();
         }
@@ -107,7 +115,7 @@ public class PoliController {
             @RequestParam(value = "dokterIds", required = false) List<String> dokterIds,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.updatePoli(poli, dokterIds);
+            poliService.updatePoli(poli, dokterIds);
             redirectAttributes.addFlashAttribute("success", "Poli berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -120,12 +128,10 @@ public class PoliController {
     public java.util.Map<String, Object> getPoliDetail(@PathVariable String id) {
         java.util.Map<String, Object> response = new java.util.HashMap<>();
         try {
-            Poli poli = adminRSService.getAllPoli().stream()
-                    .filter(p -> p.getIdPoli().equals(id))
-                    .findFirst()
+            Poli poli = poliService.getPoliById(id)
                     .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
-            List<Dokter> assignedDoctors = adminRSService.getDokterByPoli(id);
-            List<Dokter> unassignedDoctors = adminRSService.getDokterTanpaPoli();
+            List<Dokter> assignedDoctors = poliService.getDokterByPoli(id);
+            List<Dokter> unassignedDoctors = poliService.getDokterTanpaPoli();
 
             response.put("success", true);
             response.put("poli", poli);
@@ -142,7 +148,7 @@ public class PoliController {
     public String deletePoli(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.deletePoli(id);
+            poliService.deletePoli(id);
             redirectAttributes.addFlashAttribute("success", "Poli berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

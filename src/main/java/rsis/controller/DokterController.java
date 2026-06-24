@@ -15,6 +15,7 @@ import rsis.model.JadwalPraktik;
 import rsis.repository.DokterRepository;
 import rsis.repository.UserRepository;
 import rsis.service.DokterService;
+import rsis.service.JadwalPraktikService;
 import rsis.service.NotifikasiService;
 
 import java.util.List;
@@ -25,6 +26,9 @@ public class DokterController {
 
     @Autowired
     private DokterService dokterService;
+
+    @Autowired
+    private JadwalPraktikService jadwalPraktikService;
 
     @Autowired
     private NotifikasiService notifikasiService;
@@ -117,7 +121,7 @@ public class DokterController {
 
             // Get statistics for dokter
             String dokterId = dokter.getIdUser();
-            List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
+            List<JadwalPraktik> jadwals = jadwalPraktikService.getJadwalByDokterId(dokterId);
             model.addAttribute("totalJadwal", jadwals.size());
 
             List<Appointment> appointments = dokterService.getDaftarPasien(dokterId);

@@ -181,7 +181,7 @@ public class JadwalPraktikController {
             addNotifikasiToModel(dokter.getIdUser(), model);
 
             String dokterId = dokter.getIdUser();
-            List<JadwalPraktik> jadwals = dokterService.getJadwalByDokterId(dokterId);
+            List<JadwalPraktik> jadwals = jadwalPraktikService.getJadwalByDokterId(dokterId);
             model.addAttribute("jadwals", jadwals);
         }
 
@@ -194,7 +194,7 @@ public class JadwalPraktikController {
             RedirectAttributes redirectAttributes) {
         try {
             // Dokter will be set in service layer based on logged-in user
-            dokterService.createJadwal(jadwal);
+            jadwalPraktikService.createJadwal(jadwal);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil dibuat!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -206,7 +206,7 @@ public class JadwalPraktikController {
     public String updateJadwal(@ModelAttribute JadwalPraktik jadwal,
             RedirectAttributes redirectAttributes) {
         try {
-            dokterService.updateJadwal(jadwal);
+            jadwalPraktikService.updateJadwal(jadwal);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -218,7 +218,7 @@ public class JadwalPraktikController {
     public String deleteJadwal(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            dokterService.deleteJadwal(id);
+            jadwalPraktikService.deleteJadwal(id);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

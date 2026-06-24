@@ -20,6 +20,10 @@ import rsis.model.Spesialisasi;
 import rsis.repository.AdminRSRepository;
 import rsis.repository.UserRepository;
 import rsis.service.AdminRSService;
+import rsis.service.DokterService;
+import rsis.service.PoliService;
+import rsis.service.JadwalPraktikService;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -35,6 +39,15 @@ public class AdminController {
 
     @Autowired
     private AdminRSService adminRSService;
+
+    @Autowired
+    private DokterService dokterService;
+
+    @Autowired
+    private PoliService poliService;
+
+    @Autowired
+    private JadwalPraktikService jadwalPraktikService;
 
     @Autowired
     private UserRepository userRepository;
@@ -125,9 +138,9 @@ public class AdminController {
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-dokter");
 
-        List<Dokter> dokters = adminRSService.getAllDokter();
-        List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
-        List<Poli> polis = adminRSService.getAllPoli();
+        List<Dokter> dokters = dokterService.getAllDokter();
+        List<Spesialisasi> spesialisasis = dokterService.getAllSpesialisasi();
+        List<Poli> polis = poliService.getAllPoli();
         model.addAttribute("dokters", dokters);
         model.addAttribute("spesialisasis", spesialisasis);
         model.addAttribute("polis", polis);
@@ -155,9 +168,9 @@ public class AdminController {
             @RequestParam(required = false) MultipartFile dokterImage,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.createDokter(nama, email, password, nomorHp, spesialisasi, poli, dokterImage);
+            dokterService.createDokter(nama, email, password, nomorHp, spesialisasi, poli, dokterImage);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil ditambahkan!");
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | IOException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/kelola-dokter";
@@ -173,7 +186,7 @@ public class AdminController {
             @RequestParam String poli,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.updateDokter(idUser, nama, nomorHp, nomorStr, spesialisasi, poli);
+            dokterService.updateDokter(idUser, nama, nomorHp, nomorStr, spesialisasi, poli);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -185,7 +198,7 @@ public class AdminController {
     public String deleteDokter(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.softDeleteDokter(id);
+            dokterService.softDeleteDokter(id);
             redirectAttributes.addFlashAttribute("success", "Dokter berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -205,7 +218,7 @@ public class AdminController {
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-spesialisasi");
 
-        List<Spesialisasi> spesialisasis = adminRSService.getAllSpesialisasi();
+        List<Spesialisasi> spesialisasis = dokterService.getAllSpesialisasi();
         model.addAttribute("spesialisasis", spesialisasis);
         model.addAttribute("activeMenu", "kelola-spesialisasi");
         return "admin/kelola-spesialisasi";
@@ -215,7 +228,7 @@ public class AdminController {
     public String createSpesialisasi(@ModelAttribute Spesialisasi spesialisasi,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.createSpesialisasi(spesialisasi);
+            dokterService.createSpesialisasi(spesialisasi);
             redirectAttributes.addFlashAttribute("success", "Spesialisasi berhasil ditambahkan!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -227,7 +240,7 @@ public class AdminController {
     public String deleteSpesialisasi(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.deleteSpesialisasi(id);
+            dokterService.deleteSpesialisasi(id);
             redirectAttributes.addFlashAttribute("success", "Spesialisasi berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -247,9 +260,9 @@ public class AdminController {
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-jadwal");
 
-        List<JadwalPraktik> jadwals = adminRSService.getAllJadwal();
-        List<Dokter> dokters = adminRSService.getAllDokter();
-        List<Poli> polis = adminRSService.getAllPoli();
+        List<JadwalPraktik> jadwals = jadwalPraktikService.getAllJadwalWithEnrichedDokter();
+        List<Dokter> dokters = dokterService.getAllDokter();
+        List<Poli> polis = poliService.getAllPoli();
         model.addAttribute("jadwals", jadwals);
         model.addAttribute("dokters", dokters);
         model.addAttribute("polis", polis);
@@ -275,7 +288,7 @@ public class AdminController {
             LocalTime localJamMulai = LocalTime.parse(jamMulai);
             LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
 
-            adminRSService.updateJadwal(idJadwal, idUser, hari, localTanggal, localJamMulai, localJamSelesai,
+            jadwalPraktikService.updateJadwal(idJadwal, idUser, hari, localTanggal, localJamMulai, localJamSelesai,
                     statusKetersediaan, kuota, idPoli);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil diperbarui!");
         } catch (Exception e) {
@@ -300,7 +313,8 @@ public class AdminController {
             LocalTime localJamMulai = LocalTime.parse(jamMulai);
             LocalTime localJamSelesai = LocalTime.parse(jamSelesai);
 
-            adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai, statusKetersediaan,
+            jadwalPraktikService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai,
+                    statusKetersediaan,
                     kuota, idPoli);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil ditambahkan!");
         } catch (Exception e) {
@@ -332,13 +346,13 @@ public class AdminController {
                 LocalDate localTanggalMulai = (tanggalMulai != null && !tanggalMulai.isEmpty())
                         ? LocalDate.parse(tanggalMulai)
                         : LocalDate.now();
-                adminRSService.createBulkRecurringJadwal(
+                jadwalPraktikService.createBulkRecurringJadwal(
                         idUser, idPoli, hariList, localTanggalMulai, sampaiYearMonth,
                         localJamMulai, localJamSelesai, statusKetersediaan, kuota);
                 redirectAttributes.addFlashAttribute("success", "Jadwal berulang berhasil dibuat!");
             } else {
                 LocalDate localTanggal = (tanggal != null && !tanggal.isEmpty()) ? LocalDate.parse(tanggal) : null;
-                adminRSService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai,
+                jadwalPraktikService.createJadwal(idUser, hari, localTanggal, localJamMulai, localJamSelesai,
                         statusKetersediaan, kuota, idPoli);
                 redirectAttributes.addFlashAttribute("success", "Jadwal berhasil ditambahkan!");
             }
@@ -352,7 +366,7 @@ public class AdminController {
     public String deleteJadwal(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
         try {
-            adminRSService.softDeleteJadwal(id);
+            jadwalPraktikService.softDeleteJadwal(id);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil dihapus!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

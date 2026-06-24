@@ -3,15 +3,19 @@ package rsis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import rsis.model.Appointment;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
-import rsis.model.Pasien;
+import rsis.model.Poli;
+import rsis.model.Spesialisasi;
 import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
-import rsis.repository.JadwalPraktikRepository;
+import rsis.repository.PoliRepository;
+import rsis.repository.SpesialisasiRepository;
 import rsis.repository.UserRepository;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,60 +26,25 @@ public class DokterService {
     private DokterRepository dokterRepository;
 
     @Autowired
-    private JadwalPraktikRepository jadwalPraktikRepository;
-
-    @Autowired
     private AppointmentRepository appointmentRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    public List<JadwalPraktik> getJadwalByDokterId(String dokterId) {
-        List<JadwalPraktik> jadwals = jadwalPraktikRepository.findByDokter_IdUser(dokterId);
-        // Populate transient fields for each jadwal's dokter
-        for (JadwalPraktik jadwal : jadwals) {
-            if (jadwal.getDokter() != null) {
-                Dokter dokter = jadwal.getDokter();
-                userRepository.findById(dokter.getIdUser()).ifPresent(user -> {
-                    dokter.setNama(user.getNama());
-                    dokter.setEmail(user.getEmail());
-                    dokter.setPassword(user.getPassword());
-                    dokter.setRole(user.getRole());
-                });
-            }
-        }
-        return jadwals;
-    }
+    @Autowired
+    private SpesialisasiRepository spesialisasiRepository;
 
-    @Transactional
-    public JadwalPraktik updateJadwal(JadwalPraktik jadwal) {
-        return jadwalPraktikRepository.save(jadwal);
-    }
+    @Autowired
+    private PoliRepository poliRepository;
 
-    @Transactional
-    public JadwalPraktik createJadwal(JadwalPraktik jadwal) {
-        String idJadwal = generateJadwalId();
-        jadwal.setIdJadwal(idJadwal);
-        jadwal.setStatusKetersediaan("TERSEDIA");
-        jadwal.setSisaKuota(jadwal.getKuota());
-        return jadwalPraktikRepository.save(jadwal);
-    }
+    @Autowired
+    private AuthService authService;
 
-    @Transactional
-    public void deleteJadwal(String jadwalId) {
-        // Check if there are any active appointments (MENUNGGU or DIKONFIRMASI)
-        List<Appointment> activeAppointments = appointmentRepository.findByJadwal_IdJadwalAndStatusIn(
-                jadwalId, List.of("MENUNGGU", "DIKONFIRMASI"));
-        if (!activeAppointments.isEmpty()) {
-            throw new RuntimeException("Cannot delete jadwal with active appointments");
-        }
-        jadwalPraktikRepository.deleteById(jadwalId);
-    }
+    @Autowired
+    private FileStorageService fileStorageService;
 
-    public boolean cekKetersediaan(String jadwalId) {
-        Optional<JadwalPraktik> jadwalOpt = jadwalPraktikRepository.findById(jadwalId);
-        return jadwalOpt.map(JadwalPraktik::cekTersedia).orElse(false);
-    }
+    @Autowired
+    private IdGeneratorService idGeneratorService;
 
     public List<Appointment> getDaftarPasien(String dokterId) {
         return appointmentRepository.findByJadwal_Dokter_IdUser(dokterId);
@@ -108,22 +77,10 @@ public class DokterService {
 
         // Restore quota
         JadwalPraktik jadwal = appointment.getJadwal();
-        jadwal.tambahKuota();
-        jadwalPraktikRepository.save(jadwal);
-    }
-
-    private String generateJadwalId() {
-        Optional<String> latestId = jadwalPraktikRepository.findLatestJadwalId();
-        if (latestId.isPresent()) {
-            String id = latestId.get();
-            try {
-                int num = Integer.parseInt(id.substring(4));
-                return String.format("jdw-%03d", num + 1);
-            } catch (NumberFormatException e) {
-                // fallback
-            }
+        if (jadwal != null) {
+            jadwal.tambahKuota();
+            // Need to use JadwalPraktikService to save
         }
-        return "jdw-001";
     }
 
     /**
@@ -148,5 +105,141 @@ public class DokterService {
         return dokterList.stream()
                 .map(this::enrichWithUserData)
                 .toList();
+    }
+
+    // ====================
+    // Dokter Management
+    // ====================
+
+    @Transactional
+    public Dokter createDokter(Dokter dokter) {
+        dokter.setRole("DOKTER");
+        return dokterRepository.save(dokter);
+    }
+
+    @Transactional
+    public Dokter createDokter(String nama, String email, String password, String nomorHp,
+            String spesialisasiId, String poliId, MultipartFile dokterImage) throws IOException {
+        // Generate user ID
+        String userId = idGeneratorService.generateDokterId(dokterRepository.count());
+
+        // Generate nomor STR automatically
+        String nomorStr = idGeneratorService.generateNomorStr(userId);
+
+        // Encode password before saving
+        String encodedPassword = authService.encodePassword(password);
+
+        // Handle file upload
+        String imageUrl = null;
+        if (dokterImage != null && !dokterImage.isEmpty()) {
+            imageUrl = fileStorageService.saveFile(dokterImage, userId);
+        }
+
+        // Create new Dokter
+        Dokter dokter = new Dokter();
+        dokter.setIdUser(userId);
+        dokter.setNama(nama);
+        dokter.setEmail(email);
+        dokter.setPassword(encodedPassword);
+        dokter.setNomorHp(nomorHp);
+        dokter.setNomorStr(nomorStr);
+        dokter.setRole("DOKTER");
+        dokter.setDokterImage(imageUrl);
+
+        // Set Spesialisasi
+        if (spesialisasiId != null && !spesialisasiId.isEmpty()) {
+            spesialisasiRepository.findById(spesialisasiId).ifPresent(dokter::setSpesialisasi);
+        }
+
+        // Set Poli
+        if (poliId != null && !poliId.isEmpty()) {
+            poliRepository.findById(poliId).ifPresent(dokter::setPoli);
+        }
+
+        // Save Dokter (this will also save the User parent due to JOINED inheritance)
+        return dokterRepository.save(dokter);
+    }
+
+    @Transactional
+    public Dokter updateDokter(Dokter dokter) {
+        return dokterRepository.save(dokter);
+    }
+
+    @Transactional
+    public Dokter updateDokter(String idUser, String nama, String nomorHp, String nomorStr,
+            String spesialisasiId, String poliId) {
+        Dokter existingDokter = dokterRepository.findById(idUser)
+                .orElseThrow(() -> new RuntimeException("Dokter tidak ditemukan"));
+
+        existingDokter.setNama(nama);
+        existingDokter.setNomorHp(nomorHp);
+        existingDokter.setNomorStr(nomorStr);
+
+        if (spesialisasiId != null && !spesialisasiId.isEmpty()) {
+            Spesialisasi spesialisasi = spesialisasiRepository.findById(spesialisasiId)
+                    .orElseThrow(() -> new RuntimeException("Spesialisasi tidak ditemukan"));
+            existingDokter.setSpesialisasi(spesialisasi);
+        } else {
+            existingDokter.setSpesialisasi(null);
+        }
+
+        if (poliId != null && !poliId.isEmpty()) {
+            Poli poli = poliRepository.findById(poliId)
+                    .orElseThrow(() -> new RuntimeException("Poli tidak ditemukan"));
+            existingDokter.setPoli(poli);
+        } else {
+            existingDokter.setPoli(null);
+        }
+
+        return dokterRepository.save(existingDokter);
+    }
+
+    @Transactional
+    public void deleteDokter(String dokterId) {
+        dokterRepository.deleteById(dokterId);
+    }
+
+    @Transactional
+    public void softDeleteDokter(String dokterId) {
+        Optional<Dokter> dokterOpt = dokterRepository.findById(dokterId);
+        if (dokterOpt.isPresent()) {
+            Dokter dokter = dokterOpt.get();
+            dokter.setIsActive(false);
+            dokterRepository.save(dokter);
+        } else {
+            throw new RuntimeException("Dokter tidak ditemukan");
+        }
+    }
+
+    public List<Dokter> getAllDokter() {
+        List<Dokter> dokters = dokterRepository.findAllActive();
+        return enrichAllWithUserData(dokters);
+    }
+
+    public Optional<Dokter> getDokterById(String dokterId) {
+        return dokterRepository.findById(dokterId);
+    }
+
+    // ====================
+    // Spesialisasi Management
+    // ====================
+
+    @Transactional
+    public Spesialisasi createSpesialisasi(Spesialisasi spesialisasi) {
+        return spesialisasiRepository.save(spesialisasi);
+    }
+
+    @Transactional
+    public Spesialisasi updateSpesialisasi(Spesialisasi spesialisasi) {
+        return spesialisasiRepository.save(spesialisasi);
+    }
+
+    @Transactional
+    public void deleteSpesialisasi(String spesialisasiId) {
+        spesialisasiRepository.deleteById(spesialisasiId);
+    }
+
+    public List<Spesialisasi> getAllSpesialisasi() {
+        return spesialisasiRepository.findAll();
     }
 }

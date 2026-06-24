@@ -11,6 +11,7 @@ public class IdGeneratorService {
 
     /**
      * Generate ID untuk dokter
+     * 
      * @param count Jumlah dokter yang sudah ada
      * @return ID dokter dalam format dkt-XXX
      */
@@ -20,15 +21,19 @@ public class IdGeneratorService {
 
     /**
      * Generate nomor STR
+     * 
      * @param idDokter ID dokter
-     * @return Nomor STR dalam format STR-ID
+     * @return Nomor STR dalam format STR-YYYYMMDD-XXXX
      */
     public String generateNomorStr(String idDokter) {
-        return "STR-" + idDokter.toUpperCase();
+        String dateStr = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String sequenceStr = idDokter.substring(4).toUpperCase(); // Extract numeric part from dkt-XXX
+        return "STR-" + dateStr + "-" + sequenceStr;
     }
 
     /**
      * Generate ID untuk jadwal praktik
+     * 
      * @param count Jumlah jadwal yang sudah ada
      * @return ID jadwal dalam format jdw-XXX
      */
@@ -38,15 +43,17 @@ public class IdGeneratorService {
 
     /**
      * Generate ID untuk poli
+     * 
      * @param count Jumlah poli yang sudah ada
-     * @return ID poli dalam format pol-XXX
+     * @return ID poli dalam format pli-XXX
      */
     public String generatePoliId(long count) {
-        return String.format("pol-%03d", count + 1);
+        return String.format("pli-%03d", count + 1);
     }
 
     /**
      * Generate ID untuk appointment
+     * 
      * @param count Jumlah appointment yang sudah ada
      * @return ID appointment dalam format apt-XXX
      */

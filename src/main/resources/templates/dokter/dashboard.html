@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,16 +13,32 @@
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
   <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
+
 <body>
   <div th:replace="layout/navbar :: navbar('dashboard')"></div>
-  <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
 
   <main class="rs-main-content">
     <div class="rs-stats-grid">
-      <div class="rs-stat-card"><div class="rs-stat-icon-wrapper rs-icon-blue"><i class="bi bi-calendar3"></i></div><div class="rs-stat-data"><span class="rs-stat-title">Total Appointment</span><span class="rs-stat-value" id="count-today-appointments">0</span></div></div>
-      <div class="rs-stat-card"><div class="rs-stat-icon-wrapper rs-icon-red"><i class="bi bi-clipboard-pulse"></i></div><div class="rs-stat-data"><span class="rs-stat-title">Menunggu Konfirmasi</span><span class="rs-stat-value" id="count-pending">0</span></div></div>
-      <div class="rs-stat-card"><div class="rs-stat-icon-wrapper rs-icon-green"><i class="bi bi-people"></i></div><div class="rs-stat-data"><span class="rs-stat-title">Pasien Dikonfirmasi</span><span class="rs-stat-value" id="count-total-pasien">0</span></div></div>
-      <div class="rs-stat-card"><div class="rs-stat-icon-wrapper rs-icon-purple"><i class="bi bi-clock"></i></div><div class="rs-stat-data"><span class="rs-stat-title">Sesi Praktik</span><span class="rs-stat-value" id="count-active-sessions">0</span></div></div>
+      <div class="rs-stat-card">
+        <div class="rs-stat-icon-wrapper rs-icon-blue"><i class="bi bi-calendar3"></i></div>
+        <div class="rs-stat-data"><span class="rs-stat-title">Total Appointment</span><span class="rs-stat-value"
+            id="count-today-appointments">0</span></div>
+      </div>
+      <div class="rs-stat-card">
+        <div class="rs-stat-icon-wrapper rs-icon-red"><i class="bi bi-clipboard-pulse"></i></div>
+        <div class="rs-stat-data"><span class="rs-stat-title">Menunggu Konfirmasi</span><span class="rs-stat-value"
+            id="count-pending">0</span></div>
+      </div>
+      <div class="rs-stat-card">
+        <div class="rs-stat-icon-wrapper rs-icon-green"><i class="bi bi-people"></i></div>
+        <div class="rs-stat-data"><span class="rs-stat-title">Pasien Dikonfirmasi</span><span class="rs-stat-value"
+            id="count-total-pasien">0</span></div>
+      </div>
+      <div class="rs-stat-card">
+        <div class="rs-stat-icon-wrapper rs-icon-purple"><i class="bi bi-clock"></i></div>
+        <div class="rs-stat-data"><span class="rs-stat-title">Sesi Praktik</span><span class="rs-stat-value"
+            id="count-active-sessions">0</span></div>
+      </div>
     </div>
 
     <div class="rs-layout-grid">
@@ -43,7 +60,7 @@
           <h2 class="rs-section-title">Appointment Menunggu Konfirmasi</h2>
           <div class="rs-panel">
             <div class="rs-list" id="pending-list">
-               <p style="text-align: center; padding: 20px; color: #666;">Tidak ada permintaan baru.</p>
+              <p style="text-align: center; padding: 20px; color: #666;">Tidak ada permintaan baru.</p>
             </div>
             <div class="rs-panel-footer">
               <span class="rs-footer-text" id="pending-footer-text"></span>
@@ -73,10 +90,10 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      
+
       // FETCH APPOINTMENTS & QUEUE
       fetch('/dokter/appointment')
         .then(response => response.text())
@@ -91,8 +108,8 @@
 
           rows.forEach((row) => {
             const cols = row.querySelectorAll('td');
-            if (cols.length < 8) return; 
-            
+            if (cols.length < 8) return;
+
             const id = cols[0].textContent.trim();
             const patientName = cols[2].querySelector('.patient-name') ? cols[2].querySelector('.patient-name').textContent.trim() : 'Anonim';
             const bookingDate = cols[3].textContent.trim();
@@ -213,12 +230,12 @@
     }
 
     // Toggle show more for timeline
-    document.getElementById('timeline-show-more').addEventListener('click', function(e) {
+    document.getElementById('timeline-show-more').addEventListener('click', function (e) {
       e.preventDefault();
       const showMoreBtn = document.getElementById('timeline-show-more');
       const footerText = document.getElementById('timeline-footer-text');
       const hiddenItems = document.querySelectorAll('#timeline-container .hidden-timeline-item');
-      
+
       const isCurrentlyHidden = hiddenItems.length > 0 && hiddenItems[0].style.display === 'none';
 
       if (isCurrentlyHidden) {
@@ -234,4 +251,5 @@
     });
   </script>
 </body>
+
 </html>

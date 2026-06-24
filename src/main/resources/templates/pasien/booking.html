@@ -7,6 +7,7 @@
   <title>Booking Janji Temu - RSIS</title>
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
   <link rel="stylesheet" href="/css/pasien/booking.css" />
   <link rel="stylesheet" href="/css/fragments/jadwal-dokter.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/pasien/konfirmasi-booking.css" />
@@ -24,8 +25,9 @@
       <aside class="doctor-sidebar" th:if="${dokter != null}">
         <div class="doctor-profile-card">
           <div class="doctor-image-wrapper">
-            <img th:src="${dokter.dokterImage != null && !dokter.dokterImage.isEmpty() ? dokter.dokterImage : '/images/dokter.png'}" alt="Dokter"
-              class="doctor-avatar-image" />
+            <img
+              th:src="${dokter.dokterImage != null && !dokter.dokterImage.isEmpty() ? dokter.dokterImage : '/images/dokter.png'}"
+              alt="Dokter" class="doctor-avatar-image" />
           </div>
           <div class="doctor-info">
             <h1 class="doctor-name" th:text="${dokter != null ? 'dr. ' + dokter.nama : 'Dokter'}">

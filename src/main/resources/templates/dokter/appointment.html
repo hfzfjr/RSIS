@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,9 +14,9 @@
   <link rel="stylesheet" href="/css/fragments/overlay/dokter/detail-appointment.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/dokter/tolak-appointment.css" />
 </head>
+
 <body>
   <div th:replace="layout/navbar :: navbar('appointment')"></div>
-  <div th:replace="fragments/overlay/notifikasi :: notifikasi-overlay"></div>
 
   <main class="appointment-main">
     <div class="appointment-header">
@@ -58,13 +59,13 @@
           <tr th:if="${#lists.isEmpty(appointments)}">
             <td colspan="5" class="text-center">Tidak ada data appointment.</td>
           </tr>
-          
-          <tr th:each="appt : ${appointments}" 
-              th:data-status="${appt.status}" 
+
+          <tr th:each="appt : ${appointments}"
+              th:data-status="${appt.status}"
               th:data-date="${appt.tanggalBooking}"
               th:data-name="${appt.user.nama}">
             <td class="hidden-id" th:text="${appt.idAppointment}"></td>
-            
+
             <td>
               <div class="patient-info">
                 <div class="patient-avatar">
@@ -76,16 +77,16 @@
                 </div>
               </div>
             </td>
-            
+
             <td>
               <div class="date-time">
                 <span class="date" th:text="${appt.tanggalBooking}">2025-10-05</span>
                 <span class="time" th:text="${#strings.substring(appt.jadwal.jamMulai, 0, 5) + ' WIB'}">09:30 WIB</span>
               </div>
             </td>
-            
+
             <td class="keluhan" th:text="${appt.catatan != null ? appt.catatan : 'Konsultasi Umum'}">Keluhan</td>
-            
+
             <td>
               <span th:if="${appt.status == 'MENUNGGU'}" class="status-badge status-purple"><span class="status-dot"></span>Menunggu</span>
               <span th:if="${appt.status == 'DIKONFIRMASI'}" class="status-badge status-green"><span class="status-dot"></span>Dikonfirmasi</span>
@@ -93,10 +94,10 @@
               <span th:if="${appt.status == 'BATAL'}" class="status-badge status-red"><span class="status-dot"></span>Batal</span>
               <span th:if="${appt.status == 'SELESAI'}" class="status-badge status-green"><span class="status-dot"></span>Selesai</span>
             </td>
-            
+
             <td>
               <button class="btn-selengkapnya"
-                      th:data-target="'detailModal-' + ${appt.idAppointment}" 
+                      th:data-target="'detailModal-' + ${appt.idAppointment}"
                       onclick="openModal(this.getAttribute('data-target'))">
                 Selengkapnya
               </button>
@@ -106,11 +107,11 @@
       </table>
     </div>
   </main>
-    
+
   <div th:each="appt : ${appointments}">
-    
+
     <div th:replace="~{fragments/overlay/dokter/detail-appointment :: modal-detail(appt=${appt})}"></div>
-    
+
     <div th:replace="~{fragments/overlay/dokter/tolak-appointment :: modal-tolak(appt=${appt})}"></div>
 
   </div>
@@ -129,7 +130,7 @@
         document.body.style.overflow = 'auto';
       }
     }
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       if (event.target.classList.contains('modal')) {
         event.target.style.display = 'none';
         document.body.style.overflow = 'auto';
@@ -207,4 +208,5 @@
     });
   </script>
 </body>
+
 </html>

@@ -6,103 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jadwal Praktik - RSIS</title>
 
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1055;
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal.show {
-      display: block;
-    }
-
-    .modal-dialog {
-      position: relative;
-      width: auto;
-      margin: 30px auto;
-      max-width: 500px;
-    }
-
-    .modal-content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid #dee2e6;
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-    }
-
-    .modal-body {
-      position: relative;
-      padding: 24px;
-    }
-
-    .btn-close {
-      width: 1em;
-      height: 1em;
-      background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-      border: 0;
-      opacity: .5;
-      cursor: pointer;
-    }
-
-    .btn-close-white {
-      filter: invert(1) grayscale(100%) brightness(200%);
-    }
-
-    .form-control,
-    .form-select {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ced4da;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      box-sizing: border-box;
-    }
-
-    .form-label {
-      font-weight: 600;
-      font-size: 13px;
-      color: #212529;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .row {
-      display: flex;
-      gap: 15px;
-    }
-
-    .row>div {
-      flex: 1;
-    }
-  </style>
-
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/dokter/jadwal-praktik.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
   <link rel="stylesheet" href="/css/fragments/jadwal-dokter.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/dokter/tambah-jadwal.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/dokter/edit-jadwal.css" />
+  <link rel="stylesheet" href="/css/fragments/overlay/dokter/hapus-jadwal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
 </head>
 
@@ -115,17 +27,15 @@
         <h1 class="rs-title">Jadwal Praktik</h1>
         <span class="rs-subtitle">Kelola jadwal dan ketersediaan praktik Anda</span>
       </div>
-      <button class="rs-btn rs-btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+      <button class="rs-btn rs-btn-primary" id="btnTambahJadwal" th:data-dokter-id="${!jadwals.empty ? jadwals[0].dokter.idUser : ''}">
         <i class="bi bi-plus-lg"></i> Tambah Jadwal
       </button>
     </div>
 
-    <div th:if="${success}" class="alert alert-success"
-      style="padding: 15px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
+    <div th:if="${success}" class="alert alert-success">
       <span th:text="${success}"></span>
     </div>
-    <div th:if="${error}" class="alert alert-danger"
-      style="padding: 15px; background: #f8d7da; color: #721c24; border-radius: 8px; margin-bottom: 20px;">
+    <div th:if="${error}" class="alert alert-danger">
       <span th:text="${error}"></span>
     </div>
     <!-- Weekly Schedule Section -->
@@ -133,7 +43,7 @@
       th:replace="~{fragments/jadwal-dokter :: jadwal-dokter(${!jadwals.empty ? jadwals[0].dokter.idUser : ''}, 'dokter')}">
     </div>
 
-    <h2 class="rs-section-title" style="margin-top: 40px; margin-bottom: 20px;">Semua Jadwal Praktik</h2>
+    <h2 class="rs-section-title">Semua Jadwal Praktik</h2>
     <div class="rs-table-panel">
       <table class="rs-table">
         <thead>
@@ -148,7 +58,7 @@
         </thead>
         <tbody>
           <tr th:if="${jadwals.empty}">
-            <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal praktik.</td>
+            <td colspan="6" class="empty-row">Belum ada jadwal praktik.</td>
           </tr>
           <tr th:each="jadwal : ${jadwals}">
             <td th:text="${#strings.capitalize(#strings.toLowerCase(jadwal.hari))}">Hari</td>
@@ -166,16 +76,22 @@
             </td>
             <td>
               <div class="rs-action-group">
-                <button class="rs-action-btn edit" data-bs-toggle="modal"
-                  th:data-bs-target="'#editModal-' + ${jadwal.idJadwal}">
+                <button class="rs-action-btn edit"
+                  th:data-id="${jadwal.idJadwal}"
+                  th:data-hari="${jadwal.hari}"
+                  th:data-tanggal="${jadwal.tanggal}"
+                  th:data-jam-mulai="${jadwal.jamMulai}"
+                  th:data-jam-selesai="${jadwal.jamSelesai}"
+                  th:data-status-ketersediaan="${jadwal.statusKetersediaan}"
+                  th:data-kuota="${jadwal.kuota}"
+                  onclick="openEditJadwalOverlay(this)">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <form th:action="@{/jadwal/delete/{id}(id=${jadwal.idJadwal})}" method="post"
-                  style="display: inline">
-                  <button type="submit" class="rs-action-btn delete" onclick="return confirm('Hapus jadwal ini?');">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </form>
+                <button class="rs-action-btn delete"
+                  th:data-id="${jadwal.idJadwal}"
+                  onclick="openHapusJadwalOverlay(this)">
+                  <i class="bi bi-trash"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -183,99 +99,6 @@
       </table>
     </div>
   </main>
-
-  <div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: var(--rs-primary); color: white;">
-          <h5 style="margin:0; font-weight:700;">Tambah Jadwal</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form th:action="@{/jadwal/create}" method="post">
-            <label class="form-label">Hari Praktik</label>
-            <select class="form-select" name="hari" required>
-              <option value="SENIN">Senin</option>
-              <option value="SELASA">Selasa</option>
-              <option value="RABU">Rabu</option>
-              <option value="KAMIS">Kamis</option>
-              <option value="JUMAT">Jumat</option>
-              <option value="SABTU">Sabtu</option>
-              <option value="MINGGU">Minggu</option>
-            </select>
-            <div class="row">
-              <div><label class="form-label">Jam Mulai</label><input type="time" class="form-control" name="jamMulai"
-                  required /></div>
-              <div><label class="form-label">Jam Selesai</label><input type="time" class="form-control"
-                  name="jamSelesai" required /></div>
-            </div>
-            <label class="form-label">Kuota Pasien</label>
-            <input type="number" class="form-control" name="kuota" min="1" required />
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-              <button type="button" class="rs-btn rs-btn-outline" data-bs-dismiss="modal">Batal</button>
-              <button type="submit" class="rs-btn rs-btn-primary">Simpan</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Modals for each schedule -->
-  <div th:each="jadwal : ${jadwals}" class="modal fade" th:id="'editModal-' + ${jadwal.idJadwal}" tabindex="-1"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: var(--rs-primary); color: white;">
-          <h5 style="margin:0; font-weight:700;">Edit Jadwal</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form th:action="@{/jadwal/update}" method="post">
-            <input type="hidden" name="idJadwal" th:value="${jadwal.idJadwal}" />
-            <label class="form-label">Hari Praktik</label>
-            <select class="form-select" name="hari" required>
-              <option value="SENIN" th:selected="${jadwal.hari == 'SENIN'}">Senin</option>
-              <option value="SELASA" th:selected="${jadwal.hari == 'SELASA'}">Selasa</option>
-              <option value="RABU" th:selected="${jadwal.hari == 'RABU'}">Rabu</option>
-              <option value="KAMIS" th:selected="${jadwal.hari == 'KAMIS'}">Kamis</option>
-              <option value="JUMAT" th:selected="${jadwal.hari == 'JUMAT'}">Jumat</option>
-              <option value="SABTU" th:selected="${jadwal.hari == 'SABTU'}">Sabtu</option>
-              <option value="MINGGU" th:selected="${jadwal.hari == 'MINGGU'}">Minggu</option>
-            </select>
-            <div class="row">
-              <div>
-                <label class="form-label">Jam Mulai</label>
-                <input type="time" class="form-control" name="jamMulai"
-                  th:value="${#strings.substring(jadwal.jamMulai, 0, 5)}" required />
-              </div>
-              <div>
-                <label class="form-label">Jam Selesai</label>
-                <input type="time" class="form-control" name="jamSelesai"
-                  th:value="${#strings.substring(jadwal.jamSelesai, 0, 5)}" required />
-              </div>
-            </div>
-            <label class="form-label">Kuota Pasien</label>
-            <input type="number" class="form-control" name="kuota" th:value="${jadwal.kuota}" min="1" required />
-
-            <label class="form-label">Status Ketersediaan</label>
-            <select class="form-select" name="statusKetersediaan" required>
-              <option value="TERSEDIA" th:selected="${jadwal.statusKetersediaan == 'TERSEDIA'}">Aktif</option>
-              <option value="PENUH" th:selected="${jadwal.statusKetersediaan == 'PENUH'}">Penuh</option>
-              <option value="LIBUR" th:selected="${jadwal.statusKetersediaan == 'LIBUR'}">Libur</option>
-            </select>
-
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-              <button type="button" class="rs-btn rs-btn-outline" data-bs-dismiss="modal">Batal</button>
-              <button type="submit" class="rs-btn rs-btn-primary">Simpan</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script th:inline="javascript">
     /*<![CDATA[*/
@@ -533,9 +356,22 @@
 
       // Fetch data from API and trigger initial render
       window.fetchJadwalData();
+
+      // Handle tambah jadwal button click
+      document.getElementById('btnTambahJadwal').addEventListener('click', function() {
+        const dokterId = this.getAttribute('data-dokter-id');
+        if (dokterId) {
+          openTambahJadwalOverlay(dokterId);
+        }
+      });
     });
     /*]]>*/
   </script>
+
+  <!-- Overlay Fragments -->
+  <div th:replace="~{fragments/overlay/dokter/tambah-jadwal :: overlay}"></div>
+  <div th:replace="~{fragments/overlay/dokter/edit-jadwal :: overlay}"></div>
+  <div th:replace="~{fragments/overlay/dokter/hapus-jadwal :: overlay}"></div>
 </body>
 
 </html>

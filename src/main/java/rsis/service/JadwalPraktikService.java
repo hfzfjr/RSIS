@@ -129,7 +129,17 @@ public class JadwalPraktikService {
     }
 
     private String generateJadwalId() {
-        return idGeneratorService.generateJadwalId(jadwalPraktikRepository.count());
+        java.util.Optional<String> latestId = jadwalPraktikRepository.findLatestJadwalId();
+        if (latestId.isPresent()) {
+            String id = latestId.get();
+            // Extract numeric part from jdw-XXX
+            String numericPart = id.substring(4); // Remove "jdw-"
+            long maxIdNumber = Long.parseLong(numericPart);
+            return idGeneratorService.generateJadwalId(maxIdNumber);
+        } else {
+            // No jadwal exists yet, start from 1
+            return idGeneratorService.generateJadwalId(0);
+        }
     }
 
     /**

@@ -11,7 +11,7 @@ public class IdGeneratorService {
 
     /**
      * Generate ID untuk dokter
-     * 
+     *
      * @param count Jumlah dokter yang sudah ada
      * @return ID dokter dalam format dkt-XXX
      */
@@ -21,7 +21,7 @@ public class IdGeneratorService {
 
     /**
      * Generate nomor STR
-     * 
+     *
      * @param idDokter ID dokter
      * @return Nomor STR dalam format STR-YYYYMMDD-XXXX
      */
@@ -33,17 +33,18 @@ public class IdGeneratorService {
 
     /**
      * Generate ID untuk jadwal praktik
-     * 
-     * @param count Jumlah jadwal yang sudah ada
+     * Menggunakan max ID yang ada + 1 untuk menghindari duplikasi
+     *
+     * @param maxIdNumber Nomor ID terbesar yang ada (misal: 342 dari jdw-342)
      * @return ID jadwal dalam format jdw-XXX
      */
-    public String generateJadwalId(long count) {
-        return String.format("jdw-%03d", count + 1);
+    public String generateJadwalId(long maxIdNumber) {
+        return String.format("jdw-%03d", maxIdNumber + 1);
     }
 
     /**
      * Generate ID untuk poli
-     * 
+     *
      * @param count Jumlah poli yang sudah ada
      * @return ID poli dalam format pli-XXX
      */
@@ -53,7 +54,7 @@ public class IdGeneratorService {
 
     /**
      * Generate ID untuk appointment
-     * 
+     *
      * @param count Jumlah appointment yang sudah ada
      * @return ID appointment dalam format apt-XXX
      */

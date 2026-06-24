@@ -190,10 +190,25 @@ public class JadwalPraktikController {
 
     @PostMapping("/create")
     public String createJadwal(@ModelAttribute JadwalPraktik jadwal,
-            @RequestParam(required = false) String principal,
+            @AuthenticationPrincipal UserDetails principal,
             RedirectAttributes redirectAttributes) {
         try {
-            // Dokter will be set in service layer based on logged-in user
+            // Validate hari field
+            if (jadwal.getHari() == null || jadwal.getHari().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Hari harus dipilih!");
+                return "redirect:/jadwal/praktik";
+            }
+
+            // Get logged-in user and set as dokter
+            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Dokter dokter = dokterRepository.findByIdUser(user.getIdUser())
+                    .orElseThrow(() -> new RuntimeException("Dokter not found"));
+
+            jadwal.setDokter(dokter);
+            jadwal.setStatusKetersediaan("TERSEDIA");
+            jadwal.setSisaKuota(jadwal.getKuota()); // Set sisa_kuota = kuota
+
             jadwalPraktikService.createJadwal(jadwal);
             redirectAttributes.addFlashAttribute("success", "Jadwal berhasil dibuat!");
         } catch (RuntimeException e) {
@@ -241,11 +256,18 @@ public class JadwalPraktikController {
             }
 
             String dokterId = dokter.getIdUser();
-            java.util.List<Map<String, Object>> jadwalWithDates = jadwalPraktikService
-                    .getJadwalWithDatesForDokter(dokterId);
+            // Get all schedules for the doctor (not just appointments)
+            List<JadwalPraktik> jadwals = jadwalPraktikService.getJadwalByDokterId(dokterId);
+
+            // Populate transient fields for dokter in each jadwal
+            for (JadwalPraktik jadwal : jadwals) {
+                if (jadwal.getDokter() != null) {
+                    dokterService.enrichWithUserData(jadwal.getDokter());
+                }
+            }
 
             response.put("success", true);
-            response.put("jadwals", jadwalWithDates);
+            response.put("jadwals", jadwals);
         } catch (RuntimeException e) {
             response.put("success", false);
             response.put("message", e.getMessage());

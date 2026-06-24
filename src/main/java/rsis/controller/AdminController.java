@@ -89,6 +89,7 @@ public class AdminController {
         model.addAttribute("totalDokter", adminRSService.getTotalDokter());
         model.addAttribute("totalPoli", adminRSService.getTotalPoli());
         model.addAttribute("totalAppointmentHariIni", adminRSService.getTotalAppointmentHariIni());
+        model.addAttribute("totalAppointmentBulanIni", adminRSService.getTotalAppointmentBulanIni());
         model.addAttribute("appointmentPending", adminRSService.getAppointmentPending());
         LocalDate today = LocalDate.now();
         int currentMonth = today.getMonthValue();

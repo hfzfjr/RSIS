@@ -33,23 +33,23 @@
           <span class="stat-label">Total Pasien Bulan Ini</span>
           <div class="stat-icon">👨‍⚕️</div>
         </div>
-        <div class="stat-value" th:text="${totalDokter}">24</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-label">Total Appointment Hari Ini</span>
-          <div class="stat-icon">📅</div>
-        </div>
-        <div class="stat-value" th:text="${totalAppointmentHariIni}">86</div>
+        <div class="stat-value" th:text="${totalPasienBulanIni}">24</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-header">
           <span class="stat-label">Total Appointment Bulan Ini</span>
+          <div class="stat-icon">📅</div>
+        </div>
+        <div class="stat-value" th:text="${totalAppointmentBulanIni}">86</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Total Poli Tersedia</span>
           <div class="stat-icon">📋</div>
         </div>
-        <div class="stat-value" th:text="${appointmentPending}">7</div>
+        <div class="stat-value" th:text="${totalPoli}">7</div>
       </div>
     </div>
 

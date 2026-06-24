@@ -37,7 +37,7 @@ public class AdminRSService {
     // ====================
     public Long getTotalPasienHariIni() {
         LocalDate today = LocalDate.now();
-        return appointmentRepository.countConfirmedAppointmentsByDate(
+        return appointmentRepository.countConfirmedAndCompletedByDate(
                 today.atStartOfDay(),
                 today.plusDays(1).atStartOfDay());
     }
@@ -49,7 +49,7 @@ public class AdminRSService {
 
     public Long getTotalPasienBulanIni(int bulan, int tahun) {
         YearMonth month = YearMonth.of(tahun, bulan);
-        return appointmentRepository.countConfirmedAppointmentsByMonth(
+        return appointmentRepository.countConfirmedAndCompletedByMonth(
                 month.atDay(1).atStartOfDay(),
                 month.plusMonths(1).atDay(1).atStartOfDay());
     }
@@ -139,9 +139,9 @@ public class AdminRSService {
         List<rsis.model.JadwalPraktik> allJadwal = jadwalPraktikService.getAllJadwal();
         Map<String, Long> stats = new HashMap<>();
         stats.put("tersedia", allJadwal.stream()
-                .filter(j -> "TERSEDIA".equals(j.getStatusKetersediaan())).count());
+                .filter(j -> j.getSisaKuota() > 0 && "TERSEDIA".equals(j.getStatusKetersediaan())).count());
         stats.put("penuh", allJadwal.stream()
-                .filter(j -> "PENUH".equals(j.getStatusKetersediaan())).count());
+                .filter(j -> j.getSisaKuota() == 0).count());
         stats.put("libur", allJadwal.stream()
                 .filter(j -> "LIBUR".equals(j.getStatusKetersediaan())).count());
         return stats;
@@ -172,7 +172,7 @@ public class AdminRSService {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-        List<Object[]> results = appointmentRepository.countByTanggalBookingBetween(
+        List<Object[]> results = appointmentRepository.countConfirmedAndCompletedByTanggalBookingBetween(
                 startDate.atStartOfDay(),
                 endDate.atTime(23, 59, 59));
 
@@ -248,6 +248,18 @@ public class AdminRSService {
         return appointmentRepository.countTotalAppointmentsByDate(
                 today.atStartOfDay(),
                 today.plusDays(1).atStartOfDay());
+    }
+
+    public Long getTotalAppointmentBulanIni() {
+        LocalDate today = LocalDate.now();
+        return getTotalAppointmentBulanIni(today.getMonthValue(), today.getYear());
+    }
+
+    public Long getTotalAppointmentBulanIni(int bulan, int tahun) {
+        YearMonth month = YearMonth.of(tahun, bulan);
+        return appointmentRepository.countAppointmentsConfirmedAndCompletedByMonth(
+                month.atDay(1).atStartOfDay(),
+                month.plusMonths(1).atDay(1).atStartOfDay());
     }
 
     public Long getAppointmentPending() {

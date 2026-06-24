@@ -496,7 +496,7 @@ main {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  background: #f9fafc;
+  background: white;
 }
 
 .ekspor-title {

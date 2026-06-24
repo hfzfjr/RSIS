@@ -41,14 +41,13 @@ public class LaporanBulananService {
                 "Juli", "Agustus", "September", "Oktober", "November", "Desember" };
         String labelPeriode = monthNames[bulan - 1] + " " + tahun;
 
-        // Get total appointments (all statuses)
-        Long totalAppointment = appointmentRepository.countAllByMonth(
+        // Get total appointments with DIKONFIRMASI and SELESAI status
+        Long totalAppointment = appointmentRepository.countAppointmentsConfirmedAndCompletedByMonth(
                 yearMonth.atDay(1).atStartOfDay(),
                 yearMonth.plusMonths(1).atDay(1).atStartOfDay());
 
-        // Get total unique patients (confirmed appointments only for now, can be
-        // adjusted)
-        Long totalPasien = appointmentRepository.countConfirmedAppointmentsByMonth(
+        // Get total unique patients with DIKONFIRMASI and SELESAI status
+        Long totalPasien = appointmentRepository.countConfirmedAndCompletedByMonth(
                 yearMonth.atDay(1).atStartOfDay(),
                 yearMonth.plusMonths(1).atDay(1).atStartOfDay());
 
@@ -73,7 +72,7 @@ public class LaporanBulananService {
         LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDate = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
 
-        List<Appointment> appointments = appointmentRepository.findByTanggalBookingBetween(startDate, endDate);
+        List<Appointment> appointments = appointmentRepository.findConfirmedAndCompletedByDateRange(startDate, endDate);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Document document = new Document();
@@ -133,7 +132,7 @@ public class LaporanBulananService {
         LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDate = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
 
-        List<Appointment> appointments = appointmentRepository.findByTanggalBookingBetween(startDate, endDate);
+        List<Appointment> appointments = appointmentRepository.findConfirmedAndCompletedByDateRange(startDate, endDate);
 
         StringWriter writer = new StringWriter();
         CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT

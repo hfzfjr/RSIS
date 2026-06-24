@@ -35,12 +35,28 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
         List<Appointment> findByBulanDanTahun(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
+        @Query("SELECT a FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate ORDER BY a.tanggalBooking ASC")
+        List<Appointment> findConfirmedAndCompletedByDateRange(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
         @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
         Long countConfirmedAppointmentsByDate(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
+        @Query("SELECT COUNT(DISTINCT a.user.idUser) FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+        Long countConfirmedAndCompletedByDate(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
         @Query("SELECT COUNT(a) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
         Long countAllByMonth(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+        @Query("SELECT COUNT(DISTINCT a.user.idUser) FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+        Long countConfirmedAndCompletedByMonth(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
+        @Query("SELECT COUNT(a) FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
+        Long countAppointmentsConfirmedAndCompletedByMonth(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 
         @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'DIKONFIRMASI' AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
         Long countConfirmedAppointmentsByMonth(@Param("startDate") LocalDateTime startDate,
@@ -73,6 +89,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
         @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking <= :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
         List<Object[]> countByTanggalBookingBetween(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
+        @Query("SELECT a.tanggalBooking, COUNT(a) FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking <= :endDate GROUP BY a.tanggalBooking ORDER BY a.tanggalBooking")
+        List<Object[]> countConfirmedAndCompletedByTanggalBookingBetween(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
         Long countByStatus(String status);

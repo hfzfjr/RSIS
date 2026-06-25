@@ -1,8 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +10,6 @@ import rsis.model.Dokter;
 import rsis.model.Poli;
 import rsis.model.User;
 import rsis.repository.AdminRSRepository;
-import rsis.repository.UserRepository;
 import rsis.service.DokterService;
 import rsis.service.PoliService;
 import rsis.service.NotifikasiService;
@@ -28,9 +25,6 @@ public class PoliController {
 
     @Autowired
     private DokterService dokterService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private AdminRSRepository adminRSRepository;
@@ -49,14 +43,13 @@ public class PoliController {
 
     // Poli Management
     @GetMapping("/kelola-poli")
-    public String kelolaPoli(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String kelolaPoli(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-poli");
 

@@ -1,14 +1,11 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import rsis.model.Notifikasi;
 import rsis.model.User;
-import rsis.repository.UserRepository;
 import rsis.service.NotifikasiService;
 
 import java.util.List;
@@ -20,15 +17,13 @@ public class NotifikasiController {
     @Autowired
     private NotifikasiService notifikasiService;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @GetMapping
-    public String listNotifikasi(@AuthenticationPrincipal UserDetails principal, Model model) {
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String listNotifikasi(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "notifikasi");
 
@@ -51,10 +46,12 @@ public class NotifikasiController {
 
     @PostMapping("/mark-all-as-read")
     @ResponseBody
-    public String markAllAsRead(@AuthenticationPrincipal UserDetails principal) {
+    public String markAllAsRead(Model model) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
             List<Notifikasi> notifikasis = notifikasiService.getNotifikasiByPenerimaId(user.getIdUser());
             for (Notifikasi notif : notifikasis) {
                 notifikasiService.markAsRead(notif.getIdNotifikasi());
@@ -78,10 +75,12 @@ public class NotifikasiController {
 
     @GetMapping("/count")
     @ResponseBody
-    public Long getUnreadCount(@AuthenticationPrincipal UserDetails principal) {
+    public Long getUnreadCount(Model model) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
             return notifikasiService.getUnreadCount(user.getIdUser());
         } catch (Exception e) {
             return 0L;

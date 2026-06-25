@@ -1,8 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,10 +54,11 @@ public class DokterController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String dashboard(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
@@ -77,10 +76,11 @@ public class DokterController {
     }
 
     @GetMapping("/daftar-pasien")
-    public String daftarPasien(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String daftarPasien(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
@@ -101,10 +101,11 @@ public class DokterController {
     }
 
     @GetMapping("/appointment")
-    public String appointment(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String appointment(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
@@ -124,10 +125,11 @@ public class DokterController {
     }
 
     @GetMapping("/profil")
-    public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String profil(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
@@ -174,11 +176,13 @@ public class DokterController {
     @PostMapping("/profil")
     public String updateProfile(@RequestParam String namaLengkap,
             @RequestParam String nomorTelepon,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
             // Update nama and nomorHp in user
             user.setNama(namaLengkap);
@@ -196,11 +200,13 @@ public class DokterController {
     public String changePassword(@RequestParam String passwordLama,
             @RequestParam String passwordBaru,
             @RequestParam String konfirmasiPassword,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
             // Validate old password
             if (!passwordEncoder.matches(passwordLama, user.getPassword())) {

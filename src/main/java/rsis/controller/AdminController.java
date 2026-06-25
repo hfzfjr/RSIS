@@ -3,8 +3,6 @@ package rsis.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,13 +70,12 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String dashboard(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "dashboard");
 
@@ -129,13 +126,12 @@ public class AdminController {
 
     // Dokter Management
     @GetMapping("/kelola-dokter")
-    public String kelolaDokter(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String kelolaDokter(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-dokter");
 
@@ -209,13 +205,12 @@ public class AdminController {
 
     // Spesialisasi Management
     @GetMapping("/kelola-spesialisasi")
-    public String kelolaSpesialisasi(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String kelolaSpesialisasi(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-spesialisasi");
 
@@ -251,13 +246,12 @@ public class AdminController {
 
     // Jadwal Management
     @GetMapping("/kelola-jadwal")
-    public String kelolaJadwal(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String kelolaJadwal(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-jadwal");
 
@@ -376,14 +370,13 @@ public class AdminController {
     }
 
     @GetMapping("/profil")
-    public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String profil(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("email", user.getEmail());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "profil");
@@ -398,11 +391,13 @@ public class AdminController {
     @PostMapping("/profil")
     public String updateProfile(@RequestParam String namaLengkap,
             @RequestParam String nomorTelepon,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
             // Update nama and nomorHp in user
             user.setNama(namaLengkap);
@@ -420,11 +415,13 @@ public class AdminController {
     public String changePassword(@RequestParam String passwordLama,
             @RequestParam String passwordBaru,
             @RequestParam String konfirmasiPassword,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
             // Validate old password
             if (!passwordEncoder.matches(passwordLama, user.getPassword())) {

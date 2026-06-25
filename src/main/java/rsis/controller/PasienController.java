@@ -1,8 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,9 +53,11 @@ public class PasienController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String dashboard(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         // Get pasien data
         Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
@@ -130,9 +130,11 @@ public class PasienController {
     }
 
     @GetMapping("/profil")
-    public String profil(@AuthenticationPrincipal UserDetails principal, Model model) {
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String profil(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
 
@@ -177,11 +179,13 @@ public class PasienController {
             @RequestParam String tanggalLahir,
             @RequestParam String alamat,
             @RequestParam String nomorRekamMedis,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
             Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
@@ -203,11 +207,13 @@ public class PasienController {
     public String changePassword(@RequestParam String passwordLama,
             @RequestParam String passwordBaru,
             @RequestParam String konfirmasiPassword,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
             // Validate old password
             if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
@@ -241,11 +247,12 @@ public class PasienController {
 
     @GetMapping("/cari-dokter")
     public String searchDoctors(@RequestParam(required = false) String keyword,
-            @AuthenticationPrincipal UserDetails principal,
             Model model) {
         // Get user and pasien data
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
 

@@ -4,13 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import rsis.model.User;
-import rsis.repository.UserRepository;
 import rsis.service.AdminRSService;
 import rsis.service.LaporanBulananService;
 
@@ -25,9 +22,6 @@ public class LaporanController {
 
     @Autowired
     private AdminRSService adminRSService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @GetMapping
     public String laporanIndex(Model model) {
@@ -56,13 +50,12 @@ public class LaporanController {
     }
 
     @GetMapping("/admin")
-    public String laporanBulananAdmin(@AuthenticationPrincipal UserDetails principal, Model model) {
-        // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String laporanBulananAdmin(Model model) {
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        // Always set basic user attributes
-        model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "laporan");
 

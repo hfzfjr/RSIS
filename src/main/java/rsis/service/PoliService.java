@@ -126,7 +126,7 @@ public class PoliService {
     }
 
     public List<Poli> getAllPoli() {
-        List<Poli> allPoli = poliRepository.findAllActive();
+        List<Poli> allPoli = poliRepository.findByIsActiveTrueOrIsActiveNull();
         return allPoli.stream()
                 .map(p -> {
                     long count = dokterRepository.countActiveDoctorsByPoliId(p.getIdPoli());

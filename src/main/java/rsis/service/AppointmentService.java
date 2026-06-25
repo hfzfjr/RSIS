@@ -189,7 +189,7 @@ public class AppointmentService {
 
     private String generateNomorRekamMedis() {
         // Format: RM-XXXXX (5 digit sequential number)
-        long count = pasienRepository.countAll();
+        long count = pasienRepository.count();
         long nextNumber = count + 1;
         return String.format("RM-%05d", nextNumber);
     }

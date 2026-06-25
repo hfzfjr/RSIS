@@ -1,6 +1,7 @@
 package rsis.repository;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,25 +15,49 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, String> {
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByUser_IdUserOrderByTanggalBookingDesc(String idUser);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByJadwal_Dokter_IdUser(String idUser);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByJadwal_IdJadwal(String idJadwal);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByStatus(String status);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByUser_IdUserAndStatus(String idUser, String status);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByJadwal_Dokter_IdUserAndStatus(String idUser, String status);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         List<Appointment> findByJadwal_IdJadwalAndStatusIn(String idJadwal, List<String> statuses);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         @Query("SELECT a FROM Appointment a WHERE a.jadwal.dokter.idUser = :dokterId AND a.status = 'MENUNGGU' ORDER BY a.tanggalBooking ASC")
         List<Appointment> findPendingAppointmentsByDokterId(@Param("dokterId") String dokterId);
 
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
         @Query("SELECT a FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate")
         List<Appointment> findByBulanDanTahun(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
+        @EntityGraph(attributePaths = { "user", "jadwal", "jadwal.dokter", "jadwal.dokter.poli",
+                        "jadwal.dokter.spesialisasi" })
+        @Query("SELECT a FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate ORDER BY a.tanggalBooking")
+        List<Appointment> findByTanggalBookingBetween(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
         @Query("SELECT a FROM Appointment a WHERE (a.status = 'DIKONFIRMASI' OR a.status = 'SELESAI') AND a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate ORDER BY a.tanggalBooking ASC")
@@ -103,9 +128,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
         @Query("SELECT COUNT(DISTINCT a.jadwal.dokter.idUser) FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate AND a.jadwal IS NOT NULL AND a.jadwal.dokter IS NOT NULL")
         Long countDistinctDoctorsByTanggalBooking(@Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
-
-        @Query("SELECT a FROM Appointment a WHERE a.tanggalBooking >= :startDate AND a.tanggalBooking < :endDate ORDER BY a.tanggalBooking")
-        List<Appointment> findByTanggalBookingBetween(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 }

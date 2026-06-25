@@ -29,9 +29,9 @@ cp .env.example .env
 Buka file `.env` dan sesuaikan konfigurasi:
 
 ```env
-DB_URL=jdbc:postgresql://localhost:5432/rsis
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
+DB_URL=jdbc:postgresql://your-host:port/database?sslmode=require
+DB_USERNAME=your-username
+DB_PASSWORD=your-password
 ```
 
 ### 3. Build Project

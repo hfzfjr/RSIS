@@ -5,11 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Entity
 @Table(name = "admin_rs")
 @PrimaryKeyJoinColumn(name = "id_user")
@@ -26,38 +21,6 @@ public class AdminRS extends User {
             String password, String jabatan) {
         super(idUser, nama, email, password, "ADMIN_RS");
         this.jabatan = jabatan;
-    }
-
-    public void kelolaDataDokter(Dokter dokter) {
-        // Placeholder - logic in service
-    }
-
-    public void kelolaDataPoli(Poli poli) {
-        // Placeholder - logic in service
-    }
-
-    public void kelolaJadwal(JadwalPraktik jadwal) {
-        // Placeholder - logic in service
-    }
-
-    public LaporanBulanan cetakLaporanBulanan(int bulan, int tahun) {
-        return null;
-    }
-
-    public int getTotalPasienHariIni() {
-        return 0;
-    }
-
-    public int getTotalPasienBulanIni() {
-        return 0;
-    }
-
-    public List<Dokter> getDokterTersibuk() {
-        return new ArrayList<>();
-    }
-
-    public Map<String, Integer> getPasienPerHari() {
-        return new HashMap<>();
     }
 
     // Getters and Setters

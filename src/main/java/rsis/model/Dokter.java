@@ -46,6 +46,7 @@ public class Dokter extends User implements INotifiable, ISchedulable {
         this.poli = poli;
     }
 
+    // ISchedulable interface implementation
     @Override
     public List<JadwalPraktik> getJadwal() {
         return new ArrayList<>();
@@ -53,7 +54,7 @@ public class Dokter extends User implements INotifiable, ISchedulable {
 
     @Override
     public void updateJadwal(JadwalPraktik jadwal) {
-        // Placeholder - logic in service
+        // Logic in service
     }
 
     @Override
@@ -61,28 +62,10 @@ public class Dokter extends User implements INotifiable, ISchedulable {
         return false;
     }
 
-    public void kelolaJadwal(String jadwalId, String status) {
-        // Placeholder - logic in service
-    }
-
-    public List<Pasien> lihatDaftarPasien() {
-        return new ArrayList<>();
-    }
-
-    public void konfirmasiAppointment(String appointmentId) {
-        // Placeholder - logic in service
-    }
-
-    public void tolakAppointment(String appointmentId, String alasan) {
-        // Placeholder - logic in service
-    }
-
-    public Poli getPoli() {
-        return this.poli;
-    }
-
-    public Spesialisasi getSpesialisasi() {
-        return this.spesialisasi;
+    // INotifiable interface implementation
+    @Override
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Logic in service
     }
 
     // Getters and Setters
@@ -94,8 +77,16 @@ public class Dokter extends User implements INotifiable, ISchedulable {
         this.nomorStr = nomorStr;
     }
 
+    public Spesialisasi getSpesialisasi() {
+        return spesialisasi;
+    }
+
     public void setSpesialisasi(Spesialisasi spesialisasi) {
         this.spesialisasi = spesialisasi;
+    }
+
+    public Poli getPoli() {
+        return this.poli;
     }
 
     public void setPoli(Poli poli) {
@@ -116,11 +107,5 @@ public class Dokter extends User implements INotifiable, ISchedulable {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
-    }
-
-    @Override
-    public void terimaNotifikasi(Notifikasi notif) {
-        // Implementasi spesifik untuk Dokter
-        System.out.println("Dokter menerima notifikasi: " + notif.getPesan());
     }
 }

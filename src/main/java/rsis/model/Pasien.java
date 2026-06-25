@@ -7,8 +7,6 @@ import jakarta.persistence.Table;
 import rsis.model.interfaces.INotifiable;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "pasien")
@@ -36,29 +34,10 @@ public class Pasien extends User implements INotifiable {
         this.alamat = alamat;
     }
 
-    // Business methods
-    public List<Dokter> cariDokter(String spesialisasi) {
-        return new ArrayList<>();
-    }
-
-    public List<JadwalPraktik> lihatJadwalDokter(String dokterId) {
-        return new ArrayList<>();
-    }
-
-    public Appointment bookingAppointment(String jadwalId) {
-        return null;
-    }
-
-    public void batalkanAppointment(String appointmentId) {
-        // Placeholder - logic in service
-    }
-
-    public void rescheduleAppointment(String appointmentId, String jadwalBaruId) {
-        // Placeholder - logic in service
-    }
-
-    public List<Appointment> getAppointmentList() {
-        return new ArrayList<>();
+    // INotifiable interface implementation
+    @Override
+    public void terimaNotifikasi(Notifikasi notif) {
+        // Logic in service
     }
 
     // Getters and Setters
@@ -89,11 +68,5 @@ public class Pasien extends User implements INotifiable {
 
     public void setAlamat(String alamat) {
         this.alamat = alamat;
-    }
-
-    @Override
-    public void terimaNotifikasi(Notifikasi notif) {
-        // Implementasi spesifik untuk Pasien
-        System.out.println("Pasien menerima notifikasi: " + notif.getPesan());
     }
 }

@@ -5,9 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "poli")
 public class Poli {
@@ -31,26 +28,6 @@ public class Poli {
     public Poli() {
     }
 
-    public List<Dokter> getDokterList() {
-        return new ArrayList<>();
-    }
-
-    public List<JadwalPraktik> getJadwalList() {
-        return new ArrayList<>();
-    }
-
-    public String getNamaPoli() {
-        return this.namaPoli;
-    }
-
-    public void tambahDokter(Dokter dokter) {
-        // Placeholder - logic in service
-    }
-
-    public void hapusDokter(String dokterId) {
-        // Placeholder - logic in service
-    }
-
     // Getters and Setters
     public String getIdPoli() {
         return idPoli;
@@ -58,6 +35,10 @@ public class Poli {
 
     public void setIdPoli(String idPoli) {
         this.idPoli = idPoli;
+    }
+
+    public String getNamaPoli() {
+        return namaPoli;
     }
 
     public void setNamaPoli(String namaPoli) {

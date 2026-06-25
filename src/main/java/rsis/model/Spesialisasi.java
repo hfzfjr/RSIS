@@ -5,9 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "spesialisasi")
 public class Spesialisasi {
@@ -25,18 +22,6 @@ public class Spesialisasi {
     public Spesialisasi() {
     }
 
-    public List<Dokter> getDokterBySpesialisasi() {
-        return new ArrayList<>();
-    }
-
-    public String getNama() {
-        return this.nama;
-    }
-
-    public String getDeskripsi() {
-        return this.deskripsi;
-    }
-
     // Getters and Setters
     public String getIdSpesialisasi() {
         return idSpesialisasi;
@@ -46,8 +31,16 @@ public class Spesialisasi {
         this.idSpesialisasi = idSpesialisasi;
     }
 
+    public String getNama() {
+        return nama;
+    }
+
     public void setNama(String nama) {
         this.nama = nama;
+    }
+
+    public String getDeskripsi() {
+        return deskripsi;
     }
 
     public void setDeskripsi(String deskripsi) {

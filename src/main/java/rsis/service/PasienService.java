@@ -127,4 +127,11 @@ public class PasienService {
         pasien.setRole("PASIEN");
         return pasienRepository.save(pasien);
     }
+
+    public Optional<Pasien> getPasienByIdUser(String idUser) {
+        if (idUser == null) {
+            return Optional.empty();
+        }
+        return pasienRepository.findByIdUser(idUser);
+    }
 }

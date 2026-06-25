@@ -5,7 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import rsis.dto.BusiestDoctorDTO;
 import rsis.dto.VisitStatistics;
+import rsis.model.AdminRS;
 import rsis.model.Dokter;
+import rsis.repository.AdminRSRepository;
 import rsis.repository.AppointmentRepository;
 import rsis.repository.DokterRepository;
 
@@ -25,6 +27,9 @@ public class AdminRSService {
 
     @Autowired
     private DokterRepository dokterRepository;
+
+    @Autowired
+    private AdminRSRepository adminRSRepository;
 
     @Autowired
     private PoliService poliService;
@@ -308,6 +313,13 @@ public class AdminRSService {
         return appointmentRepository.countDistinctDoctorsByTanggalBooking(
                 date.atStartOfDay(),
                 date.plusDays(1).atStartOfDay());
+    }
+
+    public Optional<AdminRS> getAdminRSByIdUser(String idUser) {
+        if (idUser == null) {
+            return Optional.empty();
+        }
+        return adminRSRepository.findByIdUser(idUser);
     }
 
 }

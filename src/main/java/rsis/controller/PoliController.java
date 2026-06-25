@@ -9,7 +9,7 @@ import rsis.model.AdminRS;
 import rsis.model.Dokter;
 import rsis.model.Poli;
 import rsis.model.User;
-import rsis.repository.AdminRSRepository;
+import rsis.service.AdminRSService;
 import rsis.service.DokterService;
 import rsis.service.PoliService;
 import rsis.service.NotifikasiService;
@@ -27,7 +27,7 @@ public class PoliController {
     private DokterService dokterService;
 
     @Autowired
-    private AdminRSRepository adminRSRepository;
+    private AdminRSService adminRSService;
 
     @Autowired
     private NotifikasiService notifikasiService;
@@ -49,7 +49,7 @@ public class PoliController {
             throw new RuntimeException("User not found");
         }
 
-        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
+        AdminRS admin = adminRSService.getAdminRSByIdUser(user.getIdUser()).orElse(null);
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "kelola-poli");
 

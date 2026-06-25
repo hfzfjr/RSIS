@@ -1,7 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +9,8 @@ import rsis.model.Appointment;
 import rsis.model.User;
 import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
-import rsis.repository.DokterRepository;
-import rsis.repository.UserRepository;
 import rsis.service.DokterService;
+import rsis.service.UserService;
 import rsis.service.JadwalPraktikService;
 import rsis.service.NotifikasiService;
 import rsis.service.AppointmentService;
@@ -33,13 +31,7 @@ public class DokterController {
     private NotifikasiService notifikasiService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private DokterRepository dokterRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @Autowired
     private AppointmentService appointmentService;
@@ -60,7 +52,7 @@ public class DokterController {
             throw new RuntimeException("User not found");
         }
 
-        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -82,7 +74,7 @@ public class DokterController {
             throw new RuntimeException("User not found");
         }
 
-        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -107,7 +99,7 @@ public class DokterController {
             throw new RuntimeException("User not found");
         }
 
-        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -131,7 +123,7 @@ public class DokterController {
             throw new RuntimeException("User not found");
         }
 
-        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("email", user.getEmail());
@@ -187,7 +179,7 @@ public class DokterController {
             // Update nama and nomorHp in user
             user.setNama(namaLengkap);
             user.setNomorHp(nomorTelepon);
-            userRepository.save(user);
+            userService.saveUser(user);
 
             redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
         } catch (RuntimeException e) {
@@ -208,29 +200,7 @@ public class DokterController {
                 throw new RuntimeException("User not found");
             }
 
-            // Validate old password
-            if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi lama tidak sesuai");
-                return "redirect:/dokter/profil";
-            }
-
-            // Validate new password length
-            if (passwordBaru.length() < 8) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi baru minimal 8 karakter");
-                return "redirect:/dokter/profil";
-            }
-
-            // Validate password confirmation
-            if (!passwordBaru.equals(konfirmasiPassword)) {
-                redirectAttributes.addFlashAttribute("error",
-                        "Konfirmasi kata sandi baru harus sama dengan kata sandi baru");
-                return "redirect:/dokter/profil";
-            }
-
-            // Update password
-            user.setPassword(passwordEncoder.encode(passwordBaru));
-            userRepository.save(user);
-
+            userService.changePassword(user.getIdUser(), passwordLama, passwordBaru, konfirmasiPassword);
             redirectAttributes.addFlashAttribute("success", "Kata sandi berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

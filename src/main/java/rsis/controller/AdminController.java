@@ -3,7 +3,6 @@ package rsis.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +14,8 @@ import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Poli;
 import rsis.model.Spesialisasi;
-import rsis.repository.AdminRSRepository;
-import rsis.repository.UserRepository;
 import rsis.service.AdminRSService;
+import rsis.service.UserService;
 import rsis.service.DokterService;
 import rsis.service.PoliService;
 import rsis.service.JadwalPraktikService;
@@ -48,13 +46,7 @@ public class AdminController {
     private JadwalPraktikService jadwalPraktikService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AdminRSRepository adminRSRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     private void addJadwalStatsToModel(Model model) {
         try {
@@ -376,7 +368,7 @@ public class AdminController {
             throw new RuntimeException("User not found");
         }
 
-        AdminRS admin = adminRSRepository.findByIdUser(user.getIdUser()).orElse(null);
+        AdminRS admin = adminRSService.getAdminRSByIdUser(user.getIdUser()).orElse(null);
         model.addAttribute("email", user.getEmail());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "profil");
@@ -402,7 +394,7 @@ public class AdminController {
             // Update nama and nomorHp in user
             user.setNama(namaLengkap);
             user.setNomorHp(nomorTelepon);
-            userRepository.save(user);
+            userService.saveUser(user);
 
             redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
         } catch (RuntimeException e) {
@@ -423,29 +415,7 @@ public class AdminController {
                 throw new RuntimeException("User not found");
             }
 
-            // Validate old password
-            if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi lama tidak sesuai");
-                return "redirect:/admin/profil";
-            }
-
-            // Validate new password length
-            if (passwordBaru.length() < 8) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi baru minimal 8 karakter");
-                return "redirect:/admin/profil";
-            }
-
-            // Validate password confirmation
-            if (!passwordBaru.equals(konfirmasiPassword)) {
-                redirectAttributes.addFlashAttribute("error",
-                        "Konfirmasi kata sandi baru harus sama dengan kata sandi baru");
-                return "redirect:/admin/profil";
-            }
-
-            // Update password
-            user.setPassword(passwordEncoder.encode(passwordBaru));
-            userRepository.save(user);
-
+            userService.changePassword(user.getIdUser(), passwordLama, passwordBaru, konfirmasiPassword);
             redirectAttributes.addFlashAttribute("success", "Kata sandi berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

@@ -88,39 +88,18 @@ public class AuthController {
     @PostMapping("/register")
     public String registerSubmit(@ModelAttribute("form") RegisterForm form,
             BindingResult binding,
-            RedirectAttributes redirectAttributes, // PERUBAHAN 2: Pakai RedirectAttributes, bukan Model
+            RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        // PERUBAHAN 3: Ganti model.addAttribute jadi
-        // redirectAttributes.addFlashAttribute
-        // Serta return "auth/auth" diubah jadi return "redirect:/auth?tab=register"
-
-        if (isBlank(form.namaLengkap()) || isBlank(form.email()) || isBlank(form.password())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Nama lengkap, email, dan password wajib diisi");
-            redirectAttributes.addFlashAttribute("form", form);
-            return "redirect:/auth?tab=register";
-        }
-
-        if (!form.password().equals(form.confirmPassword())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Password dan konfirmasi password tidak cocok");
-            redirectAttributes.addFlashAttribute("form", form);
-            return "redirect:/auth?tab=register";
-        }
-
-        if (form.password().length() < 8) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Password minimal 8 karakter");
-            redirectAttributes.addFlashAttribute("form", form);
-            return "redirect:/auth?tab=register";
-        }
-
-        if (!form.email().toLowerCase().endsWith("@gmail.com")) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Email harus menggunakan domain @gmail.com");
-            redirectAttributes.addFlashAttribute("form", form);
-            return "redirect:/auth?tab=register";
-        }
-
         try {
+            // Validate registration form
+            authService.validateRegistrationForm(
+                    form.namaLengkap(),
+                    form.email(),
+                    form.password(),
+                    form.confirmPassword());
+
             // 1. Simpan data pasien ke database
             authService.registerPasien(form.namaLengkap(), form.email(), form.password());
 
@@ -162,9 +141,5 @@ public class AuthController {
         public RegisterForm() {
             this("", "", "", "");
         }
-    }
-
-    private boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
     }
 }

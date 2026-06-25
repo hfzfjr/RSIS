@@ -1,7 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +9,8 @@ import rsis.model.Appointment;
 import rsis.model.User;
 import rsis.model.Dokter;
 import rsis.model.Pasien;
-import rsis.repository.UserRepository;
-import rsis.repository.PasienRepository;
 import rsis.service.AppointmentService;
+import rsis.service.UserService;
 import rsis.service.NotifikasiService;
 import rsis.service.PasienService;
 
@@ -32,13 +30,7 @@ public class PasienController {
     private NotifikasiService notifikasiService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasienRepository pasienRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @Autowired
     private rsis.service.DokterService dokterService;
@@ -60,7 +52,7 @@ public class PasienController {
         }
 
         // Get pasien data
-        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
         if (pasien != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -136,7 +128,7 @@ public class PasienController {
             throw new RuntimeException("User not found");
         }
 
-        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
 
         model.addAttribute("nama", user.getNama());
         model.addAttribute("email", user.getEmail());
@@ -186,13 +178,13 @@ public class PasienController {
             if (user == null) {
                 throw new RuntimeException("User not found");
             }
-            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+            Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
             // Update nama and nomorHp in user
             user.setNama(namaLengkap);
             user.setNomorHp(nomorTelepon);
-            userRepository.save(user);
+            userService.saveUser(user);
 
             // Update pasien fields
             pasienService.updateProfil(pasien.getIdUser(), namaLengkap, nomorRekamMedis, tanggalLahir, alamat);
@@ -215,29 +207,7 @@ public class PasienController {
                 throw new RuntimeException("User not found");
             }
 
-            // Validate old password
-            if (!passwordEncoder.matches(passwordLama, user.getPassword())) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi lama tidak sesuai");
-                return "redirect:/pasien/profil";
-            }
-
-            // Validate new password length
-            if (passwordBaru.length() < 8) {
-                redirectAttributes.addFlashAttribute("error", "Kata sandi baru minimal 8 karakter");
-                return "redirect:/pasien/profil";
-            }
-
-            // Validate password confirmation
-            if (!passwordBaru.equals(konfirmasiPassword)) {
-                redirectAttributes.addFlashAttribute("error",
-                        "Konfirmasi kata sandi baru harus sama dengan kata sandi baru");
-                return "redirect:/pasien/profil";
-            }
-
-            // Update password
-            user.setPassword(passwordEncoder.encode(passwordBaru));
-            userRepository.save(user);
-
+            userService.changePassword(user.getIdUser(), passwordLama, passwordBaru, konfirmasiPassword);
             redirectAttributes.addFlashAttribute("success", "Kata sandi berhasil diperbarui!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -254,7 +224,7 @@ public class PasienController {
             throw new RuntimeException("User not found");
         }
 
-        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
 
         // Add navbar attributes
         model.addAttribute("nama", user.getNama());

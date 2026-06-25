@@ -244,6 +244,13 @@ public class DokterService {
         return dokterRepository.findById(dokterId);
     }
 
+    public Optional<Dokter> getDokterByIdUser(String idUser) {
+        if (idUser == null) {
+            return Optional.empty();
+        }
+        return dokterRepository.findByIdUser(idUser);
+    }
+
     // ====================
     // Spesialisasi Management
     // ====================

@@ -73,4 +73,39 @@ public class AuthService {
     public String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
+
+    /**
+     * Validate registration form fields
+     * 
+     * @param nama            The full name
+     * @param email           The email address
+     * @param password        The password
+     * @param confirmPassword The password confirmation
+     * @throws IllegalArgumentException if validation fails
+     */
+    public void validateRegistrationForm(String nama, String email, String password, String confirmPassword) {
+        // Validate required fields
+        if (isBlank(nama) || isBlank(email) || isBlank(password)) {
+            throw new IllegalArgumentException("Nama lengkap, email, dan password wajib diisi");
+        }
+
+        // Validate email domain (must be @gmail.com)
+        if (!email.toLowerCase().endsWith("@gmail.com")) {
+            throw new IllegalArgumentException("Email harus menggunakan domain @gmail.com");
+        }
+
+        // Validate password length (minimum 8 characters)
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password minimal 8 karakter");
+        }
+
+        // Validate password confirmation
+        if (!password.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Password dan konfirmasi password tidak cocok");
+        }
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
 }

@@ -1,8 +1,6 @@
 package rsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +11,8 @@ import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
 import rsis.model.User;
-import rsis.repository.PasienRepository;
-import rsis.repository.UserRepository;
 import rsis.service.AppointmentService;
+import rsis.service.PasienService;
 import rsis.service.DokterService;
 import rsis.service.NotifikasiService;
 
@@ -34,10 +31,7 @@ public class AppointmentController {
     private NotifikasiService notifikasiService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasienRepository pasienRepository;
+    private PasienService pasienService;
 
     @Autowired
     private DokterService dokterService;
@@ -52,16 +46,17 @@ public class AppointmentController {
     }
 
     @GetMapping("/booking")
-    public String showBookingForm(@AuthenticationPrincipal UserDetails principal,
-            @RequestParam(required = false) String jadwalId,
+    public String showBookingForm(@RequestParam(required = false) String jadwalId,
             @RequestParam(required = false) String dokterId,
             @RequestParam(required = false) String reschedule,
             Model model) {
         // Add navbar attributes
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
-        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
         String userId = pasien != null ? pasien.getIdUser() : user.getIdUser();
 
         model.addAttribute("nama", user.getNama());
@@ -163,13 +158,15 @@ public class AppointmentController {
     @PostMapping("/booking")
     public String bookAppointment(@ModelAttribute BookingRequestDTO bookingRequest,
             @RequestParam(required = false) String reschedule,
-            @AuthenticationPrincipal UserDetails principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
         try {
             // Get pasien data
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
+            Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
             // Set pasienId from logged-in user
@@ -215,17 +212,21 @@ public class AppointmentController {
     }
 
     @GetMapping("/my-appointments")
-    public String showMyAppointments(@AuthenticationPrincipal UserDetails principal, Model model) {
+    public String showMyAppointments(Model model) {
         // Add navbar attributes
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
 
         model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
         model.addAttribute("activeMenu", "jadwal");
 
         // Get notifications
-        String pasienId = principal.getUsername();
+        String pasienId = pasien != null ? pasien.getIdUser() : user.getIdUser();
         addNotifikasiToModel(pasienId, model);
 
         List<Appointment> appointments = appointmentService.getAppointmentsByPasienId(pasienId);
@@ -279,12 +280,14 @@ public class AppointmentController {
     @GetMapping("/detail/{id}")
     @ResponseBody
     public java.util.Map<String, Object> getAppointmentDetail(@PathVariable String id,
-            @AuthenticationPrincipal UserDetails principal) {
+            Model model) {
         java.util.Map<String, Object> response = new java.util.HashMap<>();
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
+            Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
             Appointment appointment = appointmentService.getAppointmentById(id)
@@ -311,10 +314,12 @@ public class AppointmentController {
 
     // Doctor appointment management endpoints
     @GetMapping("/dokter")
-    public String showDoctorAppointments(@AuthenticationPrincipal UserDetails principal, Model model) {
+    public String showDoctorAppointments(Model model) {
         // Get user data for navbar
-        User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = (User) model.getAttribute("currentUser");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
@@ -361,12 +366,14 @@ public class AppointmentController {
     @ResponseBody
     public java.util.Map<String, Object> updateAppointment(@PathVariable String id,
             @RequestBody java.util.Map<String, String> request,
-            @AuthenticationPrincipal UserDetails principal) {
+            Model model) {
         java.util.Map<String, Object> response = new java.util.HashMap<>();
         try {
-            User user = userRepository.findByEmailIgnoreCase(principal.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            Pasien pasien = pasienRepository.findByIdUser(user.getIdUser())
+            User user = (User) model.getAttribute("currentUser");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
+            Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Pasien not found"));
 
             Appointment appointment = appointmentService.getAppointmentById(id)

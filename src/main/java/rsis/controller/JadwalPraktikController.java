@@ -10,8 +10,6 @@ import rsis.model.Dokter;
 import rsis.model.JadwalPraktik;
 import rsis.model.Pasien;
 import rsis.model.User;
-import rsis.repository.DokterRepository;
-import rsis.repository.PasienRepository;
 import rsis.service.AppointmentService;
 import rsis.service.DokterService;
 import rsis.service.JadwalPraktikService;
@@ -40,12 +38,6 @@ public class JadwalPraktikController {
 
     @Autowired
     private NotifikasiService notifikasiService;
-
-    @Autowired
-    private PasienRepository pasienRepository;
-
-    @Autowired
-    private DokterRepository dokterRepository;
 
     private void addNotifikasiToModel(String userId, Model model) {
         try {
@@ -85,7 +77,7 @@ public class JadwalPraktikController {
             throw new RuntimeException("User not found");
         }
 
-        Pasien pasien = pasienRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Pasien pasien = pasienService.getPasienByIdUser(user.getIdUser()).orElse(null);
 
         model.addAttribute("nama", user.getNama());
         model.addAttribute("role", user.getRole());
@@ -166,7 +158,7 @@ public class JadwalPraktikController {
             throw new RuntimeException("User not found");
         }
 
-        Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+        Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
         if (dokter != null) {
             model.addAttribute("nama", user.getNama());
             model.addAttribute("role", user.getRole());
@@ -199,7 +191,7 @@ public class JadwalPraktikController {
             if (user == null) {
                 throw new RuntimeException("User not found");
             }
-            Dokter dokter = dokterRepository.findByIdUser(user.getIdUser())
+            Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser())
                     .orElseThrow(() -> new RuntimeException("Dokter not found"));
 
             jadwal.setDokter(dokter);
@@ -247,7 +239,7 @@ public class JadwalPraktikController {
             if (user == null) {
                 throw new RuntimeException("User not found");
             }
-            Dokter dokter = dokterRepository.findByIdUser(user.getIdUser()).orElse(null);
+            Dokter dokter = dokterService.getDokterByIdUser(user.getIdUser()).orElse(null);
             if (dokter == null) {
                 response.put("success", false);
                 response.put("message", "Dokter not found");

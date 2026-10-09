@@ -10,7 +10,11 @@
   <link rel="stylesheet" href="/css/dokter/dashboard.css" />
   <link rel="stylesheet" href="/css/fragments/layout/navbar.css" />
   <link rel="stylesheet" href="/css/fragments/overlay/notifikasi.css" />
-  <link rel="icon" type="image/png" href="/images/logo-rsis.png" />
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/images/favicon-32.png}">
+  <link rel="apple-touch-icon" th:href="@{/images/apple-touch-icon.png}">
+  <link rel="manifest" th:href="@{/manifest.webmanifest}">
+  <meta name="theme-color" content="#1b6b4a">
+  <meta name="apple-mobile-web-app-title" content="RSIS">
   <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 

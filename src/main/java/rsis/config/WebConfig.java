@@ -2,6 +2,7 @@ package rsis.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,10 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Bean
     WebServerFactoryCustomizer<TomcatServletWebServerFactory> webmanifestMimeCustomizer() {
-        return factory -> factory.addMimeMappings(
-                mappings -> mappings.add("webmanifest", "application/manifest+json"));
+        return factory -> {
+            MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
+            mappings.add("webmanifest", "application/manifest+json");
+            factory.setMimeMappings(mappings);
+        };
     }
 }
